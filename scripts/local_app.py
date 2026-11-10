@@ -38,6 +38,26 @@ def port_open(port):
         return False
 
 
+def reuse_running_app(no_browser=False):
+    ports = [port for _, port in SERVICES] + [3000]
+    busy = [port for port in ports if port_open(port)]
+    if not busy:
+        return False
+    if len(busy) == len(ports):
+        try:
+            with urllib.request.urlopen("http://localhost:3000", timeout=3) as response:
+                html = response.read(100000).decode("utf-8", errors="replace")
+                if response.status == 200 and ("phylodivas" in html.lower() or "/src/main" in html):
+                    print("phyloDIVaS is already running: http://localhost:3000. Setup was skipped.", flush=True)
+                    if not no_browser:
+                        webbrowser.open("http://localhost:3000")
+                    return True
+        except OSError:
+            pass
+    raise RuntimeError("Ports already in use: " + ", ".join(map(str, busy))
+                       + ". Setup was not run. Stop the previous launcher with Ctrl+C, then retry. No process was terminated.")
+
+
 def dependencies():
     # nvm is a shell function and may not be initialized in a new terminal.
     if not shutil.which("node") or not shutil.which("npm"):
@@ -85,13 +105,21 @@ def environment():
 
 
 def setup(paths, env):
+    log_dir = ROOT / ".local-run" / "setup"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    def run_step(label, command, cwd, filename):
+        path = log_dir / filename
+        print(label, flush=True)
+        with path.open("w") as log:
+            result = subprocess.run(command, cwd=cwd, env=env, stdout=log, stderr=subprocess.STDOUT,
+                                    shell=os.name == "nt" and command[0] == paths["npm"])
+        if result.returncode:
+            raise RuntimeError(f"{label} failed. Details: {path}")
     for name, _ in SERVICES:
-        subprocess.run([paths["dotnet"], "restore", str(ROOT / name / (name + ".csproj"))],
-                       cwd=ROOT, env=env, check=True)
-        subprocess.run([paths["dotnet"], "build", "--no-restore", str(ROOT / name / (name + ".csproj"))],
-                       cwd=ROOT, env=env, check=True)
-    subprocess.run([paths["npm"], "ci"], cwd=ROOT / "ClientApp", env=env, check=True,
-                   shell=os.name == "nt")
+        run_step(f"Preparing {name}...", [paths["dotnet"], "build", str(ROOT / name / (name + ".csproj"))],
+                 ROOT, name + ".log")
+    run_step("Installing frontend dependencies...", [paths["npm"], "ci"], ROOT / "ClientApp", "frontend.log")
+    print(f"Setup finished. Detailed build and dependency audit logs: {log_dir}", flush=True)
 
 
 def stop(processes):
@@ -181,6 +209,8 @@ def main():
     parser.add_argument("--check", action="store_true", help="Check prerequisites/configuration without starting services")
     parser.add_argument("--no-browser", action="store_true")
     args = parser.parse_args()
+    if not args.check and reuse_running_app(args.no_browser):
+        return
     paths, env = dependencies(), environment()
     if args.check:
         print("Prerequisites and local configuration format OK. Database/AWS access has not been verified.")

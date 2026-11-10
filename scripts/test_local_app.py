@@ -8,6 +8,24 @@ import local_app
 
 
 class LauncherTests(unittest.TestCase):
+    def test_existing_app_skips_setup_and_opens_browser(self):
+        from unittest.mock import MagicMock
+        response = MagicMock()
+        response.status = 200
+        response.read.return_value = b'<title>phyloDIVaS</title>'
+        response.__enter__.return_value = response
+        with patch.object(local_app, 'port_open', return_value=True), patch.object(local_app.urllib.request, 'urlopen', return_value=response), patch.object(local_app.webbrowser, 'open') as browser:
+            self.assertTrue(local_app.reuse_running_app())
+            browser.assert_called_once_with('http://localhost:3000')
+
+    def test_partial_port_conflict_fails_before_install(self):
+        with patch.object(local_app, 'port_open', side_effect=lambda port: port == 3000):
+            with self.assertRaisesRegex(RuntimeError, 'Setup was not run'):
+                local_app.reuse_running_app()
+
+    def test_no_running_instance_proceeds(self):
+        with patch.object(local_app, 'port_open', return_value=False):
+            self.assertFalse(local_app.reuse_running_app())
     def test_checkout_relative_and_seven_apis(self):
         self.assertEqual(local_app.ROOT, Path(local_app.__file__).resolve().parents[1])
         self.assertEqual(len(local_app.SERVICES), 7)
