@@ -39,10 +39,25 @@ def port_open(port):
 
 
 def dependencies():
+    # nvm is a shell function and may not be initialized in a new terminal.
+    if not shutil.which("node") or not shutil.which("npm"):
+        node_root = Path(os.environ.get("NVM_DIR", str(Path.home() / ".nvm"))) / "versions" / "node"
+        candidates = []
+        for directory in node_root.glob("v*/bin"):
+            try:
+                version = tuple(int(part) for part in directory.parent.name.lstrip("v").split("."))
+            except ValueError:
+                continue
+            if version[0] >= 22 and (directory / "node").is_file() and (directory / "npm").exists():
+                candidates.append((version, directory))
+        if candidates:
+            directory = max(candidates)[1]
+            os.environ["PATH"] = str(directory) + os.pathsep + os.environ.get("PATH", "")
     paths = {name: shutil.which(name) for name in ("dotnet", "node", "npm")}
     missing = [name for name, path in paths.items() if not path]
     if missing:
-        raise RuntimeError("Missing prerequisites: " + ", ".join(missing) + ". See README.md.")
+        raise RuntimeError("Missing prerequisites: " + ", ".join(missing)
+                           + ". Install Node.js 22+ with npm from https://nodejs.org/ (or run nvm install 22 and nvm use 22), reopen your terminal, and retry. See README.md.")
     sdk = subprocess.check_output([paths["dotnet"], "--list-sdks"], text=True)
     if not any(line.startswith("8.") for line in sdk.splitlines()):
         raise RuntimeError("Install the .NET 8 SDK (not just the runtime).")
