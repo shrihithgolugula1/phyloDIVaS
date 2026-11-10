@@ -1,0 +1,1124 @@
+/* Page shell to match app look */
+.body {
+    background-color: #f4f6f6;
+    
+}
+
+.searchSection {
+    display: flex;
+    justify-content: center;
+}
+
+.searchContainer {
+    padding: 1rem 0 3rem;
+    width: min(1180px, calc(100% - 40px));
+    max-width: 1200px;
+        margin-bottom: 5rem;
+
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .searchContainer {
+        width: 95vw;
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+        text-align: center;
+    }
+
+    .searchAlignment {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .searchBar {
+        width: 100%;
+    }
+
+    .searchButton {
+        width: 100%;
+    }
+
+    .alignmentSelect {
+        max-width: 100%;
+    }
+
+    .inputRow {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .speciesInput {
+        max-width: 100%;
+    }
+
+    .suggestionTray {
+        padding: 10px;
+        gap: 6px;
+    }
+
+    .suggestionChip {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 140px;
+        padding: 6px 10px;
+    }
+
+    .stepContainer {
+        padding: 15px;
+    }
+
+    .selectedSpecies {
+        padding: 15px;
+    }
+
+    .speciesItem {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .removeButton {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .jobMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+
+    .actionsRow {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .actionsRow > button {
+        width: 100%;
+    }
+
+    .analysisStatus {
+        padding: 20px;
+        font-size: 1rem;
+    }
+
+    .detailsMeta {
+        grid-template-columns: 1fr;
+    }
+
+    .detailsToggleRow {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .searchContainer {
+        width: 98vw;
+        padding: 1rem 0.75rem;
+    }
+
+    .title {
+        font-size: 1.25rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .suggestionChip {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+.title {
+    color: #17252d;
+    margin-bottom: 10px;
+    font-size: clamp(30px, 4vw, 44px);
+    letter-spacing: 0;
+}
+
+.subtitle {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 1.05rem;
+}
+
+.citationsLink {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.citationsText {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.citationsText:hover {
+    color: #15ca24;
+    text-decoration: underline;
+}
+
+.progressSection {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.progressBar {
+    margin: 4px 0 0;
+    height: 12px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #e7ebf3;
+}
+
+/* Local wrappers used in JSX */
+.statusBlock { 
+    margin: 0;
+    padding: 14px;
+    background: #f8fafc;
+    border: 1px solid #e4e7ee;
+    border-radius: 12px;
+    display: grid;
+    gap: 10px;
+}
+.statusAlert { 
+    margin: 0;
+    border-radius: 10px;
+    border: 1px solid #cfe8ff;
+}
+
+.searchAlignment {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.searchBar { flex: 1; }
+.searchInputs { display: flex; }
+.speciesSearch { width: 100%; }
+
+.alignment { margin-top: 16px; }
+.alignmentSelect { max-width: 240px; }
+
+.stepContainer {
+    margin-bottom: 30px;
+    padding: 25px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.stepHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.inputRow {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.speciesInput {
+    flex: 1;
+    max-width: 400px;
+}
+
+.suggestionTray {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.suggestionToolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 8px 0;
+    color: #52616b;
+    font-size: 0.86rem;
+}
+
+.suggestionToolbar > span { margin-right: auto; }
+.showMoreSuggestions { display: block; margin: -8px auto 20px; padding: 7px 12px; border: 1px solid #8aa5a3; border-radius: 4px; background: #fff; color: #0b615b; font-weight: 650; cursor: pointer; }
+.showMoreSuggestions:hover:not(:disabled) { background: #edf7f5; }
+.showMoreSuggestions:disabled { cursor: wait; opacity: 0.65; }
+.suggestionToolbar select { min-width: 180px; padding: 7px 30px 7px 9px; border: 1px solid #b9c3c8; border-radius: 4px; background: #fff; color: #26333f; }
+.sortDirection { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #b9c3c8; border-radius: 4px; background: #fff; cursor: pointer; }
+.triangleUp, .triangleDown { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; }
+.triangleUp { border-bottom: 9px solid #0b716a; }
+.triangleDown { border-top: 9px solid #0b716a; }
+.inputTreeTime { fill: #8a4b08; font-size: 11px; font-weight: 700; }
+
+.queuedSpecies { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 12px; padding: 10px; border: 1px solid #b8d8d4; background: #edf7f5; }
+.queuedSpecies > span { margin-right: 3px; color: #315f5b; }
+.queuedSpecies button { display: inline-flex; align-items: center; gap: 7px; border: 1px solid #84bcb5; border-radius: 4px; padding: 5px 8px; background: #fff; color: #26333f; }
+.queuedSpecies button span { color: #687780; font-size: 1rem; }
+
+.eyebrow { margin: 0; color: #0b716a; font-size: 13px; font-weight: 750; text-transform: uppercase; }
+.provenance { margin: 16px 0 26px; padding: 10px 12px; border-left: 3px solid #0b716a; background: #eaf5f3; color: #42545e; font-size: 13px; }
+.workflowSteps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 26px 0 0; padding: 0; list-style: none; border-bottom: 1px solid #cfd7da; }
+.workflowSteps li { display: flex; align-items: center; gap: 8px; padding: 10px 8px; color: #6c7981; border-bottom: 3px solid transparent; }
+.workflowSteps li span { display: inline-grid; place-items: center; width: 24px; height: 24px; border: 1px solid #aeb8bd; border-radius: 50%; font-size: 12px; }
+.workflowSteps .currentStep { color: #0b716a; border-bottom-color: #0b716a; font-weight: 700; }
+.workflowSteps .completeStep { color: #315f5b; }
+.workflowSteps .completeStep span { color: #fff; background: #0b716a; border-color: #0b716a; }
+@media (max-width: 700px) { .workflowSteps { grid-template-columns: repeat(2, 1fr); } }
+
+.suggestionChip {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    min-height: 164px;
+    text-align: left;
+    gap: 3px;
+}
+
+.suggestionChip:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.suggestionCommon {
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.suggestionSelected { border-color: #0b716a; box-shadow: inset 0 0 0 1px #0b716a; background: #edf7f5; }
+.selectionState { margin-top: auto; padding-top: 7px; color: #0b716a; font-size: 0.78rem; font-weight: 700; }
+
+@media (max-width: 600px) {
+    .suggestionToolbar { align-items: stretch; flex-wrap: wrap; }
+    .suggestionToolbar > span { width: 100%; }
+    .suggestionToolbar label { flex: 1; }
+    .suggestionToolbar select { width: 100%; min-width: 0; }
+}
+
+.suggestionScientific {
+    font-style: italic;
+    font-weight: 600;
+    color: #212529;
+    font-size: 1em;
+}
+
+.suggestionMeta {
+    color: #5f6872;
+    font-size: 0.78em;
+    line-height: 1.35;
+}
+
+.alignmentSelection {
+    margin-bottom: 20px;
+}
+
+.alignmentSelection label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.selectedSpecies {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.speciesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.speciesItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.speciesItem:last-child {
+    border-bottom: none;
+}
+
+.statusSection {
+    margin-bottom: 20px;
+}
+
+.statusText {
+    margin: 0;
+    padding: 10px;
+    background-color: #e3f2fd;
+    border-radius: 4px;
+    color: #1565c0;
+    font-weight: 500;
+}
+
+.errorAlert {
+    margin-top: 10px;
+}
+
+.actionSection {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.actionsRow { display: flex; justify-content: center; margin-top: 16px; }
+.speciesSummary { font-weight: 500; color: #495057; }
+.placeholder { color: #8c8f93; }
+.jobMeta { 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    font-size: 0.9rem; 
+    color: #4c5560; 
+}
+.removeButton { margin-left: 12px; }
+
+.analysisStatus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    font-size: 1.1em;
+    color: #495057;
+}
+
+.outputsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.outputsMeta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.outputBadge {
+    background: #e8f0ff;
+    color: #0d6efd;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.outputGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.outputCard {
+    background: #fff;
+    border: 1px solid #e3e6ef;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 8px #0f0d0d0d;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.outputTitle {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.outputDescription {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.treeCard {
+    background: linear-gradient(135deg, #f8fbff, #ffffff);
+    border: 1px solid #e3e6ef;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 2px 10px #0f0d0d0f;
+}
+
+.treeHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.treeScaleSwitcher {
+    display: inline-flex;
+    flex-shrink: 0;
+    border: 1px solid #b8c4c9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.treeScaleSwitcher button {
+    border: 0;
+    border-right: 1px solid #b8c4c9;
+    background: #ffffff;
+    color: #34454d;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.treeScaleSwitcher button:last-child { border-right: 0; }
+.treeScaleSwitcher button:disabled { color: #8a989e; background: #f1f4f5; cursor: not-allowed; }
+.treeScaleSwitcher .treeScaleActive { color: #ffffff; background: #0b716a; }
+
+.treeCanvas {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 8px 14px;
+}
+
+.treeSvg {
+    display: block;
+    width: auto;
+    min-width: 100%;
+    max-width: none;
+    min-height: 260px;
+}
+
+.treeBranch {
+    fill: none;
+    stroke: #71838d;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.treeNode {
+    fill: #0b716a;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+}
+
+.treeLabel {
+    fill: #2c3e50;
+    font-size: 14px;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.treeBranchLabel {
+    fill: #53656e;
+    font-size: 10px;
+    font-style: normal;
+    paint-order: stroke;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.treeTimeLabel {
+    fill: #8a4b08;
+    font-size: 11px;
+    font-weight: 700;
+    paint-order: stroke;
+    stroke: #ffffff;
+    stroke-width: 3px;
+}
+
+.treeTimeAxis line,
+.treeTimeAxisLine {
+    stroke: #53656e;
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+}
+
+.treeTimeAxis text {
+    fill: #53656e;
+    font-size: 11px;
+}
+
+@media (max-width: 720px) {
+    .treeHeader { align-items: flex-start; flex-direction: column; }
+    .treeScaleSwitcher { width: 100%; }
+    .treeScaleSwitcher button { flex: 1; }
+}
+
+.treeScale line {
+    stroke: #53656e;
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+}
+
+.treeScale text {
+    fill: #53656e;
+    font-size: 11px;
+    font-style: normal;
+}
+
+/* Button visual alignment with app Button component (scoped) */
+.searchContainer :global(.btn) {
+    border-radius: 50px;
+    padding: 0.54rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    box-shadow: 0 4px 4px #0F0D0D0D;
+}
+
+/* Primary and success → green style */
+.searchContainer :global(.btn-primary),
+.searchContainer :global(.btn-success) {
+    background-color: #15ca24;
+    border: 2px solid #15ca24;
+    color: #063c14;
+}
+.searchContainer :global(.btn-primary:hover),
+.searchContainer :global(.btn-success:hover) {
+    background-color: #11a71e;
+    border-color: #11a71e;
+    color: #063c14;
+}
+.searchContainer :global(.btn-primary:focus),
+.searchContainer :global(.btn-primary:focus-visible),
+.searchContainer :global(.btn-success:focus),
+.searchContainer :global(.btn-success:focus-visible) {
+    background-color: #0d8317;
+    border-color: #15ca24;
+    color: #063c14;
+    box-shadow: 0 0 0 0.2rem rgba(21, 202, 36, 0.25);
+}
+
+/* Outline secondary/danger → neutral grey outline to match app secondary */
+.searchContainer :global(.btn-outline-danger),
+.searchContainer :global(.btn-outline-secondary) {
+    background-color: #fff;
+    border: 2px solid #C9C4C4;
+    color: #8F8383;
+}
+.searchContainer :global(.btn-outline-danger:hover),
+.searchContainer :global(.btn-outline-secondary:hover),
+.searchContainer :global(.btn-outline-danger:focus),
+.searchContainer :global(.btn-outline-secondary:focus) {
+    background-color: #C9C4C4;
+    color: #201D1D;
+    border-color: #C9C4C4;
+}
+
+.historyBadge {
+    background-color: #eef1f7;
+    border: 1px solid #d5d9e4;
+    color: #2f3a4d;
+    padding: 6px 10px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.modeSwitcher {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.modeButton {
+    min-width: 180px;
+    border-radius: 6px;
+}
+
+.selectedSpeciesHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+.selectedSpeciesHeader h5 { margin: 0; }
+.viewSwitcher { display: inline-flex; padding: 3px; border: 1px solid #b9c3c8; border-radius: 6px; background: #eef1f2; }
+.viewSwitcher button { min-width: 82px; border: 0; border-radius: 4px; padding: 6px 10px; background: transparent; color: #52616b; font-weight: 650; }
+.viewSwitcher button:disabled { opacity: 0.45; }
+.viewSwitcher .activeView { background: #fff; color: #0b716a; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.inputTreePanel { min-height: 230px; border: 1px solid #d8dfe2; background: #fff; padding: 14px; }
+.inputTreeScroller { width: 100%; overflow-x: auto; }
+.inputTreeSvg { display: block; width: auto; max-width: none; }
+.inputTreeEdge { fill: none; stroke: #84949b; stroke-width: 2; }
+.inputTreeNode { fill: #0b716a; }
+.inputTreeLabel { fill: #26333f; font-size: 13px; font-style: italic; }
+.inputTreeTime { fill: #52616b; font-size: 10px; }
+.inputTreeTimeAxis { stroke: #718188; stroke-width: 1; }
+.treeStatus { min-height: 190px; display: flex; align-items: center; justify-content: center; gap: 9px; color: #52616b; }
+.treeError { padding: 12px; border-left: 3px solid #b42318; background: #fff1f0; color: #8d1b13; }
+.treeProvenance { margin: 10px 0 0; color: #66757d; font-size: 0.78rem; }
+.treeWarning { margin: 6px 0 0; color: #8a5a00; font-size: 0.82rem; }
+.treeActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.treeContextNote { margin: 6px 0 0; color: #63717a; font-size: 0.82rem; }
+.saturationWarning { margin-top: 10px; padding: 10px 12px; border-left: 4px solid #b7791f; background: #fff8e6; color: #6b4700; font-size: 0.86rem; }
+
+@media (max-width: 600px) {
+    .selectedSpeciesHeader { align-items: stretch; flex-direction: column; }
+    .viewSwitcher { align-self: flex-start; }
+}
+
+.resumeCard {
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+}
+
+.resumeHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.infoButton {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    display: inline-grid !important;
+    place-items: center;
+    padding: 0 !important;
+    border: 1px solid #9aabad !important;
+    border-radius: 50% !important;
+    color: #0b716a !important;
+    background: #ffffff !important;
+    text-decoration: none !important;
+    font-size: 1rem !important;
+}
+
+.infoButton:hover { background: #eaf5f3 !important; }
+.infoButton:focus-visible { outline: 3px solid #74b9b2; outline-offset: 2px; }
+
+.galaxyHelp {
+    margin: 14px 0 18px;
+    padding: 16px;
+    border-left: 4px solid #0b716a;
+    background: #eef7f5;
+    color: #26333f;
+}
+
+.galaxyHelp section + section { margin-top: 16px; }
+.galaxyHelp h6 { margin-bottom: 8px; }
+.galaxyHelp ol { margin: 0; padding-left: 22px; }
+.galaxyHelp li + li { margin-top: 5px; }
+.galaxyHelp p { margin: 14px 0 0; }
+
+.pipelineTracker {
+    padding: 14px;
+    border: 1px solid #d7e0e3;
+    background: #ffffff;
+}
+
+.pipelineTrackerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.pipelineTrackerHeader span { color: #66757d; font-size: 0.8rem; }
+.pipelineTracker ol { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pipelineTracker li { display: flex; align-items: center; gap: 7px; min-width: 0; color: #718087; font-size: 0.78rem; line-height: 1.25; }
+.pipelineTracker li > span { flex: 0 0 24px; width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid #b7c2c7; border-radius: 50%; background: #fff; font-weight: 700; }
+.pipelineTracker .pipelineStageComplete { color: #315f5b; }
+.pipelineTracker .pipelineStageComplete > span { color: #fff; background: #0b716a; border-color: #0b716a; }
+.pipelineTracker .pipelineStageCurrent { color: #0b5f59; font-weight: 700; }
+.pipelineTracker .pipelineStageCurrent > span { border: 3px solid #0b716a; color: #0b716a; }
+.pipelineTracker .pipelineStageFailed { color: #9f2525; font-weight: 700; }
+.pipelineTracker .pipelineStageFailed > span { border: 3px solid #b42318; color: #b42318; background: #fff4f2; }
+
+.timeEstimate {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-left: 3px solid #0b716a;
+    background: #eef7f5;
+}
+.timeEstimate div { display: flex; flex-direction: column; flex: 0 0 auto; }
+.timeEstimate span { color: #52646c; font-size: 0.74rem; font-weight: 650; text-transform: uppercase; }
+.timeEstimate strong { color: #194944; font-size: 0.95rem; }
+.timeEstimate p { align-self: center; margin: 0; color: #46565e; font-size: 0.78rem; line-height: 1.35; text-align: right; }
+
+.orthologCount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 14px 0 4px;
+    padding: 12px 14px;
+    border: 1px solid #b8d8d2;
+    background: #f3faf8;
+}
+
+.orthologCount > div {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+}
+
+.orthologCount span,
+.reuseEyebrow {
+    color: #52646c;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.orthologCount strong {
+    color: #154f49;
+    font-size: 1.35rem;
+    line-height: 1.2;
+}
+
+.orthologCount p {
+    max-width: 700px;
+    margin: 0;
+    color: #46565e;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    text-align: right;
+}
+
+.liveStatusPanel { margin-top: 14px; padding-top: 12px; border-top: 1px solid #d7e0e3; }
+.liveStatusSummary { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.liveStatusSummary span { padding: 4px 7px; border: 1px solid #d7e0e3; background: #f8fafb; color: #46565e; font-size: 0.76rem; }
+.liveStatusSummary span:first-child { margin-right: auto; border: 0; padding-left: 0; background: transparent; color: #26333f; }
+.liveStatusActions { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 12px; }
+.liveStatusEvidence { margin-top: 10px; font-size: 0.86rem; }
+.liveStatusEvidence summary { cursor: pointer; font-weight: 600; }
+.liveStatusEvidence ul { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.liveStatusEvidence li { display: flex; justify-content: space-between; gap: 16px; }
+.liveStatusEvidence li span { overflow-wrap: anywhere; }
+.galaxyEvidence { margin-top: 12px; }
+.galaxyEvidence summary { cursor: pointer; color: #0b615b; font-weight: 650; }
+.galaxyEvidence ul { margin: 9px 0 0; padding: 0; list-style: none; border: 1px solid #e1e6e8; }
+.galaxyEvidence li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 9px; font-size: 0.78rem; }
+.galaxyEvidence li + li { border-top: 1px solid #e8ecee; }
+.galaxyEvidence li span { overflow-wrap: anywhere; }
+.galaxyEvidence li strong { flex: 0 0 auto; color: #52616b; text-transform: capitalize; }
+.galaxyEvidence li strong[data-state="ok"] { color: #176b45; }
+.galaxyEvidence li strong[data-state="error"],
+.galaxyEvidence li strong[data-state="failed"] { color: #a3261c; }
+
+.modeAction {
+    align-self: flex-start;
+    min-width: 230px;
+}
+
+.detailsToggleRow {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.detailsToggle {
+    font-size: 0.85rem !important;
+    padding: 0.35rem 0.9rem !important;
+}
+
+.analysisDetails {
+    margin-top: 12px;
+    padding: 18px;
+    background-color: #ffffff;
+    border: 1px solid #e4e7ee;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: opacity 180ms ease, max-height 180ms ease, transform 180ms ease;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+}
+
+.analysisDetailsHidden {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+}
+
+.detailsMeta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px 14px;
+}
+
+.detailsMetaItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detailsLabel {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.detailsValue {
+    font-weight: 500;
+    color: #212529;
+}
+
+.detailsMetaList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.detailsMetaList code {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.detailsSpecies {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detailsSpeciesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detailsSpeciesList li {
+    color: #343a40;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid #e8ecef;
+    border-radius: 8px;
+    background: #fbfcff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.detailsLinks a {
+    margin-left: 10px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.jobTag {
+    background: #eef1f7;
+    border: 1px solid #d5d9e4;
+    border-radius: 10px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.jobState {
+    color: #0f5132;
+    border-color: #cce3d0;
+    background: #f1f7f3;
+    font-weight: 600;
+}
+
+.detailsEmpty {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.retryPanel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 18px;
+    margin: 18px 0;
+    border: 1px solid #b9c9de;
+    border-radius: 8px;
+    background: #f5f8fc;
+}
+
+.retryPanel h5 {
+    margin: 0 0 6px;
+}
+
+.retryPanel p {
+    max-width: 760px;
+    margin: 0;
+    color: #465568;
+}
+
+.retryPanel button {
+    flex: 0 0 auto;
+}
+
+.reusePanel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 18px 0;
+    padding: 18px;
+    border: 1px solid #9fcfc5;
+    background: #f3faf8;
+}
+
+.reusePanel h5 {
+    margin: 2px 0 6px;
+}
+
+.reusePanel p {
+    max-width: 780px;
+    margin: 0;
+    color: #465568;
+}
+
+.reuseEyebrow {
+    margin: 0 !important;
+    color: #0b716a !important;
+}
+
+.reusePanel button {
+    flex: 0 0 auto;
+}
+
+.runningOrthoResults {
+    margin: 0 0 24px;
+    border: 1px solid #b9c9de;
+    background: #f7f9fc;
+}
+
+.runningOrthoHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 18px 12px;
+}
+
+.runningOrthoHeader p {
+    color: #526171;
+}
+
+.runningOrthoHeader button {
+    flex: 0 0 auto;
+}
+
+.runningOrthoSummary {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding: 10px 18px;
+    border-top: 1px solid #dbe2eb;
+    color: #526171;
+    font-size: 0.9rem;
+}
+
+.runningOrthoSummary strong {
+    color: #17324d;
+    font-size: 1.15rem;
+}
+
+.runningOrthoSummary span:last-child {
+    margin-left: auto;
+}
+
+.runningOrthoContent {
+    padding: 0 12px 12px;
+    border-top: 1px solid #dbe2eb;
+}
+
+.runningOrthoContent > div {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .modeSwitcher {
+        flex-direction: column;
+    }
+    
+    .modeButton,
+    .modeAction {
+        width: 100%;
+    }
+
+    .analysisDetails {
+        padding: 14px;
+    }
+
+    .detailsSpeciesList {
+        grid-template-columns: 1fr;
+        padding-left: 16px;
+    }
+
+    .pipelineTrackerHeader { align-items: stretch; flex-direction: column; }
+    .pipelineTracker ol { grid-template-columns: repeat(2, 1fr); }
+    .timeEstimate { align-items: stretch; flex-direction: column; gap: 6px; }
+    .timeEstimate p { align-self: stretch; text-align: left; }
+    .orthologCount { align-items: stretch; flex-direction: column; gap: 6px; }
+    .orthologCount p { max-width: none; text-align: left; }
+    .liveStatusActions { align-items: stretch; flex-direction: column; }
+    .retryPanel { align-items: stretch; flex-direction: column; }
+    .retryPanel button { width: 100%; }
+    .reusePanel { align-items: stretch; flex-direction: column; }
+    .reusePanel button { width: 100%; }
+    .runningOrthoHeader { align-items: stretch; flex-direction: column; }
+    .runningOrthoHeader button { width: 100%; }
+    .runningOrthoSummary span:last-child { width: 100%; margin-left: 0; }
+}

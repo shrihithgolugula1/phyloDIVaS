@@ -1,0 +1,132 @@
+.registerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  background-color: #f2f1f1;
+  padding: 40px 20px;
+}
+
+/* White centered card */
+.registerForm {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 3rem;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.title {
+  font-size: 1.8rem;
+  color: #222;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.message {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #007bff;
+  background-color: #e8f4ff;
+  border: 1px solid #cfe6ff;
+}
+
+/* Form fields */
+.formRow {
+  margin-bottom: 1.3rem;
+}
+
+.formRow label {
+  display: block;
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+textarea,
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  transition: all 0.25s ease;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+textarea:focus,
+select:focus,
+input:focus {
+  outline: none;
+  border-color: #2ecc71;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+  background-color: #fff;
+}
+
+input[type="radio"] {
+  accent-color: #2ecc71;
+}
+
+.formRow div label {
+  margin-right: 1.2rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Button area */
+.registerButton {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* ✅ Green button like your Register page */
+.buttonLink {
+  background-color: #12b81f;
+  color: #000; /* ⬅️ changed from white (#fff) to black */
+  padding: 0.9rem 2.2rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 10px rgba(18, 184, 31, 0.25);
+}
+
+.buttonLink:hover {
+  background-color: #0e9e1a;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(18, 184, 31, 0.3);
+  color: #000; /* keep text black even on hover */
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .registerForm {
+    padding: 1.8rem;
+    width: 90%;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+}

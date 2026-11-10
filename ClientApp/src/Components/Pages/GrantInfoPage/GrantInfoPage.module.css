@@ -1,0 +1,71 @@
+.grantInfoContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 80vh;
+    background-color: #F2F1F1;
+    padding-bottom: 50px;
+}
+
+.title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    color: #333;
+    text-align: center;
+}
+
+.grantInfoForm {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 2rem 3rem;
+    box-shadow: 0 4px 4px #0F0D0D0D;
+    width: 50vw;
+    max-width: 600px;
+    border: 0.05rem solid #0F0D0D33;
+}
+
+.formRow {
+    display: block;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+    .formRow label {
+        flex: 1;
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+        text-align: right;
+    }
+
+    .formRow input, .formRow select {
+        width: 100%;
+    }
+
+
+.confirmButton {
+    display: flex;
+    justify-content: center;
+}
+
+.altActions {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.altButtonAlign {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    line-height: 1.6;
+}

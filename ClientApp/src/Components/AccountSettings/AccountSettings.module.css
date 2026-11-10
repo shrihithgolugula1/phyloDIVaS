@@ -1,0 +1,111 @@
+        
+ .accountSettingsContainer {
+    display: flex;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 0 0 20px 20px;
+    padding: 2rem 3rem;
+    box-shadow: 0 4px 4px #0F0D0D0D;
+    border: 0.05rem solid #0F0D0D33;
+    display: block;
+    width: 80vw;
+    min-height: 60vh;
+}
+.body {
+    background-color: #F2F1F1;
+}
+
+.accountSettingsSection {
+    display: flex;
+    justify-content: center;
+}
+
+/* Display value for non-editable fields */
+.displayValue {
+  padding: 0.5rem 0;
+  color: #111827;
+  font-size: 1rem;
+}
+
+/* Toggle switch */
+.toggleGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toggleInfo {
+  flex: 1;
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: #E4E1E1;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggleActive {
+  background-color: #1e61e8;
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggleActive .toggleSlider {
+  transform: translateX(20px);
+}
+
+.helperText {
+  font-size: 0.875rem;
+  color: #8F8383;
+  margin-top: 0.25rem;
+}
+
+
+
+.subsectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Form rows for side-by-side fields */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0;
+}
+.formLabel {
+  font-weight: 600;
+  background: linear-gradient(135deg, #f5f4f4 0%, #fff 100%);
+  width: 100%;
+  padding-top:0.5rem;
+  padding-bottom:0.5rem;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}

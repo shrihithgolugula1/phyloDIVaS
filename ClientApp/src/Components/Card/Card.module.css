@@ -1,0 +1,65 @@
+.cardContainer {
+    position: relative;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(15, 13, 13, 0.06), 0 1px 2px rgba(15, 13, 13, 0.04);
+    border: 0.05rem solid rgba(15, 13, 13, 0.08);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.cardContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1e61e8 0%, #15ca24 50%, #de2160 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cardContainer:hover {
+    box-shadow: 0 8px 24px rgba(15, 13, 13, 0.12), 0 4px 8px rgba(15, 13, 13, 0.08);
+    transform: translateY(-4px);
+    border-color: rgba(15, 13, 13, 0.12);
+}
+
+.cardContainer:hover::before {
+    opacity: 1;
+}
+
+.cardIcon {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #0b716a;
+    opacity: 0.85;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.cardContainer:hover .cardIcon {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.cardTitle {
+    text-align: left;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #2C2C2C;
+    letter-spacing: -0.01em;
+}
+
+.cardFooter {
+    margin-top: 1rem;
+}

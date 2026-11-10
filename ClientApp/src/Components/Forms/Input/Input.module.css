@@ -1,0 +1,92 @@
+.input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: 0.6rem;
+  border: 0.05rem solid #3A353533;
+  color: #3A3535CC;
+  background-color: #F2F1F1;
+  outline: none;
+  transition: border-color 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 4px 4px #0F0D0D0D inset;
+}
+
+.input:focus {
+  background-color: #F2F1F180;
+  color: #3A3535;
+  box-shadow: 0 4px 5px #0F0D0D0D inset;
+}
+
+.primary.input:-webkit-autofill,
+.primary.input:-webkit-autofill:hover,
+.primary.input:-webkit-autofill:focus {
+    box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05) inset,
+    0 0 0px 1000px #e5ffe7 inset !important;
+
+  -webkit-box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05) inset,
+    0 0 0px 1000px #e5ffe7 inset !important;
+
+  -webkit-text-fill-color: #2F2828 !important;
+}
+
+.primary:focus {
+  border: 0.08rem solid #15ca2480;
+  outline-width: 0.2rem;
+  outline-color: #acf7b3;
+}
+
+.success {
+  background-color: #e5ffe7;
+}
+
+.success:focus {
+    background-color: #e5ffe7;
+    border: 0.08rem solid #acf7b3;
+    outline-width: 0.2rem;
+    outline-color: #acf7b3;
+}
+
+.success.input:-webkit-autofill,
+.success.input:-webkit-autofill:hover,
+.success.input:-webkit-autofill:focus {
+    box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05) inset,
+    0 0 0px 1000px #e5ffe7 inset !important;
+
+  -webkit-box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05) inset,
+    0 0 0px 1000px #e5ffe7 inset !important;
+
+  -webkit-text-fill-color: #2F2828 !important;
+}
+
+.error {
+  background-color: #fad0de;
+  border: 0.05rem solid #5F0A2633;
+  color: #3C0618CC;
+}
+
+.error:focus {
+  background-color: #fad0de;
+  color: #3C0618;
+  border: 0.08rem solid #F7ACC5;
+  outline-width: 0.2rem;
+  outline-color: #F7ACC5;
+}
+
+.error.input:-webkit-autofill,
+.error.input:-webkit-autofill:hover,
+.error.input:-webkit-autofill:focus {
+    box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05) inset,
+    0 0 0px 1000px #fad0de inset !important;
+
+  -webkit-box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.05) inset,
+    0 0 0px 1000px #fad0de inset !important;
+
+  -webkit-text-fill-color: #3C0618 !important;
+}

@@ -1,0 +1,28 @@
+.cardRow {
+  display: flex;
+  flex-wrap: wrap; /* allows wrapping to next line */
+  justify-content: center;
+  gap: 1.5rem;
+  width: min(100%, 880px);
+  margin:  auto;
+  box-sizing: border-box;
+}
+
+.cardRow > * {
+  flex: 1 1 calc(50% - 1.5rem);
+  min-width: 250px; /* ensures cards don’t shrink too small */
+}
+
+/* Tablet: 2 per row */
+@media (max-width: 900px) {
+  .cardRow > * {
+    flex: 1 1 calc(50% - 1.5rem);
+  }
+}
+
+/* Mobile: 1 per row */
+@media (max-width: 600px) {
+  .cardRow > * {
+    flex: 1 1 100%;
+  }
+}

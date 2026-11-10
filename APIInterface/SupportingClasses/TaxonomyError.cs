@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace APIInterface.SupportingClasses
+{
+    public class TaxonomyError
+    {
+        [JsonPropertyName("reason")]
+        public string Reason { get; set; }
+
+        [JsonPropertyName("invalid_identifiers")]
+        public List<string> InvalidIdentifiers { get; set; }
+    }
+}

@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "phyloDIVaS Home";
+    Layout = "_Layout";
+}
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .top-section {
+      position: relative;
+      height: 25vh;
+      background-color: #595959;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .top-section::before {
+      content: 'X';
+      position: absolute;
+      font-size: 60vh;
+      color: rgba(255, 255, 255, 0.08);
+      z-index: 0;
+      transform: scaleX(1.2) rotate(15deg);
+    }
+
+    .logo-title {
+      z-index: 1;
+      color: #f4f4f4;
+      font-size: 2.8rem;
+      font-weight: bold;
+    }
+
+    .bottom-section {
+      padding: 50px 40px;
+      background-color: #f4f4f4;
+    }
+
+    .card-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .info-card {
+      background-color: white;
+      border-radius: 16px;
+      padding: 25px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      flex: 0 1 calc(45% - 20px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .info-card h3 {
+      color: black;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+    }
+
+    .info-card p {
+      flex-grow: 1;
+      font-size: 1rem;
+      color: #555;
+    }
+    .info-card .card-footer {
+      margin-top: 20px;
+      background-color: #f0f0f0;
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .homeLink
+    {
+        text-decoration: none;
+        color:black;
+    }
+
+  
+  </style>
+
+<body>
+
+  <div class="top-section">
+    <div class="logo-title">[phyloDIVaS Logo]</div>
+  </div>
+
+  <div class="bottom-section">
+
+    <div class="card-row">
+      <div class="info-card">
+        <h3>About Us</h3>
+        <p>Learn about the phyloDIVaS project, its research goals, and the team behind it.</p>
+        <a class="homeLink" href="@Url.Action("AboutUs", "Capstone")">
+            <div class="card-footer">
+                Learn More
+            </div>
+        </a>
+        </div>
+
+      <div class="info-card">
+        <h3>Start Searching</h3>
+        <p>Search curated genomic records by organism, gene, or assembly.</p>
+        <a class="homeLink" href="@Url.Action("Search", "Capstone")">
+            <div class="card-footer">
+                Start Now
+            </div>
+        </a>
+      </div>
+      </div>
+
+    <div class="card-row">
+      <div class="info-card">
+        <h3>Save Searches</h3>
+        <p>Return to previous searches and review saved results.</p>
+        <a class="homeLink" href="@Url.Action("HistoryPage", "Capstone")">
+            <div class="card-footer">
+                Click Here
+            </div>
+        </a>
+      </div>
+        <div class="info-card">
+            <h3>Run a dN/dS Analysis</h3>
+            <p>Compare orthologous genes across species to investigate patterns of selection.</p>
+            <a class="homeLink" href="@Url.Action("DnDsAnalysisCalculationPage", "Capstone")">
+                <div class="card-footer">
+                    Start Now
+                </div>
+            </a>
+        </div>
+    </div>
+
+    </div>
+
+</body>

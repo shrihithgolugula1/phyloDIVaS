@@ -1,0 +1,137 @@
+/* shared base styling */
+.button {
+  border-radius: 6px;
+  padding: 0.54rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 4px #0F0D0D0D;
+}
+
+/*     VARIANTS     */
+.primary {
+  color: #fff;
+}
+
+.fullWidth {
+  display: block;     
+  width: 100%;        
+  text-align: center;    
+}
+
+.secondary {
+  background-color: #fff;
+}
+
+/*     COLORS     */
+
+/* BLUE */
+.primary.blue {
+  background-color: #0b716a;
+  border: 2px solid #0b716a;
+}
+.primary.blue:hover {
+  background-color: #075a55;
+  border-color: #075a55;
+}
+.primary.blue:focus,
+.primary.blue:focus-visible {
+  background-color: #064d49;
+  border-color: #0b716a;
+}
+
+.secondary.blue {
+  border: 2px solid #0b716a;
+  color: #0b716a;
+}
+.secondary.blue:hover,
+.secondary.blue:focus {
+  background-color: #0b716a;
+  color: #fff;
+  border-color: #0b716a;
+}
+
+/* GREEN */
+.primary.green {
+  background-color: #15ca24;
+  border: 2px solid #15ca24;
+  color: #063c14;
+}
+.primary.green:hover {
+  background-color: #11a71e;
+  border-color: #11a71e;
+}
+.primary.green:focus,
+.primary.green:focus-visible {
+  background-color: #0d8317;
+  border-color: #15ca24;
+}
+
+.secondary.green {
+  border: 2px solid #15ca24;
+  color: #11a71e;
+}
+.secondary.green:hover,
+.secondary.green:focus {
+  background-color: #15ca24;
+  color: #063c14;
+}
+
+/* PINK */
+.primary.pink {
+  background-color: #ca1551;
+  border: 2px solid #ca1551;
+  color: #fff;
+}
+.primary.pink:hover {
+  background-color: #a71143;
+  border-color: #a71143;
+}
+.primary.pink:focus,
+.primary.pink:focus-visible {
+  background-color: #830d34;
+  border-color: #ca1551;
+}
+
+.secondary.pink {
+  border: 2px solid #ca1551;
+  color: #ca1551;
+}
+.secondary.pink:hover,
+.secondary.pink:focus {
+  background-color: #ca1551;
+  color: #fff;
+  border-color: #ca1551;
+}
+
+/* GREY */
+.primary.grey {
+  background-color: #C9C4C4;
+  border: 2px solid #C9C4C4;
+  color: #201D1D;
+  text-decoration:none;
+}
+.primary.grey:hover {
+  background-color: #ACA3A3;
+  border-color: #ACA3A3;
+}
+.primary.grey:focus,
+.primary.grey:focus-visible {
+  background-color: #8F8383;
+  border-color: #C9C4C4;
+}
+
+.secondary.grey {
+  border: 2px solid #C9C4C4;
+  color: #8F8383;
+    text-decoration:none;
+
+}
+.secondary.grey:hover,
+.secondary.grey:focus {
+  background-color: #C9C4C4;
+  color: #201D1D;
+  border-color: #C9C4C4;
+}

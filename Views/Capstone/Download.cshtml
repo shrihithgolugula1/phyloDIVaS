@@ -1,0 +1,108 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Download Data";
+}
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        /* .container { */
+        /*     max-width: 600px; */
+        /*     margin: 50px auto; */
+        /*     padding: 20px; */
+        /*     background-color: #e0e0e0; /* Grey container */ */
+        /*     border-radius: 10px; */
+        /* } */
+
+        .title {
+            text-align: center;
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-btn {
+            display: block;
+            width: 50%;
+            background-color: #8c8c8c;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px auto;
+        }
+
+            .download-btn:hover {
+                background-color: #6c6c6c;
+            }
+    </style>
+<body>
+    <div class="container">
+        <div class="title">Download Table Data</div>
+
+        <div class="table-container">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Comparison</th>
+                        <th>dn</th>
+                        <th>ds</th>
+                        <th>dn/ds Ratio</th>
+                        <th>Selection Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Human vs. Mouse</td>
+                        <td>0.011</td>
+                        <td>0.102</td>
+                        <td>0.11</td>
+                        <td>Purifying</td>
+                    </tr>
+                    <tr>
+                        <td>Mouse vs. Rat</td>
+                        <td>0.098</td>
+                        <td>0.089</td>
+                        <td>1.10</td>
+                        <td>Positive</td>
+                    </tr>
+                    <tr>
+                        <td>Human vs. Chimp</td>
+                        <td>0.033</td>
+                        <td>0.061</td>
+                        <td>0.54</td>
+                        <td>Purifying</td>
+                    </tr>
+                    <tr>
+                        <td>Dog vs. Cat</td>
+                        <td>0.071</td>
+                        <td>0.072</td>
+                        <td>0.99</td>
+                        <td>Neutral</td>
+                    </tr>
+                    <tr>
+                        <td>Fly vs. Mosquito</td>
+                        <td>0.120</td>
+                        <td>0.088</td>
+                        <td>1.36</td>
+                        <td>Positive</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button class="download-btn">Download Data</button>
+    </div>
+</body>

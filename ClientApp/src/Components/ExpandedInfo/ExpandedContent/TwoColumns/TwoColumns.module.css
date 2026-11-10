@@ -1,0 +1,8 @@
+.twoColumns {
+    display: flex;
+    gap: 2rem
+}
+
+.column {
+    width: 100%;
+}

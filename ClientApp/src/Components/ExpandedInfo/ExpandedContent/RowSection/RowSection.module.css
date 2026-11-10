@@ -1,0 +1,15 @@
+.sectionRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.divider {
+  margin: 0 0 1% 0;
+  color: #e0e0e0;
+  border-top: 2px solid #e0e0e0;
+}
+
+.title {
+  font-weight: bold;
+  text-transform: uppercase;
+}

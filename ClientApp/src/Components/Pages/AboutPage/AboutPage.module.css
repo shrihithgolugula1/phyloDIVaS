@@ -1,0 +1,305 @@
+.aboutWrapper {
+    background: linear-gradient(180deg, #f2f1f1 0%, #e8e7e7 100%);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem 1.5rem;
+    color: #333;
+}
+
+.hero {
+    background: linear-gradient(135deg, #d8d7d7 0%, #e9e8e8 50%, #d8d7d7 100%);
+    border: 1px solid #dcdcdc;
+    border-radius: 16px;
+    padding: 2.8rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto 2.2rem auto;
+    box-shadow: 0 4px 12px rgba(15, 13, 13, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Permanent multicolor gradient bar at the top */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1e61e8 0%, #15ca24 50%, #de2160 100%);
+}
+
+.hero:hover {
+    box-shadow: 0 6px 20px rgba(15, 13, 13, 0.15);
+}
+
+.heroContent {
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.eyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #333;
+    background: #ffffff;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid #d0d0d0;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.2rem 0 0.8rem 0;
+    color: #333;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4a4a4a;
+    margin: 0;
+}
+
+.grid {
+    max-width: 1100px;
+    margin: 0 auto 2rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.4rem;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid rgba(15, 13, 13, 0.2);
+    border-radius: 14px;
+    padding: 1.5rem 1.6rem;
+    box-shadow: 0 2px 8px rgba(15, 13, 13, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+    box-shadow: 0 8px 20px rgba(15, 13, 13, 0.12);
+    transform: translateY(-2px);
+    border-color: rgba(15, 13, 13, 0.25);
+}
+
+.card h2 {
+    font-size: 1.15rem;
+    margin: 0;
+    color: #222;
+    font-weight: 600;
+}
+
+.card p {
+    margin: 0;
+    line-height: 1.6;
+    color: #3a3a3a;
+}
+
+.list {
+    padding-left: 1.1rem;
+    margin: 0.4rem 0 0 0;
+    display: grid;
+    gap: 0.3rem;
+    color: #333;
+}
+
+.list li {
+    line-height: 1.5;
+}
+
+.tagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+}
+
+.tag {
+    background: #c2d5f9;
+    color: #1e61e8;
+    border: 1px solid #86abf6;
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.tag:hover {
+    background: #86abf6;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.note {
+    color: #444;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.infoStrip {
+    max-width: 1100px;
+    margin: 0 auto 2.4rem auto;
+    background: linear-gradient(135deg, #2b2b2b 0%, #1a1a1a 100%);
+    color: #f3f3f3;
+    border-radius: 14px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    padding: 1.4rem 1.6rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle accent line on dark strip - top */
+.infoStrip::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        rgba(30, 97, 232, 0.6), 
+        rgba(202, 21, 81, 0.6), 
+        rgba(13, 131, 23, 0.6)
+    );
+}
+
+/* Subtle accent line on dark strip - bottom */
+.infoStrip::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        rgba(30, 97, 232, 0.6), 
+        rgba(202, 21, 81, 0.6), 
+        rgba(13, 131, 23, 0.6)
+    );
+}
+
+.infoBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.metric {
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-size: 0.75rem;
+    color: #d3d3d3;
+    margin: 0;
+}
+
+.metricValue {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+}
+
+.ctaSection {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.ctaCard {
+    background: #ffffff;
+    border: 1px solid rgba(15, 13, 13, 0.2);
+    border-radius: 14px;
+    padding: 1.8rem;
+    box-shadow: 0 4px 12px rgba(15, 13, 13, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle gradient accent that appears on hover */
+.ctaCard::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1e61e8 0%, #15ca24 50%, #de2160 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ctaCard:hover {
+    box-shadow: 0 8px 24px rgba(15, 13, 13, 0.15);
+    transform: translateY(-2px);
+}
+
+.ctaCard:hover::before {
+    opacity: 1;
+}
+
+.ctaCard h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.1rem;
+    color: #222;
+    font-weight: 600;
+}
+
+.ctaCard p {
+    margin: 0;
+    color: #3a3a3a;
+    line-height: 1.5;
+    max-width: 650px;
+}
+
+.ctaActions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .hero {
+        padding: 2rem 1.3rem;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+
+    .ctaCard {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ctaActions {
+        width: 100%;
+        flex-direction: column;
+    }
+}

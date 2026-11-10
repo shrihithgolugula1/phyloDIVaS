@@ -1,0 +1,6 @@
+@SearchAPI_HostAddress = http://localhost:5038
+
+GET {{SearchAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

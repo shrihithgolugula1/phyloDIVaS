@@ -1,0 +1,35 @@
+.green {
+    color: #0D8317;
+    font-weight: bold;
+    text-decoration: none;
+}
+    .green:hover {
+        text-decoration: underline;
+    }
+
+.pink {
+    color: #CA1551;
+    font-weight: bold;
+    text-decoration: none;
+}
+    .pink:hover {
+        text-decoration: underline;
+    }
+
+.blue {
+    color: #1E61E8;
+    font-weight: bold;
+    text-decoration: none;
+}
+    .blue:hover {
+        text-decoration: underline;
+    }
+
+.grey {
+    color: #8F8383;
+    font-weight: bold;
+    text-decoration: none;
+}
+    .grey:hover {
+        text-decoration: underline;
+    }

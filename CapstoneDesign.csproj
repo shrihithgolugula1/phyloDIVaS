@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Controllers\**\*.cs" />
+		<Compile Remove="FeedbackAPI\**\*.cs" />
+		<Compile Remove="LoginBffAPI\**\*.cs" />
+		<Compile Remove="RegistrationControllerAPI\**\*.cs" />
+		<Compile Remove="SearchAPI\**\*.cs" />
+		<Compile Remove="SearchHistoryAPI\**\*.cs" />
+		<Compile Remove="SwaggerUI\**\*.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="**\bin\**\*.cs" />
+		<Compile Remove="**\obj\**\*.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="APIInterface\APIInterface.csproj" />
+		<ProjectReference Include="CapstoneServices\CapstoneServices.csproj" />
+		<ProjectReference Include="PhyloDivas.Data.New\PhyloDivas.Data.New.csproj" />
+		<ProjectReference Include="SearchAPI\SearchAPI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="ClientApp\src\api\dndsApi.js" />
+		<Content Include="ClientApp\src\api\dndsPage.js" />
+		<Content Include="ClientApp\src\api\speciesCatalog.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="4.0.0" />
+		<PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="3.1.1" />
+		<PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="4.0.3.9" />
+		<PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.20" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10" PrivateAssets="all" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	</ItemGroup>
+
+</Project>

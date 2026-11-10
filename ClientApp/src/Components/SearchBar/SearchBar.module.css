@@ -1,0 +1,18 @@
+.searchInputWrapper {
+    position: relative; /* key for dropdown positioning */
+    width: 100%;
+}
+
+.searchAlignment {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.searchAlignment button[type="submit"] { min-height: 46px; }
+
+@media (max-width: 640px) {
+    .searchAlignment { align-items: stretch; flex-direction: column; }
+    .searchAlignment button[type="submit"] { width: 100%; }
+}

@@ -1,0 +1,143 @@
+﻿.verificationContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 80vh;
+    background-color: #fff;
+    padding-bottom: 50px;
+}
+
+.formRow select {
+    flex: 2;
+    border: none;
+    border-radius: 50px;
+    padding: 0.8rem 1.25rem 0.8rem 1rem; /* extra right padding for arrow */
+    font-size: 1rem;
+    background-color: #f5f5f5;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: all 0.2s ease;
+    height: 40px; /* match other inputs */
+    line-height: 1.5;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* custom arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.6rem auto;
+    text-overflow: ellipsis; /* prevent text from being cut */
+}
+
+
+    .formRow select:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 2px #6CBF5A;
+    }
+
+.inputLike {
+    border-radius: 50px !important;
+    height: 40px !important;
+    padding: 0.5rem 1.25rem 0.5rem 1rem !important;
+    font-size: 1rem !important;
+    background-color: #f5f5f5 !important;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1) !important;
+    border: none !important;
+    line-height: 1.5 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 0.6rem auto !important;
+    vertical-align: middle !important;
+    color: #6c757d !important;
+}
+
+
+.title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    color: #333;
+    text-align: center;
+}
+
+.registerForm {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 2rem 3rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    width: 50vw;
+    max-width: 600px;
+}
+
+.formRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+}
+
+    .formRow label {
+        flex: 1;
+        font-size: 1rem;
+        color: #333;
+        margin-right: 1rem;
+        text-align: right;
+    }
+
+    .formRow input {
+        flex: 2;
+        border: none;
+        border-radius: 50px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        background-color: #f5f5f5;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+        .formRow input:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 2px #6CBF5A;
+        }
+
+.verifyButton {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    border: none;
+    background-color: #6CBF5A;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+    .verifyButton:hover {
+        background-color: #549546;
+    }
+
+.otherInput {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.inputLike {
+    width: 100%;
+    height: 40px;
+    padding: 0.4rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}

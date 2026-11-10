@@ -1,0 +1,7 @@
+<Project>
+  <!-- Disable apphost (native executable wrapper) for these ASP.NET projects to avoid file/folder name collisions
+       when other projects copy static web assets into solution-level bin under a subfolder with the same project name. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)'=='SearchAPI' or '$(MSBuildProjectName)'=='SearchHistoryAPI' or '$(MSBuildProjectName)'=='RegistrationControllerAPI' or '$(MSBuildProjectName)'=='FeedbackAPI' or '$(MSBuildProjectName)'=='SwaggerUI'">
+    <UseAppHost>false</UseAppHost>
+  </PropertyGroup>
+</Project>

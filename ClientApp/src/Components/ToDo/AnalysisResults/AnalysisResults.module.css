@@ -1,0 +1,1466 @@
+.alignment {
+  width: min(1480px, 96vw);
+  margin: 0 auto;
+}
+
+.searchButton {
+  border-radius: 50px;           /* rounded like the bar */
+  padding: .8rem 1.25rem;       /* balanced size */
+  background-color: #6CBF5A;
+  border: none;
+  color: #FAFAFA;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* subtle shadow */
+}
+
+.buttonCenter {
+  /* position: absolute; this is kind of fun probably wont use tho */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonStack {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.outputsTable {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.outputsHeaderRow,
+.outputsRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #e4e7ee;
+  border-radius: 8px;
+  background: #fbfcff;
+}
+
+.outputsHeaderRow {
+  background: #f2f4f8;
+  font-weight: 700;
+  color: #2f3a4d;
+}
+
+.outputsName {
+  font-weight: 600;
+  color: #2f3a4d;
+  word-break: break-word;
+}
+
+.outputsPending {
+  color: #9aa2b1;
+  font-size: 0.9rem;
+}
+
+.selectedRow {
+  border: 1px solid #82c4ff;
+  background: #f0f7ff;
+}
+
+.dndsTable {
+  margin: 12px 0 16px 0;
+}
+
+.dndsTable .outputsHeaderRow,
+.dndsTable .outputsRow {
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
+}
+
+.ratioBar {
+  position: relative;
+  height: 10px;
+  background: #e9eef5;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ratioFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #58D68D;
+}
+
+.ratioLabel {
+  font-size: 0.8rem;
+  margin-left: 6px;
+}
+
+.sortHeader {
+  background: none;
+  border: none;
+  font-weight: 700;
+  text-align: left;
+  padding: 0;
+  color: #2f3a4d;
+}
+
+.downloadCell {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.detailPanel {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid #e4e7ee;
+  border-radius: 12px;
+  background: #fbfcff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.omegaClassList {
+  margin: 10px 0;
+}
+
+.sitesBlock {
+  margin-top: 10px;
+}
+
+.listContainer {
+  max-height: 420px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  padding-right: 4px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.listContainer .outputsHeaderRow {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f2f4f8;
+}
+
+.hyphySection {
+  margin-top: 1.5rem;
+}
+
+.hyphyHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 1rem;
+}
+
+.hyphyHeader h4,
+.hyphyHeader p {
+  margin-bottom: 0.35rem;
+}
+
+.hyphyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.hyphyOverviewCard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  background: #f2f4f8;
+  border: 1px solid #e4e7ee;
+}
+
+.hyphyOverviewItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.selectionChart {
+  margin: 0 0 1rem;
+  padding: 12px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.chartHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.chartHeading h5 { margin: 0; }
+.chartHeading span { color: #5c667a; font-size: .85rem; }
+
+.barChart {
+  display: flex;
+  min-height: 220px;
+  gap: 8px;
+  overflow-x: auto;
+  align-items: flex-end;
+}
+
+.barColumn {
+  display: grid;
+  grid-template-rows: 180px auto;
+  gap: 6px;
+  min-width: 54px;
+  max-width: 84px;
+  flex: 1 0 54px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.barColumn:focus-visible {
+  outline: 3px solid #0b6bcb;
+  outline-offset: 3px;
+}
+
+.barTrack {
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid #84919d;
+  background: #f2f4f8;
+}
+
+.barFill { width: 100%; background: #5b7c99; }
+.barSignificant { background: #238636; }
+
+.barColumn > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-size: .75rem;
+}
+
+.hyphyCard {
+  border: 1px solid #e4e7ee;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fbfcff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.hyphyCardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.hyphyLabel {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.hyphyName {
+  font-weight: 700;
+  font-size: 1rem;
+  word-break: break-word;
+  color: #2f3a4d;
+}
+
+.hyphyDownloads {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.hyphyMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin: 10px 0;
+}
+
+.metaLabel {
+  font-size: 0.85rem;
+  color: #5c667a;
+  display: block;
+}
+
+.metaValue {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.metaError {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  color: #b94a48;
+  background: #fdecea;
+  border: 1px solid #f5c2c0;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.omegaBar {
+  display: flex;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e4e7ee;
+  background: #f7f9fb;
+  min-height: 36px;
+}
+
+.omegaBar > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  color: #10212d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.omegaPurifying { background: #8ac4ea; }
+.omegaNeutral { background: #f3c969; }
+.omegaPositive { background: #74cf91; }
+
+.resultTabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 16px;
+  border: 1px solid #cdd5df;
+  border-radius: 8px;
+  background: #f2f4f8;
+}
+
+.resultTab {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  color: #334155;
+  background: transparent;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.resultTab:hover { background: #e4eaf1; }
+
+.resultTab:focus-visible {
+  outline: 3px solid #0b6bcb;
+  outline-offset: 2px;
+}
+
+.activeResultTab {
+  color: #fff;
+  background: #17695e;
+}
+
+.activeResultTab:hover { background: #11544b; }
+
+.resultPanel {
+  min-height: 240px;
+}
+
+.methodOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.methodSummaryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #d9e0e8;
+  border-radius: 8px;
+  background: #fbfcff;
+}
+
+.methodSummaryCard strong {
+  color: #173f3a;
+  font-size: 1.35rem;
+}
+
+.methodSummaryCard small { color: #6a7380; }
+
+.enrichmentStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid #7a8794;
+  background: #f2f4f8;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.chartsGrid .selectionChart { min-width: 0; }
+
+.nativeTableWrap,
+.nativeTableWrapTall {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.nativeTableWrapTall { max-height: 430px; }
+
+.nativeTable {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  color: #202a35;
+  background: #fff;
+}
+
+.nativeTable th,
+.nativeTable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e4e8ed;
+  text-align: left;
+  vertical-align: top;
+}
+
+.nativeTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  color: #2f3a4d;
+  background: #f2f4f8;
+}
+
+.nativeTable th button {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font-weight: 700;
+  text-align: left;
+}
+
+.nativeTable tbody tr:last-child th,
+.nativeTable tbody tr:last-child td { border-bottom: 0; }
+
+.locationCell {
+  min-width: 220px;
+  max-width: 380px;
+  overflow-wrap: anywhere;
+}
+
+.geneFamilyName {
+  display: block;
+  margin-bottom: 2px;
+  color: #173f3a;
+  font-weight: 750;
+}
+
+.geneFamilyName + span {
+  color: #697586;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.84rem;
+}
+
+.selectionBadge {
+  display: inline-block;
+  padding: 4px 7px;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.callPositive {
+  color: #12622f;
+  background: #e5f6e9;
+  border-color: #65a878;
+}
+
+.callNegative {
+  color: #384655;
+  background: #edf1f4;
+  border-color: #9ba7b3;
+}
+
+.callUnavailable {
+  color: #704b00;
+  background: #fff4d6;
+  border-color: #d1a43b;
+}
+
+.detailActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.selectionCallout {
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid;
+  border-left-width: 5px;
+  border-radius: 6px;
+}
+
+.selectionCallout p {
+  margin: 5px 0 0;
+}
+
+.nativeResultSection {
+  margin-top: 18px;
+}
+
+.nativeResultSection h6 { margin-bottom: 10px; }
+
+.significantRow th,
+.significantRow td {
+  background: #eaf7ed;
+  font-weight: 650;
+}
+
+.sequenceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 16px;
+  overflow-wrap: anywhere;
+}
+
+.rawNativeResult {
+  margin-top: 16px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.rawNativeResult summary {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.rawNativeResult pre {
+  max-height: 420px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  color: #f8f9fa;
+  background: #1d242a;
+  font-size: 0.82rem;
+}
+
+.omegaSegment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b1c2c;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.searchButton:hover {
+  background-color: #549546;
+  color: #FAFAFA;
+}
+
+.cardDnDsRows {
+  display: flex;
+  justify-content: space-between; /* pushes text left + right */
+}
+
+.cardTitle {
+  text-align: center;
+}
+
+.statusBlock {
+  margin-bottom: 1.5rem;
+}
+
+.statusAlert {
+  margin-bottom: 0.75rem;
+}
+
+.progressBar {
+  height: 1.5rem;
+  font-weight: 600;
+}
+
+.jobMeta {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.jobState {
+  text-transform: capitalize;
+}
+
+.jobDetails {
+  margin-top: 2rem;
+}
+
+.jobDetailsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.jobPayload {
+  max-height: 320px;
+  overflow: auto;
+  background: #1e1e1e;
+  color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #17695e;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.analysisOverview {
+  margin-bottom: 20px;
+  padding: 18px 20px;
+  border: 1px solid #d8e0e7;
+  border-left: 5px solid #17695e;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.overviewHeader,
+.filterHeader,
+.tableToolbar,
+.geneHeader,
+.methodIntro,
+.figureHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.overviewHeader h4,
+.filterHeader h5,
+.tableToolbar h5,
+.geneHeader h4,
+.methodIntro h5,
+.figureHeader h5 {
+  margin: 0;
+}
+
+.overviewActions,
+.geneHeaderActions,
+.artifactActions,
+.figureActions,
+.tableControls,
+.subsetControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 1px;
+  margin: 16px 0 10px;
+  overflow: hidden;
+  border: 1px solid #dde3e9;
+  border-radius: 6px;
+  background: #dde3e9;
+}
+
+.overviewGrid > div {
+  min-width: 0;
+  padding: 10px 12px;
+  background: #f7f9fa;
+}
+
+.overviewGrid dt,
+.geneMetadata dt,
+.speciesGeneDetails dt {
+  margin-bottom: 3px;
+  color: #5b6773;
+  font-size: .76rem;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.overviewGrid dd,
+.geneMetadata dd,
+.speciesGeneDetails dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #1f2933;
+  font-weight: 650;
+}
+
+.speciesLine {
+  margin: 8px 0 0;
+  color: #44515e;
+  font-size: .88rem;
+}
+
+.inlineWarning {
+  margin: 10px 0 0;
+  color: #704b00;
+  font-size: .85rem;
+}
+
+.loadingStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #485867;
+  font-size: .88rem;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.metricGrid article {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid #d9e0e6;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.metricGrid span {
+  color: #52606d;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.metricGrid strong {
+  margin: 3px 0;
+  color: #173f3a;
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+
+.metricGrid small {
+  color: #687582;
+  font-size: .75rem;
+}
+
+.filterPanel,
+.rankedExplorer {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #d9e0e6;
+  border-radius: 8px;
+  background: #f8fafb;
+}
+
+.filterHeader p,
+.tableToolbar p,
+.figureHeader p,
+.geneHeader p,
+.methodIntro p {
+  margin: 4px 0 0;
+  color: #596673;
+  font-size: .86rem;
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: minmax(210px, 2fr) repeat(2, minmax(145px, 1fr)) repeat(4, minmax(112px, .7fr));
+  gap: 10px;
+  margin-top: 12px;
+  align-items: end;
+}
+
+.filterGrid label,
+.geneSelector label {
+  margin-bottom: 4px;
+  color: #43515e;
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.subsetControls {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #dce3e9;
+}
+
+.subsetControls input,
+.subsetControls select {
+  width: auto;
+  min-width: 170px;
+  flex: 1 1 180px;
+}
+
+.figureGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.dashboardFigure {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #d9e0e6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.figureHeader {
+  margin-bottom: 8px;
+}
+
+.figureDenominator {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border: 1px solid #b8c3cd;
+  border-radius: 5px;
+  color: #40515f;
+  background: #f2f5f7;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.figureSvg {
+  display: block;
+  width: 100%;
+  max-height: 440px;
+  overflow: visible;
+  color: #263746;
+  background: #fff;
+}
+
+.heatmapSvg {
+  max-height: 620px;
+  overflow-x: auto;
+}
+
+.figureNote {
+  min-height: 34px;
+  margin: 7px 0;
+  color: #5e6a76;
+  font-size: .78rem;
+}
+
+.figureActions {
+  justify-content: flex-end;
+  padding-top: 9px;
+  border-top: 1px solid #e3e8ed;
+}
+
+.axisLine {
+  stroke: #697785;
+  stroke-width: 1.2;
+}
+
+.gridLine {
+  stroke: #e3e8ed;
+  stroke-width: 1;
+}
+
+.axisText,
+.axisLabel,
+.overlapLabel,
+.methodAxisLabel,
+.heatmapLabel,
+.heatmapGeneLabel,
+.goLabel,
+.emptyChartText {
+  fill: #40515f;
+  font-family: inherit;
+}
+
+.axisText { font-size: 11px; }
+.axisLabel { font-size: 12px; font-weight: 650; }
+.histogramBar { fill: #94a4b2; }
+.histogramSignificant { fill: #17796b; }
+.thresholdLine { stroke: #b33a3a; stroke-width: 2; stroke-dasharray: 5 4; }
+.scatterPoint { cursor: pointer; stroke: #fff; stroke-width: 1; opacity: .85; }
+.scatterPoint:focus { stroke: #0b6bcb; stroke-width: 3; outline: none; }
+.overlapRow { cursor: pointer; }
+.overlapRow:focus { outline: none; }
+.overlapRow:focus .overlapBar { stroke: #0b6bcb; stroke-width: 3; }
+.overlapLabel { font-size: 11px; }
+.overlapDot { fill: #fff; stroke: #a7b2bc; stroke-width: 2; }
+.overlapDotActive { fill: #17695e; stroke: #0e5149; stroke-width: 2; }
+.overlapBar { fill: #54758c; }
+.methodAxisLabel { font-size: 10px; font-weight: 800; }
+.heatmapLabel { font-size: 9px; }
+.heatmapGeneLabel { font-size: 10px; cursor: pointer; }
+.goLabel { font-size: 10px; }
+.goDot { fill: #17695e; opacity: .82; cursor: pointer; }
+.emptyChartText { font-size: 14px; }
+
+.unavailableFigure {
+  display: flex;
+  min-height: 220px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 28px;
+  color: #596673;
+  text-align: center;
+  background: #f6f8f9;
+  border: 1px dashed #b9c3cc;
+}
+
+.unavailableFigure strong { color: #374653; }
+
+.tableToolbar {
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tableControls select { width: auto; min-width: 150px; }
+
+.tableEvidence {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #0e5b2a;
+  background: #dff2e4;
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.emptyState {
+  margin: 12px 0 0;
+  color: #65717d;
+  text-align: center;
+}
+
+.geneSpecificLayout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.geneSelector {
+  position: sticky;
+  top: 12px;
+  padding: 12px;
+  border: 1px solid #d9e0e6;
+  border-radius: 8px;
+  background: #f8fafb;
+}
+
+.geneOptionList {
+  display: flex;
+  max-height: 570px;
+  flex-direction: column;
+  gap: 3px;
+  margin: 10px 0 6px;
+  overflow-y: auto;
+}
+
+.geneOption,
+.activeGeneOption {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: #253542;
+  background: transparent;
+  text-align: left;
+}
+
+.geneOption:hover { background: #edf2f5; }
+
+.activeGeneOption {
+  border-color: #17695e;
+  color: #123f39;
+  background: #dff1ed;
+}
+
+.geneOption span,
+.activeGeneOption span {
+  color: #687582;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: .72rem;
+}
+
+.geneOption:focus-visible,
+.activeGeneOption:focus-visible,
+.geneResultTab:focus-visible {
+  outline: 3px solid #0b6bcb;
+  outline-offset: 2px;
+}
+
+.geneWorkspace {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #d9e0e6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.geneHeader {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #dfe5ea;
+}
+
+.geneResultTabs {
+  display: flex;
+  gap: 18px;
+  margin: 12px 0 16px;
+  border-bottom: 1px solid #cad3dc;
+}
+
+.geneResultTab {
+  padding: 8px 2px 9px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: #52606d;
+  background: transparent;
+  font-weight: 750;
+}
+
+.activeGeneResultTab {
+  border-bottom-color: #17695e;
+  color: #123f39;
+}
+
+.geneMetadata {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 0 14px;
+  overflow: hidden;
+  border: 1px solid #dfe5ea;
+  border-radius: 6px;
+  background: #dfe5ea;
+}
+
+.geneMetadata > div {
+  padding: 10px;
+  background: #f8fafb;
+}
+
+.functionalAnnotation,
+.interpretation {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-left: 4px solid #63869f;
+  background: #f2f6f8;
+}
+
+.functionalAnnotation h5,
+.interpretation h5 { margin: 0 0 6px; font-size: 1rem; }
+.functionalAnnotation p,
+.interpretation p { margin: 0 0 6px; }
+
+.geneMarkdownSummaries {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-left: 4px solid #17695e;
+  background: #f2f6f8;
+}
+
+.geneMarkdownSummaries h5 { margin: 0 0 6px; font-size: 1rem; }
+.geneMarkdownSummaries > p { margin: 0 0 10px; }
+.markdownSummary { margin-top: 8px; border: 1px solid #d6dee5; border-radius: 5px; background: #fff; }
+.markdownSummary summary { cursor: pointer; padding: 8px 10px; font-weight: 700; }
+.markdownSummary pre { max-height: 260px; margin: 0; padding: 10px; overflow: auto; white-space: pre-wrap; font-size: .8rem; }
+
+.geneEvidenceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.geneEvidenceGrid > button {
+  display: flex;
+  min-height: 120px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 12px;
+  border: 1px solid #d6dee5;
+  border-radius: 7px;
+  color: #263746;
+  background: #fff;
+  text-align: left;
+}
+
+.geneEvidenceGrid > button:hover { border-color: #17695e; background: #f5faf8; }
+.geneEvidenceGrid > button > span:first-child { color: #17695e; font-weight: 800; }
+.geneEvidenceGrid > button strong { font-size: .9rem; }
+
+.speciesGeneDetails {
+  border: 1px solid #d9e0e6;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.speciesGeneDetails summary {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.speciesGeneDetails dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.speciesGeneDetails dl > div { min-width: 0; }
+
+.methodWorkspace { min-width: 0; }
+
+.methodIntro {
+  margin-bottom: 12px;
+}
+
+.methodIntro > div:first-child { max-width: 760px; }
+
+.artifactActions {
+  padding: 10px 0;
+  border-top: 1px solid #e0e6eb;
+  border-bottom: 1px solid #e0e6eb;
+}
+
+.visionNote {
+  margin: 6px 0 14px;
+  color: #65717d;
+  font-size: .78rem;
+}
+
+.methodUnavailable { margin: 0; }
+
+.memeSitePlot {
+  display: flex;
+  height: 150px;
+  align-items: flex-end;
+  gap: 1px;
+  padding: 8px;
+  overflow-x: auto;
+  border: 1px solid #dfe5ea;
+  background: #f7f9fa;
+}
+
+.memeSitePoint,
+.memeSitePositive {
+  width: 3px;
+  min-width: 2px;
+  background: #8795a2;
+}
+
+.memeSitePositive { background: #17796b; }
+
+.rawNativeResult > p,
+.rawLoading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  color: #5b6773;
+}
+
+.jobDetails > summary {
+  cursor: pointer;
+  color: #475664;
+  font-weight: 700;
+}
+
+:global(body.dark-mode) .analysisOverview,
+:global(body.dark-mode) .dashboardFigure,
+:global(body.dark-mode) .geneWorkspace,
+:global(body.dark-mode) .metricGrid article,
+:global(body.dark-mode) .geneEvidenceGrid > button,
+:global(body.dark-mode) .speciesGeneDetails,
+:global(body.dark-mode) .nativeTable,
+:global(body.dark-mode) .nativeTableWrap,
+:global(body.dark-mode) .nativeTableWrapTall,
+:global(body.dark-mode) .rawNativeResult,
+:global(body.dark-mode) .figureSvg {
+  color: #edf2f5;
+  border-color: #59656c;
+  background: #22292d;
+}
+
+:global(body.dark-mode) .filterPanel,
+:global(body.dark-mode) .rankedExplorer,
+:global(body.dark-mode) .geneSelector,
+:global(body.dark-mode) .overviewGrid > div,
+:global(body.dark-mode) .geneMetadata > div,
+:global(body.dark-mode) .functionalAnnotation,
+:global(body.dark-mode) .geneMarkdownSummaries,
+:global(body.dark-mode) .interpretation,
+:global(body.dark-mode) .unavailableFigure,
+:global(body.dark-mode) .memeSitePlot {
+  color: #edf2f5;
+  border-color: #59656c;
+  background: #2b3338;
+}
+
+:global(body.dark-mode) .markdownSummary {
+  color: #edf2f5;
+  border-color: #59656c;
+  background: #22292d;
+}
+
+:global(body.dark-mode) .axisText,
+:global(body.dark-mode) .axisLabel,
+:global(body.dark-mode) .overlapLabel,
+:global(body.dark-mode) .methodAxisLabel,
+:global(body.dark-mode) .heatmapLabel,
+:global(body.dark-mode) .heatmapGeneLabel,
+:global(body.dark-mode) .goLabel,
+:global(body.dark-mode) .emptyChartText {
+  fill: #e6edf2;
+}
+
+:global(body.dark-mode) .gridLine { stroke: #465159; }
+:global(body.dark-mode) .axisLine { stroke: #b3c0c9; }
+
+:global(body.high-contrast) .dashboardFigure,
+:global(body.high-contrast) .analysisOverview,
+:global(body.high-contrast) .geneWorkspace,
+:global(body.high-contrast) .filterPanel,
+:global(body.high-contrast) .rankedExplorer {
+  border: 2px solid #fff !important;
+}
+
+:global(body.high-contrast) .activeResultTab,
+:global(body.high-contrast) .activeGeneOption,
+:global(body.high-contrast) .activeGeneResultTab {
+  color: #000 !important;
+  background: #ffea00 !important;
+  border-color: #ffea00 !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .alignment {
+    width: 90vw;
+  }
+
+  .hyphyHeader {
+    flex-direction: column;
+  }
+
+  .methodOverviewGrid,
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .resultTabs {
+    display: flex;
+    width: 100%;
+  }
+
+  .resultTab {
+    flex: 1;
+  }
+
+  .hyphyOverviewCard {
+    grid-template-columns: 1fr;
+  }
+
+  .hyphyMetaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .detailHeader,
+  .enrichmentStatus {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .detailActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .dndsTable .outputsHeaderRow,
+  .dndsTable .outputsRow {
+    grid-template-columns: 1.5fr 0.8fr 0.8fr 0.8fr 1.5fr;
+  }
+
+  .searchButton {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 14px;
+  }
+
+  .cardDnDsRows {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .jobMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .progressBar {
+    height: 1.25rem;
+  }
+
+  .jobPayload {
+    max-height: 200px;
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+
+  .statusAlert {
+    font-size: 0.9rem;
+  }
+
+  .overviewHeader,
+  .filterHeader,
+  .tableToolbar,
+  .geneHeader,
+  .methodIntro,
+  .figureHeader {
+    flex-direction: column;
+  }
+
+  .overviewGrid,
+  .metricGrid,
+  .geneMetadata,
+  .geneEvidenceGrid,
+  .figureGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .geneSpecificLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .geneSelector { position: static; }
+  .geneOptionList { max-height: 260px; }
+  .geneResultTabs { gap: 8px; overflow-x: auto; }
+  .speciesGeneDetails dl { grid-template-columns: 1fr; }
+  .tableControls { width: 100%; }
+  .tableControls select { flex: 1; min-width: 0; }
+}
+
+@media (max-width: 480px) {
+  .alignment {
+    width: 95vw;
+  }
+
+  .hyphyCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .searchButton {
+    padding: 0.6rem 0.9rem;
+    font-size: 13px;
+  }
+
+  .filterGrid { grid-template-columns: 1fr; }
+  .overviewActions,
+  .artifactActions,
+  .figureActions { width: 100%; }
+  .overviewActions > *,
+  .artifactActions > * { flex: 1 1 auto; }
+
+  .jobPayload {
+    max-height: 150px;
+    font-size: 0.8rem;
+  }
+}
+.resultsLoading {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+  color: var(--bs-body-color);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 16px;
+}
+.resultsLoading h4 { margin-top: 1rem; }
+.resultsLoading progress { display: block; width: 100%; height: 16px; margin: 1.5rem 0 1rem; accent-color: #087f8c; }

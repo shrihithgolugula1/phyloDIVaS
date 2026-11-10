@@ -1,0 +1,15 @@
+.expandedSection { width: 100%; color: #26333f; }
+.tabs { display: flex; gap: 18px; border-bottom: 1px solid #d9dee3; }
+.tabs button { padding: 10px 2px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: #64737c; font-weight: 650; cursor: pointer; }
+.tabs button.active { color: #0b716a; border-bottom-color: #0b716a; }
+.tabPanel { padding: 20px 0 10px; }
+.summary { max-width: 920px; margin: 0 0 22px; color: #42545e; line-height: 1.6; }
+.fieldGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 28px; margin: 0; }
+.fieldGrid div { min-width: 0; }
+.fieldGrid dt { color: #687780; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+.fieldGrid dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.missing { color: #89949a; font-style: italic; }
+.provenance { margin: 12px 0 0; color: #76838a; font-size: 12px; }
+.empty { padding: 20px; color: #687780; }
+@media (max-width: 800px) { .fieldGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .fieldGrid { grid-template-columns: 1fr; } }

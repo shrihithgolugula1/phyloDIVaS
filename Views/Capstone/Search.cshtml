@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "Search By Gene & Species";
+    Layout = "_Layout";
+}
+
+<style>
+    body {
+        background-color: #f4f4f4;
+    }
+</style>
+
+<div class="container py-5">
+    <h1 class="text-center fw-bold">Search By Gene & Species</h1>
+    <p class="text-center mb-4">
+        Search for genes and species to analyze evolutionary relationships, orthologs, and selection patterns.
+        View detailed results, compare across species, and download sequence data for further research.
+    </p>
+
+    <!-- Search Form -->
+    <form class="row justify-content-center mb-5">
+        <div class="col-md-3 mb-2">
+            <label for="gene" class="form-label fw-bold">Gene:</label>
+            <input type="text" class="form-control" id="gene" placeholder="Enter gene name">
+        </div>
+        <div class="col-md-3 mb-2">
+            <label for="species" class="form-label fw-bold">Species:</label>
+            <select class="form-select" id="species">
+                <option selected>Select species</option>
+                <option value="Example">Example</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-secondary w-100 shadow-sm" style="background-color:#777; margin-bottom: 4%; border: none;">Search</button>
+        </div>
+    </form>
+
+    <!-- Results Table -->
+    <div class="table-responsive">
+        <table class="table table-striped align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Gene Name</th>
+                    <th>Species</th>
+                    <th>Orthologs Found</th>
+                    <th>dn/ds Ratio</th>
+                    <th>Download Data</th>
+                    <th>Visualize Data</th>
+                    <th>Find Similar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < 7; i++)
+                {
+                    <tr>
+                        <td>Example</td>
+                        <td>Example</td>
+                        <td>15 Species</td>
+                        <td>0.87</td>
+                        <td>
+                            <a href="@Url.Action("Download", "Capstone")"><i class="bi bi-download fs-5"></i></a>
+                        </td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#visualizeModal">
+                                <i class="bi bi-image fs-5"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                <i class="bi bi-search fs-5"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Search Modal -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content rounded-4 shadow" style="background-color: #e5e5e5;">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <div class="row g-4 justify-content-center">
+
+                    @for (int i = 0; i < 6; i++)
+                    {
+                        <div class="col-md-4 d-flex flex-column align-items-center">
+                            <div class="bg-white p-3 rounded-3 shadow-sm text-start w-100" style="max-width: 250px;">
+                                <p><strong>Gene</strong> <span class="float-end">Example</span></p>
+                                <p><strong>Species</strong> <span class="float-end">Example</span></p>
+                                <p><strong>Orthologs</strong> <span class="float-end">15 Species</span></p>
+                                <p><strong>dn/ds</strong> <span class="float-end">0.87</span></p>
+                            </div>
+                            <button class="btn btn-secondary mt-2 shadow-sm" style="background-color:#777; border: none;">Open in Search</button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualization Modal -->
+<div class="modal fade" id="visualizeModal" tabindex="-1" aria-labelledby="visualizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center" style="min-height: 400px;">
+                <img src="https://via.placeholder.com/600x400?text=Visualization+Placeholder" alt="Visualization" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</div>

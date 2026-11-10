@@ -1,0 +1,4 @@
+{
+  "ConnectionStrings__PhylodivasDb": "Host=localhost;Port=5432;Database=phylodivas;Username=YOUR_USER;Password=YOUR_PASSWORD",
+  "ConnectionStrings__DefaultConnection": "Host=localhost;Port=5432;Database=phylodivas;Username=YOUR_USER;Password=YOUR_PASSWORD"
+}

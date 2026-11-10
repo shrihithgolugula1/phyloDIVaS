@@ -1,0 +1,242 @@
+﻿:root {
+    --font-scale: 1;
+    --high-contrast-bg: #000;
+    --high-contrast-text: #fff;
+    --dark-bg: #1a1a1a;
+    --dark-text: #e6e6e6;
+}
+
+.accessibility-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    padding: 14px 18px;
+    background: #4a4a4a;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    z-index: 3000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease;
+}
+
+    .accessibility-btn:hover {
+        transform: scale(1.15);
+    }
+
+.accessibility-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 25px;
+    width: 310px;
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    display: block;
+    z-index: 3001;
+    animation: fadeSlide 0.3s ease;
+}
+
+.accessibility-panel[hidden] {
+    display: none !important;
+}
+
+@keyframes fadeSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.panel-title {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.setting-group {
+    margin-bottom: 18px;
+}
+
+.setting-label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.setting-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.acc-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .acc-btn:hover {
+        background: #ededed;
+    }
+
+.acc-select {
+    width: 100%;
+    border-radius: 10px !important;
+    padding: 8px !important;
+}
+
+
+body.dark-mode {
+    background-color: #15191b !important;
+    color: #f2f5f4 !important;
+}
+
+body.dark-mode .body *:not(img):not(svg):not(path) {
+    background-color: #202629 !important;
+    color: #f2f5f4 !important;
+}
+
+body.dark-mode .body,
+body.dark-mode main,
+body.dark-mode form,
+body.dark-mode table,
+body.dark-mode [class*="container"],
+body.dark-mode [class*="panel"],
+body.dark-mode [class*="card"],
+body.dark-mode .modal-content,
+body.dark-mode .dropdown-menu,
+body.dark-mode .accordion-item {
+    background-color: #202629 !important;
+    color: #f2f5f4 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode td,
+body.dark-mode th,
+body.dark-mode li {
+    color: #f2f5f4 !important;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: #111617 !important;
+    color: #fff !important;
+    border-color: #82918f !important;
+}
+
+body.dark-mode a { color: #79ddd2 !important; }
+body.dark-mode .accessibility-panel { background-color: #202629 !important; }
+body.dark-mode .acc-btn { background-color: #30393c !important; color: #fff !important; border-color: #91a09e !important; }
+
+body.high-contrast {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+body.high-contrast .body *:not(img):not(svg):not(path) {
+    background-color: #000 !important;
+    background-image: none !important;
+    color: #fff !important;
+    border-color: #fff !important;
+    box-shadow: none !important;
+}
+
+body.high-contrast .body,
+body.high-contrast main,
+body.high-contrast form,
+body.high-contrast table,
+body.high-contrast [class*="container"],
+body.high-contrast [class*="panel"],
+body.high-contrast [class*="card"],
+body.high-contrast .modal-content,
+body.high-contrast .dropdown-menu {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-color: #fff !important;
+}
+
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast h5,
+body.high-contrast h6,
+body.high-contrast p,
+body.high-contrast span,
+body.high-contrast label,
+body.high-contrast td,
+body.high-contrast th,
+body.high-contrast li {
+    color: #fff !important;
+}
+
+body.high-contrast a { color: #ffea00 !important; text-decoration: underline !important; }
+
+    body.high-contrast input,
+    body.high-contrast button,
+    body.high-contrast select {
+        background-color: #000 !important;
+        color: #fff !important;
+        border: 2px solid #fff !important;
+    }
+
+body.high-contrast .accessibility-panel,
+body.high-contrast .acc-btn {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: 2px solid #fff !important;
+}
+
+body.reduced-motion * {
+    animation: none !important;
+    transition: none !important;
+}
+
+body.cb-protanopia .body > :not(#accessibilityPanel):not(#accessibilityToggle) { filter: hue-rotate(30deg) saturate(60%); }
+body.cb-deuteranopia .body > :not(#accessibilityPanel):not(#accessibilityToggle) { filter: hue-rotate(-25deg) saturate(60%); }
+body.cb-tritanopia .body > :not(#accessibilityPanel):not(#accessibilityToggle) { filter: hue-rotate(90deg) saturate(40%); }
+
+.alt-text-placeholder {
+    padding: 12px;
+    border: 2px dashed currentColor;
+    background: Canvas;
+    color: CanvasText;
+}
+
+.reset-accessibility { width: 100%; }
+#accessibilityPanel,
+#accessibilityToggle {
+    position: fixed !important;
+    transform: none !important;
+    filter: none !important;
+    will-change: auto !important;
+    z-index: 99999 !important;
+}
+
+.accessibility-isolation {
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    backdrop-filter: none !important;
+}

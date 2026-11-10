@@ -1,0 +1,109 @@
+/* ProfilePage.module.css */
+
+.page {
+  min-height: 100vh;
+  background-color: #F2F1F1;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.pageHeader {
+  width: 75vw;
+  margin: auto;
+  margin-bottom: 2rem;
+}
+
+.pageTitle {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #201D1D;
+  margin-bottom: 0.5rem;
+}
+
+.pageSubtitle {
+  color: #736868;
+}
+
+/* Tabs */
+
+.tabNav {
+  display: flex;
+  justify-content: left;
+  background-color: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 2rem 3rem;
+  border: 0.05rem solid #0F0D0D33;
+  width: 80vw;
+  margin: auto;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  color: #8F8383;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #3A3535;
+  border-bottom-color: #ACA3A3;
+}
+
+.tabActive {
+  border-bottom-color: #1143a7;
+  color: #1143a7;
+}
+
+.tabIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Content */
+.content {
+  background-color: #f9fafb;
+}
+
+/* Section */
+.section {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.sectionIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #1143a7;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #201D1D;
+}
+
+.sectionSubtitle {
+  color: #6b7280;
+}

@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "dn/ds Analysis";
+}
+<style>
+    body { background-color: #f4f4f4; font-family: 'Segoe UI', sans-serif; }
+    .main-container { max-width: 1000px; margin: 50px auto; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.1); padding: 30px; }
+    .section-title { font-weight: bold; font-size: 1.7rem; margin-bottom: 15px; }
+    .subtitle { color: #6c757d; font-size: .95rem; margin-bottom: 20px; }
+</style>
+<body>
+<div class="main-container">
+    <h2 class="section-title">dn/ds Analysis - Gene Evolution Metrics</h2>
+    <p class="subtitle">Enter a gene and build a species list (≥3). Galaxy will fetch NCBI CDS FASTA, align, back-translate, and run HYPHY BUSTED.</p>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="form-section p-3 bg-light rounded">
+                <div class="mb-3">
+                    <label class="form-label" for="gene-input">Gene</label>
+                    <input id="gene-input" type="text" class="form-control" placeholder="e.g. BRCA1" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="species-input">Add species by scientific or common name</label>
+                    <div class="input-group">
+                        <input id="species-input" type="text" class="form-control" placeholder="e.g. Homo sapiens" />
+                        <button id="add-species-btn" class="btn btn-outline-secondary" type="button">Add</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Selected species</label>
+                    <ul id="species-list" class="list-group"></ul>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="align-select">Alignment method</label>
+                    <select id="align-select" class="form-select">
+                        <option value="mafft" selected>MAFFT</option>
+                        <option value="muscle">MUSCLE</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="start-btn" class="btn btn-primary" type="button">Run BUSTED</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="options-section p-3 bg-light rounded">
+                <label class="form-label">Job Status</label>
+                <div class="progress" role="progressbar" aria-label="Job progress" aria-valuemin="0" aria-valuemax="100">
+                    <div id="job-progress" class="progress-bar" style="width: 0%">0%</div>
+                </div>
+                <div id="job-status" class="mt-2 small text-muted">Idle</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+@section Scripts{
+    <script type="module" src="~/js/dndsPage.js"></script>
+}

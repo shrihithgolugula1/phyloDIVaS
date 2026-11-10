@@ -1,0 +1,240 @@
+﻿.body > nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000;
+  padding: 14px 28px;
+  background-color: #f4f6f6;
+  border-bottom: 1px solid #dfe4e6;
+  position: relative;
+  overflow: visible;
+  z-index: 1000;
+}
+
+.logoContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.logoContainer:hover .wordmark,
+.logoContainer:focus-visible .wordmark {
+  opacity: 0.82;
+}
+
+.logoContainer:focus-visible {
+  outline: 3px solid #0b716a;
+  outline-offset: 4px;
+}
+
+.logoMark { width: 48px; height: 58px; object-fit: contain; }
+.wordmark { font-size: 21px; font-weight: 650; white-space: nowrap; }
+.wordmark span { color: #35a852; }
+.wordmark strong { color: #dc2862; }
+
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.menuToggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #000;
+}
+
+/* Center navigation pill container */
+.centerNavContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.centerNav {
+  position: relative;
+  display: inline-flex;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Sliding pill indicator */
+.navPill {
+  display: none;
+}
+
+/* Navigation links inside the pill */
+.navLink {
+  position: relative;
+  padding: 0.5rem 1.25rem;
+  text-decoration: none;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: color 0.3s ease;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  color: #0b716a;
+}
+
+.navLinkActive {
+  color: #fff;
+  background: #0b716a;
+}
+
+.navLinkActive:hover {
+  color: #fff;
+}
+
+/* Auth section */
+.auth {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.authLink {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #000;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.authLink:hover {
+  color: #0b716a;
+}
+
+.registerBtn {
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: #0b716a;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.registerBtn:hover {
+  background-color: #075a55;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(232, 30, 97, 0.3);
+  color: #fff;
+}
+
+.logoutBtn {
+  padding: 0.5rem 1.5rem;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  border-color: #0b716a;
+  color: #0b716a;
+  transform: translateY(-1px);
+}
+
+.mobileAuth {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .body > nav {
+    padding: 16px;
+  }
+
+  .menuToggle {
+    display: inline-flex;
+  }
+
+  .logoMark { width: 40px; height: 50px; }
+
+  .centerNavContainer {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    z-index: 999;
+  }
+
+  .centerNavContainer.mobileOpen {
+    display: block;
+  }
+
+  .centerNav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .navPill {
+    display: none;
+  }
+
+  .navLink {
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+  }
+
+  .navLinkActive {
+    background: #F2F1F1;
+    color: #E81E61;
+  }
+
+  .auth {
+    display: none;
+  }
+
+  .mobileAuth {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .mobileAuth .logoutBtn {
+    width: 100%;
+    text-align: left;
+  }
+}

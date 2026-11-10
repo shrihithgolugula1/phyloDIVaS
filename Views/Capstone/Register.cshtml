@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="box">
+    <h2>PhyloDIVas Register</h2>
+    <p class="text-center text-secondary" style="font-size: 1.1rem;">
+        Please enter your information below to register an account.
+    </p>
+
+    <form class="form-layout">
+        <div><label>Username:</label> <input type="text" /></div>
+        <div><label>Password:</label> <input type="password" /></div>
+        <div><label>Age:</label> <input type="number" /></div>
+        <div><label>Gender:</label> <input type="text" /></div>
+        <div><label>Ethnicity:</label> <input type="text" /></div>
+        <div><label>Education:</label> <input type="text" /></div>
+        <div><label>Income:</label> <input type="text" /></div>
+        <div><label>Occupation:</label> <input type="text" /></div>
+        <div><label>State:</label> <input type="text" /></div>
+
+        <div class="text-center" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-secondary px-4">Register</button>
+        </div>
+    </form>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<style>
+    body {
+        background-color: #f4f4f4;
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        color: #333;
+    }
+
+    .box {
+        max-width: 700px;
+        margin: 60px auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .box h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 32px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .form-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .form-layout div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    label {
+        width: 150px;
+        font-weight: 500;
+        color: #444;
+    }
+
+    input {
+        flex: 1;
+        max-width: 250px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background-color: #e0e0e0;
+        border: none;
+        color: #333;
+    }
+
+    input:focus {
+        background-color: #d5d5d5;
+        outline: none;
+        box-shadow: 0 0 0 0.15rem rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-secondary {
+        background-color: #666;
+        border: none;
+        border-radius: 8px;
+    }
+
+    .btn-secondary:hover {
+        background-color: #555;
+    }
+</style>

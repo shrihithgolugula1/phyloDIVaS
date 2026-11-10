@@ -1,0 +1,6 @@
+.showMore {
+  display: flex;            /* flex container */
+  align-items: center;
+  margin: 0 auto;           /* centers horizontally */
+  justify-content: center;  /* makes sure contents are centered inside too */
+}

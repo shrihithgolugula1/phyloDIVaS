@@ -1,0 +1,47 @@
+.dataRow td {
+  vertical-align: middle;
+  padding: 14px 16px;
+}
+
+.actionsCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 184px;
+}
+
+.primaryAction,
+.iconAction {
+  border: 1px solid #c9cfd6;
+  background: #fff;
+  color: #24313d;
+  border-radius: 6px;
+  min-height: 36px;
+  cursor: pointer;
+}
+
+.primaryAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  font-weight: 650;
+}
+
+.iconAction {
+  width: 36px;
+}
+
+.primaryAction:hover,
+.iconAction:hover {
+  border-color: #147d76;
+  color: #0b625d;
+  background: #f0faf8;
+}
+
+.primaryAction:focus-visible,
+.iconAction:focus-visible {
+  outline: 3px solid rgba(20, 125, 118, 0.25);
+  outline-offset: 2px;
+}

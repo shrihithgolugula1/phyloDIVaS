@@ -1,0 +1,103 @@
+.homeContainer {
+    min-height: calc(100vh - 76px);
+    background: #f4f6f6;
+    padding: 46px 0 72px;
+}
+
+.welcome {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 720px);
+    align-items: center;
+    justify-content: center;
+    gap: 38px;
+    width: min(1080px, calc(100% - 40px));
+    margin: 0 auto 54px;
+    padding: 22px 0 44px;
+    border-bottom: 1px solid #d8dfe1;
+}
+
+.welcomeMark {
+    width: 200px;
+    height: 245px;
+    object-fit: contain;
+    justify-self: center;
+}
+
+.welcomeContent h1 {
+    margin: 4px 0 12px;
+    color: #17252d;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.08;
+    letter-spacing: 0;
+}
+
+.welcomeContent h1 span {
+    white-space: nowrap;
+}
+
+.eyebrow {
+    margin: 0;
+    color: #0b716a;
+    font-size: 13px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+.intro {
+    max-width: 680px;
+    margin: 0;
+    color: #53636c;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.welcomeActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.quickActions {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+.sectionHeading {
+    width: min(100%, 880px);
+    margin: 0 auto 16px;
+}
+
+.sectionHeading h2 {
+    margin: 0 0 4px;
+    color: #17252d;
+    font-size: 22px;
+}
+
+.sectionHeading p {
+    margin: 0;
+    color: #687780;
+}
+
+@media (max-width: 700px) {
+    .homeContainer { padding: 28px 0 52px; }
+    .welcome {
+        grid-template-columns: 104px minmax(0, 1fr);
+        align-items: start;
+        gap: 18px;
+        width: calc(100% - 24px);
+        margin-bottom: 36px;
+        padding-bottom: 32px;
+    }
+    .welcomeMark { width: 96px; height: 126px; }
+    .welcomeContent h1 { font-size: 34px; }
+    .intro { font-size: 16px; }
+    .welcomeActions { flex-direction: column; }
+    .welcomeActions a { width: 100%; text-align: center; }
+    .quickActions { width: calc(100% - 24px); }
+}
+
+@media (max-width: 430px) {
+    .welcome { grid-template-columns: 1fr; }
+    .welcomeMark { display: none; }
+}

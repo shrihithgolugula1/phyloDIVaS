@@ -1,0 +1,23 @@
+.body { background: #f4f6f6; min-height: 70vh; }
+.searchSection { width: 100%; }
+.searchContainer { width: min(1180px, calc(100% - 40px)); margin: 0 auto 64px; }
+.pageHeader { max-width: 760px; padding: 12px 0 22px; }
+.pageHeader h1 { margin: 3px 0 8px; font-size: clamp(30px, 4vw, 44px); color: #17252d; letter-spacing: 0; }
+.pageHeader p:last-child { margin: 0; color: #596872; font-size: 17px; line-height: 1.55; }
+.eyebrow { margin: 0; color: #0b716a; font-size: 13px; font-weight: 750; text-transform: uppercase; letter-spacing: 0; }
+.searchTabs { display: flex; gap: 4px; border-bottom: 1px solid #cfd7da; margin-bottom: 24px; }
+.searchTabs a { padding: 10px 16px; color: #52616b; text-decoration: none; font-weight: 650; border-bottom: 3px solid transparent; }
+.searchTabs a:hover { color: #0b716a; }
+.searchTabs .activeTab { color: #0b716a; border-bottom-color: #0b716a; }
+.sourceNote { margin: 14px 0 26px; padding: 10px 12px; border-left: 3px solid #0b716a; background: #eaf5f3; color: #42545e; font-size: 13px; }
+.resultSummary { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 10px; }
+.resultSummary h2 { margin: 0; color: #17252d; font-size: 20px; }
+.resultSummary span, .secondary { display: block; color: #687780; font-size: 13px; margin-top: 4px; }
+.error, .loading, .noResults { margin: 22px 0; padding: 16px; border-radius: 6px; }
+.error { background: #fff1f0; border: 1px solid #e6b8b3; color: #8b2d25; }
+.loading { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #d9dee3; color: #42545e; }
+.noResults { background: #fff; border: 1px solid #d9dee3; color: #52616b; text-align: center; }
+.spinner { width: 18px; height: 18px; border: 2px solid #bddbd7; border-top-color: #0b716a; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 640px) { .searchContainer { width: min(100% - 24px, 1180px); } .resultSummary { align-items: flex-start; flex-direction: column; gap: 3px; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
