@@ -2,6 +2,13 @@ namespace CapstoneServices.Galaxy;
 
 public static class GalaxyCompletionEvidence
 {
+    public static string SelectionOutputKey(string name)
+    {
+        var method = name.Contains("absrel", StringComparison.OrdinalIgnoreCase) ? "absrel"
+            : name.Contains("busted", StringComparison.OrdinalIgnoreCase) ? "busted"
+            : name.Contains("meme", StringComparison.OrdinalIgnoreCase) ? "meme" : "other";
+        return method + (name.Contains("markdown", StringComparison.OrdinalIgnoreCase) || name.Contains("report", StringComparison.OrdinalIgnoreCase) ? ":markdown" : ":json");
+    }
     public static string RecordState(System.Text.Json.JsonElement record)
     {
         if (record.TryGetProperty("elements_states", out var states) && states.ValueKind == System.Text.Json.JsonValueKind.Object)

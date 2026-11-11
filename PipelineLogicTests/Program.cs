@@ -13,6 +13,8 @@ void Check(string name, bool condition)
 }
 
 Check("one completed tool cannot imply full completion", !GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("HyPhy-BUSTED", "ok") }));
+Check("retry generation groups by method and artifact type, not collection name", GalaxyCompletionEvidence.SelectionOutputKey("HyPhy-aBSREL on collection 1") == GalaxyCompletionEvidence.SelectionOutputKey("HyPhy-aBSREL on collection 2"));
+Check("Markdown and JSON stay distinct during retry selection", GalaxyCompletionEvidence.SelectionOutputKey("MEME Report (Markdown)") != GalaxyCompletionEvidence.SelectionOutputKey("HyPhy-MEME"));
 Check("paused method prevents full completion", !GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("BUSTED", "ok"), ("MEME", "paused"), ("aBSREL", "ok") }));
 Check("three completed method records permit record-level completion", GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("BUSTED", "ok"), ("MEME", "ok"), ("aBSREL", "ok") }));
 

@@ -1598,6 +1598,12 @@ namespace AnalysisAPI.Controllers
                 var currentWorkflowItems = items.Where(item => item.Hid > generationFloor).ToList();
 
                 var hyphyItems = currentWorkflowItems.Where(item => NameHas(item.Name, "hyphy", "busted", "absrel", "meme")).ToList();
+                var latestHyphyCollections = hyphyItems
+                    .Where(item => item.ContentType == "dataset_collection")
+                    .GroupBy(item => GalaxyCompletionEvidence.SelectionOutputKey(item.Name))
+                    .Select(group => group.OrderByDescending(item => item.Hid).First())
+                    .ToList();
+                if (latestHyphyCollections.Count > 0) hyphyItems = latestHyphyCollections;
                 var downstreamItems = currentWorkflowItems.Where(item => NameHas(
                     item.Name,
                     "mafft",
