@@ -2,7 +2,7 @@ export function parseMembership(text) {
     const lines = text.trim().split(/\r?\n/);
     const header = lines.shift().split('\t');
     if (header[0] !== 'HOG' || header.length < 4) throw new Error('Invalid saved orthogroup table.');
-    const species = header.slice(3).map(name => name.replace(/_proteome_filtered$/i, '').replaceAll('_', ' '));
+    const species = header.slice(3).map(name => name.replace(/_proteome_filtered$/i, '').replaceAll('_', ' ').replace(/^[a-z]/, c => c.toUpperCase()));
     const rows = lines.map(line => line.split('\t'));
     if (rows.some(row => row.length !== header.length || !/^N\d+\.HOG\d+$/.test(row[0]))) throw new Error('Incomplete saved membership rows.');
     return {species, rows};

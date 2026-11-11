@@ -17,7 +17,7 @@ export default function OrthoFinderDemoResults({newick, icons, submitted, strict
     return <section className={styles.section} aria-labelledby="demo-orthofinder-title">
         <h2 id="demo-orthofinder-title">OrthoFinder results</h2>
         <div className={styles.stats}>
-            <div><strong>8</strong><span>species in the exported tree</span></div>
+            <div><strong>{tree.nodes.filter(node => !node.children.length).length}</strong><span>species in the exported tree</span></div>
             <div><strong>{strict.rows.length.toLocaleString()}</strong><span>strict root N0 orthogroups</span></div>
             <div><strong>{submitted.rows.length.toLocaleString()}</strong><span>groups submitted in the historical run</span></div>
         </div>

@@ -28,7 +28,11 @@ export default function GenomeWideDemoResults({snapshot,examples}) {
         return()=>{active=false;};
     },[selectedExample]);
     const last=Math.max(1,Math.ceil(genes.length/25));const current=Math.min(page,last);
-    const exportRows=()=>downloadText(rowsToDelimited(snapshot.genes.map(g=>({'Orthogroup':g.orthogroup,'Gene':g.consensus_bat_symbol,'Full name':g.protein_name,'BUSTED state':g.busted_status,'BUSTED p':g.BUSTED_p,'BUSTED BH q':g.BUSTED_q_BH,'aBSREL state':g.absrel_status,'aBSREL selected branches':g.aBSREL_branches_within_gene005,'MEME state':g.meme_status,'MEME selected sites':g.MEME_sites_raw01}))), 'phylodivas_bat_genome_snapshot.csv','text/csv;charset=utf-8');
+    const exportRows=()=>{
+        const rows=snapshot.genes.map(g=>({'Orthogroup':g.orthogroup,'Gene':g.consensus_bat_symbol,'Full name':g.protein_name,'BUSTED state':g.busted_status,'BUSTED p':g.BUSTED_p,'BUSTED BH q':g.BUSTED_q_BH,'aBSREL state':g.absrel_status,'aBSREL selected branches':g.aBSREL_branches_within_gene005,'MEME state':g.meme_status,'MEME selected sites':g.MEME_sites_raw01}));
+        const columns=Object.keys(rows[0]||{}).map(key=>({label:key,value:key}));
+        downloadText(rowsToDelimited(rows,columns),'phylodivas_bat_genome_snapshot.csv','text/csv;charset=utf-8');
+    };
     return <section className={styles.section} aria-labelledby="genome-snapshot-title">
         <h2 id="genome-snapshot-title">Genome-wide selection results</h2>
         <p><strong>Frozen partial snapshot, {new Date(snapshot.savedAt).toLocaleString()}.</strong> This view includes every readable saved result from one historical invocation. Later results and duplicate invocations are not pooled. Missing, queued, paused and failed tests are not negative findings.</p>
