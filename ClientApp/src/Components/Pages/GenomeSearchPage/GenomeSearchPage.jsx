@@ -8,6 +8,8 @@ import {saveSearch} from "../../../api/searchHistoryApiCalls.js";
 import {getGenomeFasta} from "../../../api/downloadGenomeAPICall.js";
 import { suggestSpecies } from "../../../api/dndsApi.js";
 
+import { groupExactSpecies } from "../../../utils/exploreSpecies";
+
 const GenomeSearchPage = () => {
     // Table headers and subheaders
     const HEADERS = [
@@ -146,6 +148,8 @@ const GenomeSearchPage = () => {
         return () => { active = false; };
     }, [searchQuery]);
 
+    const { primary, related } = groupExactSpecies(results, searchQuery);
+
     return (
         <div className={styles.body}>
             <main className={styles.searchSection}>
@@ -178,14 +182,26 @@ const GenomeSearchPage = () => {
 
                     {!loading && results.length > 0 && (
                         <section aria-labelledby="genome-results">
-                        <div className={styles.resultSummary}><h2 id="genome-results">Genome results</h2><span>{results.length} annotated {results.length === 1 ? "assembly" : "assemblies"}</span></div>
+                        <div className={styles.resultSummary}><h2 id="genome-results">Genome results</h2><span>{primary.length} annotated {primary.length === 1 ? "assembly" : "assemblies"}</span></div>
                         <ResultsTable
-                            rows={results}
+                            rows={primary}
                             headers={HEADERS}
                             includeSubHeader={false}
                             columns={COLUMNS}
                             expandedContent={(rowData) => <ExpandedGenome data={rowData._fullData} />}
                         />
+                        {related.length > 0 && (
+                            <details key={searchQuery}>
+                                <summary>Related results ({related.length} {related.length === 1 ? "assembly" : "assemblies"})</summary>
+                                <ResultsTable
+                                    rows={related}
+                                    headers={HEADERS}
+                                    includeSubHeader={false}
+                                    columns={COLUMNS}
+                                    expandedContent={(rowData) => <ExpandedGenome data={rowData._fullData} />}
+                                />
+                            </details>
+                        )}
                         </section>
                     )}
 

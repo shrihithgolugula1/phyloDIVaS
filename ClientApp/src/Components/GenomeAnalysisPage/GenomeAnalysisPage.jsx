@@ -2310,7 +2310,7 @@ const renderSpeciesTree = useCallback(() => {
                                     )}
                                     <div className={analysisPageStyles.liveStatusSummary}>
                                         <span><strong>{liveGalaxyStatus.historyName || "Galaxy history"}</strong></span>
-                                        <span>{liveGalaxyStatus.jobs?.running || 0} running</span>
+                                        <span>Dataset/collection records: {liveGalaxyStatus.jobs?.running || 0} running</span>
                                         <span>{liveGalaxyStatus.jobs?.queued || 0} queued</span>
                                         <span>{liveGalaxyStatus.jobs?.failed || 0} failed</span>
                                         <span>Checked {new Date(liveGalaxyStatus.checkedAt).toLocaleTimeString()}</span>
@@ -2337,7 +2337,7 @@ const renderSpeciesTree = useCallback(() => {
                                                 disabled={isContinuingPreparation}
                                                 onClick={handleContinuePreparedAnalysis}
                                             >
-                                                {isContinuingPreparation ? "Preparing OrthoFinder inputs..." : "Continue to OrthoFinder"}
+                                                {isContinuingPreparation ? "Recovering preparation..." : "Recover interrupted preparation"}
                                             </Button>
                                         )}
                                         <Form.Check
@@ -2768,18 +2768,18 @@ const renderSpeciesTree = useCallback(() => {
                                             type="button"
                                             variant="outline-primary"
                                             onClick={handleOpenTreeOfLifeComparison}
-                                            disabled={contextTreeLoading}
+                                            disabled
                                         >
                                             {contextTreeLoading
                                                 ? <><Spinner animation="border" size="sm" className="me-2" />Building context tree...</>
-                                                : "Compare with tree-of-life context"}
+                                                : "External tree context unavailable in lab beta"}
                                         </Button>
                                     </div>
                                     {contextTreeError && <div className={parametersStyles.treeError} role="alert">{contextTreeError}</div>}
                                     <p className={parametersStyles.treeProvenance}>TimeTree divergence estimates are mapped onto an NCBI Taxonomy topology. Branches are scaled in millions of years.</p>
-                                    <p className={parametersStyles.treeContextNote}>Opens Big Tree Viewer's bundled default tree with matching selected species highlighted in bright red with red markers. Zoom in to inspect individual species. Species absent from that reference tree cannot be highlighted; the Metadata panel shows the match count.</p>
+                                    <p className={parametersStyles.treeContextNote}>The external Big Tree Viewer overlay is disabled pending validation of reference coverage and taxon matching. The reference subtree above remains available; it is not an OrthoFinder-inferred species tree.</p>
                                     {inputTreeMaxDivergenceMa > dsSaturationWarningMa && <div className={parametersStyles.saturationWarning} role="alert">
-                                        <strong>dS saturation warning:</strong> this species set spans approximately {inputTreeMaxDivergenceMa.toFixed(1)} Ma. Analyses above {dsSaturationWarningMa.toFixed(0)} Ma may not be accurate because of synonymous-site saturation. This is a conservative screening threshold; actual saturation depends on the gene, lineage, and substitution model.
+                                        <strong>Divergence screening flag:</strong> this species set spans approximately {inputTreeMaxDivergenceMa.toFixed(1)} Ma, above the configured {dsSaturationWarningMa.toFixed(0)} Ma screening threshold. Divergence time alone does not establish synonymous-site saturation or invalidate an analysis. Check gene-specific dS estimates, alignment quality, lineage, and substitution-model fit.
                                     </div>}
                                     {inputTree.missingSpecies?.length > 0 && <p className={parametersStyles.treeWarning}>Not resolved: {inputTree.missingSpecies.join(", ")}</p>}
                                 </>}
