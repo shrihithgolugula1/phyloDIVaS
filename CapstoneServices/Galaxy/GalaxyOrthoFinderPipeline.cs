@@ -5465,7 +5465,7 @@ namespace CapstoneServices.Galaxy
         {
             try
             {
-                var contents = await _galaxy.ListHistoryContentsAsync(historyId, ct, includeHidden: true, includeDeleted: true);
+                var contents = await _galaxy.ListHistoryContentsAsync(historyId, ct, includeHidden: true, includeDeleted: false);
                 if (contents.ValueKind != JsonValueKind.Array)
                     return null;
 
