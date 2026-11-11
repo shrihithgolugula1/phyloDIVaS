@@ -1669,7 +1669,8 @@ namespace AnalysisAPI.Controllers
                         ? "Finished with gene-level exceptions. No HyPhy jobs are active. Successful results are available; failed and paused genes remain listed separately and are not negative findings."
                         : "All available HyPhy method records have finished. Review gene-level results and coverage below.";
                 }
-                else if (failedDownstreamItems.Count > 0 || failedHyphyItems.Count > 0)
+                else if ((failedDownstreamItems.Count > 0 || failedHyphyItems.Count > 0) &&
+                         !hyphyItems.Any(item => IsActive(item.State)) && !downstreamItems.Any(item => IsActive(item.State)))
                 {
                     stage = "workflow_failed";
                     var failedItem = failedDownstreamItems.Concat(failedHyphyItems)
