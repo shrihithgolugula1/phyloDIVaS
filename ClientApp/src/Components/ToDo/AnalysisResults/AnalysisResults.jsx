@@ -920,7 +920,7 @@ function AnalysisResults({
     );
 
     return (
-        <div className={styles.alignment}>
+        <div className={`${styles.alignment} ${demoMode ? styles.demoWorkspace : ""}`}>
             {(statusMessage || errorMessage) && <Alert variant={errorMessage ? "danger" : "info"}>{errorMessage || statusMessage}</Alert>}
 
             <section className={styles.analysisOverview} aria-labelledby="analysis-overview-title">

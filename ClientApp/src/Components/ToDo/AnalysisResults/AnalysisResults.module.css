@@ -3,6 +3,16 @@
   margin: 0 auto;
 }
 
+.demoWorkspace {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.demoWorkspace .overviewGrid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+}
+
 .searchButton {
   border-radius: 50px;           /* rounded like the bar */
   padding: .8rem 1.25rem;       /* balanced size */
