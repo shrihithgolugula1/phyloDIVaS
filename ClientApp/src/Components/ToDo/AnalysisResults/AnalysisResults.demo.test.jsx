@@ -39,7 +39,8 @@ it('uses the live dashboard for every demo gene, original reports, figures and l
   screen.getByRole('option',{name:/EIF4G2/}).click();await screen.findByRole('heading',{name:'EIF4G2',exact:true},{timeout:15000});
   screen.getByRole('tab',{name:'MEME',exact:true}).click();expect(await screen.findByRole('img',{name:'MEME Manhattan plot by codon position'})).toBeTruthy();
   expect(request.mock.calls.filter(([url])=>String(url).includes('/reports/batch-')).length).toBeLessThanOrEqual(2);
-  screen.getByRole('tab',{name:'Genome-wide Insights',exact:true}).click();screen.getByRole('button',{name:'Reset filters',exact:true}).click();
+  screen.getByRole('tab',{name:'Genome-wide Insights',exact:true}).click();(await screen.findByRole('button',{name:'Reset filters',exact:true})).click();
+  await screen.findByText('9,978 genes in the active view',{exact:true});
   const scatter=screen.getByRole('img',{name:/Cross-method selection evidence scatterplot/});expect(scatter.querySelectorAll('path').length).toBeLessThanOrEqual(4);expect(scatter.querySelectorAll('path').length).toBeGreaterThan(0);
   expect(request.mock.calls.every(([url])=>String(url).startsWith('/demo/bats/'))).toBe(true);
  } finally {cleanup();create.mockRestore();revoke.mockRestore();click.mockRestore();vi.unstubAllGlobals();}
