@@ -88,12 +88,11 @@ const outputMatchesGene = (output, gene, method = null) => {
     return outputKey === normalizeIdentifier(gene.orthogroupId) || outputKey === gene.id;
 };
 
-const artifactMatchesGene = (artifact, gene, kind) => artifact?.kind === kind && (
-    normalizeIdentifier(artifact.elementIdentifier) === gene.id ||
-    normalizeIdentifier(artifact.name) === gene.id ||
-    normalizeIdentifier(artifact.elementIdentifier).includes(gene.id) ||
-    gene.id.includes(normalizeIdentifier(artifact.elementIdentifier))
-);
+const artifactMatchesGene = (artifact, gene, kind) => artifact?.kind === kind &&
+    [artifact.elementIdentifier, artifact.name].some(value => {
+        const match = String(value || "").match(/\bN\d+\.HOG\d+\b/i);
+        return match && normalizeIdentifier(match[0]) === gene.id;
+    });
 
 const redactSensitiveValues = (value) => {
     if (Array.isArray(value)) return value.map(redactSensitiveValues);
