@@ -1853,6 +1853,7 @@ const renderSpeciesTree = useCallback(() => {
     // If workflow is complete but HyPhy outputs are empty, attempt to refresh them once
     useEffect(() => {
         if (currentStep !== WORKFLOW_STEPS.COMPLETED) return;
+        if (currentJobInfo?.hyphyOutputsLoading || currentJobInfo?.hyphyDiscoveryError) return;
         if (currentJobInfo?.hyphyMarkdownOutputs?.length || currentJobInfo?.hyphyJsonOutputs?.length) return;
         if (hyphyResultsHydratedRef.current) return;
 

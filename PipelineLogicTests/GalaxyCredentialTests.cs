@@ -20,6 +20,16 @@ internal static class GalaxyCredentialTests
             throw new Exception("Missing request credential was not rejected before transport/cache.");
         }
         await MissingScope();
+        using (client.UseApiKey("dummy-route"))
+        {
+            await client.GetCollectionDetailsAsync("history", "collection");
+            if (handler.Paths.Last() != "/api/histories/history/contents/dataset_collections/collection")
+                throw new Exception("Collection lookup must use its history-scoped route.");
+            await client.GetCollectionDetailsAsync(null!, "collection");
+            if (handler.Paths.Last() != "/api/dataset_collections/collection")
+                throw new Exception("Collection lookup without a history must preserve the unscoped route.");
+            Console.WriteLine("PASS: history-scoped and standalone collection routes");
+        }
         using (client.UseApiKey("dummy-poll"))
         using (client.UseHistoryReadCache())
         {
@@ -51,10 +61,12 @@ internal static class GalaxyCredentialTests
     private sealed class FixtureHandler : HttpMessageHandler
     {
         public List<string> Keys { get; } = new();
+        public List<string> Paths { get; } = new();
         public int DatasetReads { get; private set; }
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Keys.Add(request.Headers.GetValues("x-api-key").Single());
+            Paths.Add(request.RequestUri!.AbsolutePath);
             var dataset = request.RequestUri!.AbsolutePath.Contains("/api/datasets/");
             if (dataset) DatasetReads++;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(dataset ? "{\"state\":\"ok\"}" : "[]") });

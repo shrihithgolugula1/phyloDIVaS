@@ -1665,9 +1665,8 @@ namespace AnalysisAPI.Controllers
                         .OrderBy(item => item.State is "error" or "failed" ? 0 : 1)
                         .ThenBy(item => item.Hid)
                         .First();
-                    var diagnostic = await GetFailedGalaxyItemDiagnosticAsync(req.HistoryId, failedItem, statusCts.Token);
                     detail = $"Galaxy stopped because '{failedItem.Name}' failed."
-                        + (string.IsNullOrWhiteSpace(diagnostic) ? string.Empty : $" Galaxy reported: {diagnostic}");
+                        + " Successful gene outputs remain available. Inspect the failed job in Galaxy for its diagnostic log.";
                 }
                 else if (hyphyItems.Any(item => IsActive(item.State)))
                 {
