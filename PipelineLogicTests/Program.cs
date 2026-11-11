@@ -8,6 +8,10 @@ void Check(string name, bool condition)
     passed++;
 }
 
+Check("one completed tool cannot imply full completion", !GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("HyPhy-BUSTED", "ok") }));
+Check("paused method prevents full completion", !GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("BUSTED", "ok"), ("MEME", "paused"), ("aBSREL", "ok") }));
+Check("three completed method records permit record-level completion", GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("BUSTED", "ok"), ("MEME", "ok"), ("aBSREL", "ok") }));
+
 var n0 = string.Join('\n', new[]
 {
     "HOG\tOG\tGene Tree Parent Clade\tDrosophila_melanogaster\tDrosophila_simulans\tDrosophila_sechellia",

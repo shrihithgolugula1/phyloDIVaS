@@ -8,7 +8,7 @@ import {saveSearch} from "../../../api/searchHistoryApiCalls.js";
 import { API_BASES, apiUrl } from "../../../api/config.js";
 
 import styles from './GeneSearchPage.module.css';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const GeneSearchPage = () => {
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ const GeneSearchPage = () => {
 //       }
 //    ];
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(useLocation().search);
     const taxon = params.get('taxon');
 
     function getLastSearch(){
@@ -55,18 +55,22 @@ const GeneSearchPage = () => {
     }
 
     // State for search and results
-    const [searchQuery, setSearchQuery] = useState(getLastSearch());
+    const [searchQuery, setSearchQuery] = useState(getLastSearch);
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [downloadError, setDownloadError] = useState(null);
 
 
     // Fetch results when search query changes
     useEffect(() => {
+        let active = true;
+        setDownloadError(null);
         const fetchResults = async () => {
             if (!searchQuery.trim()) {
                 setResults([]);
                 setError(null);
+                setLoading(false);
                 return;
             }
 
@@ -81,6 +85,7 @@ const GeneSearchPage = () => {
 
                 if (!response.ok) {
                     const errorData = await response.text();
+                    if (!active) return;
                     if (response.status === 404) {
                         setResults([]);
                         setError(errorData || "No results found for the query.");
@@ -89,6 +94,7 @@ const GeneSearchPage = () => {
                     }
                 } else {
                     const data = await response.json();
+                    if (!active) return;
                     console.log("GeneSearchPage: API response =", data);
                     //saves once good results are returned
 
@@ -124,12 +130,13 @@ const GeneSearchPage = () => {
 
                         _downloadAction: async (row = {}) => {
                             console.log("=== Download ACTION TRIGGERED ===: " + row.geneId);
+                            setDownloadError(null);
                             try {
                                 await getGeneFasta(row.geneId)
                                 //call download api method here 
                                 console.log("Download successful");
                             } catch (err) {
-                                console.error("Error saving search:", err);
+                                if (active) setDownloadError(`Failed to download sequence: ${err.message || "Please try again."}`);
                             }
                         }
 
@@ -138,15 +145,17 @@ const GeneSearchPage = () => {
                     setResults(formattedResults);
                 }
             } catch (err) {
+                if (!active) return;
                 setError(`Failed to fetch results: ${err.message}`);
                 setResults([]);
             } finally {
-                setLoading(false);
+                if (active) setLoading(false);
             }
         };
 
         fetchResults();
-    }, [searchQuery]);
+        return () => { active = false; };
+    }, [searchQuery, taxon]);
 
     return(
         <div className={styles.body}>
@@ -186,6 +195,8 @@ const GeneSearchPage = () => {
 
                     <br />
                     <div className={styles.sourceNote}><strong>Source:</strong> NCBI Taxonomy, Gene, and Datasets. Sequence downloads are provided directly by NCBI.</div>
+
+                    {downloadError && <div className={styles.error} role="alert">{downloadError}</div>}
 
                     {error && <div className={styles.error} role="alert"><strong>Search unavailable.</strong> {error}</div>}
                     {loading && <div className={styles.loading} role="status"><span className={styles.spinner} />Searching NCBI Gene...</div>}

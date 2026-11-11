@@ -36,18 +36,22 @@ const GenomeSearchPage = () => {
     }
 
     // State for search and results
-    const [searchQuery, setSearchQuery] = useState(getLastSearch());
+    const [searchQuery, setSearchQuery] = useState(getLastSearch);
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [downloadError, setDownloadError] = useState(null);
 
 
     // Fetch results when search query changes
     useEffect(() => {
+        let active = true;
+        setDownloadError(null);
         const fetchResults = async () => {
             if (!searchQuery.trim()) {
                 setResults([]);
                 setError(null);
+                setLoading(false);
                 return;
             }
 
@@ -56,6 +60,7 @@ const GenomeSearchPage = () => {
             
             try {
                 const suggestions = await suggestSpecies({ query: searchQuery, limit: 25 });
+                if (!active) return;
 
                     const formattedResults = suggestions.map(item => ({
                         accession: item.accession || "N/A",
@@ -102,12 +107,13 @@ const GenomeSearchPage = () => {
 
                         _downloadAction: async (row = {}) => {
                             console.log("=== Download ACTION TRIGGERED ===: " + row.accession);
+                            setDownloadError(null);
                             try {
                                 await getGenomeFasta(row.accession)
                                 //call download api method here 
                                 console.log("Download successful");
                             } catch (err) {
-                                console.error("Error saving search:", err);
+                                if (active) setDownloadError(`Failed to download sequence: ${err.message || "Please try again."}`);
                             }
                         },
 
@@ -128,14 +134,16 @@ const GenomeSearchPage = () => {
                     
                     setResults(formattedResults);
             } catch (err) {
+                if (!active) return;
                 setError(`Failed to fetch results: ${err.message}`);
                 setResults([]);
             } finally {
-                setLoading(false);
+                if (active) setLoading(false);
             }
         };
 
         fetchResults();
+        return () => { active = false; };
     }, [searchQuery]);
 
     return (
@@ -161,6 +169,8 @@ const GenomeSearchPage = () => {
                     />
 
                     <div className={styles.sourceNote}><strong>Source:</strong> NCBI Taxonomy, Datasets, RefSeq, and BUSCO assembly metadata. Results are limited to annotated RefSeq assemblies.</div>
+
+                    {downloadError && <div className={styles.error} role="alert">{downloadError}</div>}
 
                     {error && <div className={styles.error} role="alert"><strong>Search unavailable.</strong> {error}</div>}
 

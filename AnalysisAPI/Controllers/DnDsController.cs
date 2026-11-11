@@ -1673,10 +1673,16 @@ namespace AnalysisAPI.Controllers
                     stage = "workflow_running";
                     detail = "HyPhy selection tests are active in Galaxy.";
                 }
-                else if (hyphyItems.Any(item => string.Equals(item.State, "ok", StringComparison.OrdinalIgnoreCase)))
+                else if (GalaxyCompletionEvidence.AllMethodsComplete(hyphyItems.Select(item => (item.Name, item.State))) &&
+                         !downstreamItems.Any(item => IsActive(item.State)))
                 {
                     stage = "workflow_complete";
-                    detail = "HyPhy BUSTED output datasets are complete.";
+                    detail = "Available BUSTED, aBSREL, and MEME output records are complete. Gene-level parsing and coverage are verified separately in the results viewer.";
+                }
+                else if (hyphyItems.Count > 0)
+                {
+                    stage = "workflow_running";
+                    detail = "Some HyPhy outputs are present, but completion of all three methods is not verified. Outputs may be paused, pending, or incompletely discovered; this is not confirmation that jobs are running.";
                 }
                 else if (codonCollections.Any(item => item.State.Equals("ok", StringComparison.OrdinalIgnoreCase)) &&
                          treeCollections.Any(item => item.State.Equals("ok", StringComparison.OrdinalIgnoreCase)) &&
