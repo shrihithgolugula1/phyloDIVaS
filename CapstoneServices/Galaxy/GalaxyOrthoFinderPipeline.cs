@@ -6199,12 +6199,13 @@ namespace CapstoneServices.Galaxy
                         // Dive into collection elements (list of markdown/json)
                         try
                         {
-                            // Prefer contents_url for accurate element identifiers
+                            // The full collection representation expands dataset metadata
+                            // and is expensive for large batches. Read compact child pages.
                             JsonElement? collectionContents = null;
-                            try { collectionContents = await _galaxy.GetCollectionDetailsAsync(historyId, id, ct); } catch { }
-                            if (collectionContents is null && item.TryGetProperty("contents_url", out var urlProp) && urlProp.ValueKind == JsonValueKind.String)
+                            if (item.TryGetProperty("contents_url", out var urlProp) && urlProp.ValueKind == JsonValueKind.String)
                             {
-                                try { collectionContents = await _galaxy.GetCollectionContentsAsync(urlProp.GetString()!, ct); } catch { /* fall back */ }
+                                var expectedCount = item.TryGetProperty("element_count", out var countNode) && countNode.TryGetInt32(out var count) ? count : 0;
+                                collectionContents = await _galaxy.GetCollectionElementsAsync(urlProp.GetString()!, expectedCount, ct);
                             }
 
                             JsonElement collectionElements = default;

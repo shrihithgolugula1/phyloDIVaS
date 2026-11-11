@@ -616,12 +616,12 @@ function AnalysisResults({
         let cancelled = false;
         setArtifacts([]);
         setArtifactError(null);
-        if (!historyId || !galaxyApiKey) return () => { cancelled = true; };
+        if (!historyId || !galaxyApiKey || jobInfo?.hyphyOutputsLoading || !hyphyJsonOutputs.length) return () => { cancelled = true; };
         getAnalysisResultArtifacts(historyId, galaxyApiKey)
             .then((items) => { if (!cancelled) setArtifacts(items); })
             .catch((error) => { if (!cancelled) setArtifactError(error); });
         return () => { cancelled = true; };
-    }, [historyId, galaxyApiKey]);
+    }, [historyId, galaxyApiKey, jobInfo?.hyphyOutputsLoading, hyphyJsonOutputs.length]);
 
     const collectionInventory = useMemo(() => reconcileHyphyCollections(hyphyJsonOutputs), [hyphyJsonOutputs]);
     const requestedGroupIds = collectionInventory.geneIds;

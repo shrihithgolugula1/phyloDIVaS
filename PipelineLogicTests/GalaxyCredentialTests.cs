@@ -29,6 +29,16 @@ internal static class GalaxyCredentialTests
             if (handler.Paths.Last() != "/api/dataset_collections/collection")
                 throw new Exception("Collection lookup without a history must preserve the unscoped route.");
             Console.WriteLine("PASS: history-scoped and standalone collection routes");
+            var elements = await client.GetCollectionElementsAsync("/fixture-elements", 2001);
+            if (elements.GetArrayLength() != 2001 || elements[2000].GetProperty("element_index").GetInt32() != 2000)
+                throw new Exception("Collection pagination lost boundary elements or ordering.");
+            try
+            {
+                await client.GetCollectionElementsAsync("/fixture-elements", 2002);
+                throw new Exception("Collection count mismatch was accepted.");
+            }
+            catch (InvalidOperationException) { }
+            Console.WriteLine("PASS: collection pagination preserves boundary elements and rejects incomplete inventories");
         }
         using (client.UseApiKey("dummy-poll"))
         using (client.UseHistoryReadCache())
@@ -67,6 +77,12 @@ internal static class GalaxyCredentialTests
         {
             Keys.Add(request.Headers.GetValues("x-api-key").Single());
             Paths.Add(request.RequestUri!.AbsolutePath);
+            if (request.RequestUri.AbsolutePath == "/fixture-elements")
+            {
+                var offset = int.Parse(System.Text.RegularExpressions.Regex.Match(request.RequestUri.Query, @"offset=(\d+)").Groups[1].Value);
+                var rows = Enumerable.Range(offset, Math.Min(2000, 2001 - offset)).Select(i => new { element_index = i });
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(rows)) });
+            }
             var dataset = request.RequestUri!.AbsolutePath.Contains("/api/datasets/");
             if (dataset) DatasetReads++;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(dataset ? "{\"state\":\"ok\"}" : "[]") });

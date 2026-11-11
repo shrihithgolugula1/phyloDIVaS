@@ -746,6 +746,30 @@ namespace CapstoneServices.Galaxy
             return (await JsonSerializer.DeserializeAsync<JsonElement>(s, JsonOpts, ct));
         }
 
+        public async Task<JsonElement> GetCollectionElementsAsync(string contentsUrl, int count, CancellationToken ct = default)
+        {
+            if (count <= 0) return await GetCollectionContentsAsync(contentsUrl, ct);
+            const int pageSize = 2000;
+            using var concurrency = new SemaphoreSlim(3);
+            var pages = await Task.WhenAll(Enumerable.Range(0, (count + pageSize - 1) / pageSize).Select(async page =>
+            {
+                await concurrency.WaitAsync(ct);
+                try
+                {
+                    using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    timeout.CancelAfter(TimeSpan.FromSeconds(45));
+                    var separator = contentsUrl.Contains('?') ? "&" : "?";
+                    var result = await GetCollectionContentsAsync($"{contentsUrl}{separator}limit={pageSize}&offset={page * pageSize}", timeout.Token);
+                    if (result.ValueKind != JsonValueKind.Array) throw new InvalidOperationException("Galaxy collection page is not an array.");
+                    return result.EnumerateArray().Select(item => item.Clone()).ToArray();
+                }
+                finally { concurrency.Release(); }
+            }));
+            var elements = pages.SelectMany(page => page).ToArray();
+            if (elements.Length != count) throw new InvalidOperationException($"Galaxy returned {elements.Length} collection elements; expected {count}. Retry after the collection finishes populating.");
+            return JsonSerializer.SerializeToElement(elements, JsonOpts);
+        }
+
         public async Task<JsonElement> GetHistoryDetailsAsync(string historyId, CancellationToken ct = default)
         {
             var resp = await SendAsync(HttpMethod.Get, $"/api/histories/{Uri.EscapeDataString(historyId)}", null, ct);
