@@ -5,6 +5,16 @@ Never substitutes older results for an unavailable method.
 """
 import argparse,collections,csv,json,pathlib,re,sqlite3
 
+def meme_p_values(data):
+    """Read test p-values, never the distinct p+ mixture-weight column."""
+    mle=data['MLE']
+    names=[re.sub('[^a-z0-9]','',re.sub('<[^>]+>','',str(h[0] if isinstance(h,list) else h)).lower()) for h in mle['headers']]
+    index=names.index('pvalue')
+    values=[row[index] for rows in mle['content'].values() for row in rows]
+    if not values or any(not isinstance(p,(int,float)) or isinstance(p,bool) or not 0<=p<=1 for p in values):
+        raise ValueError('Invalid MEME p-values')
+    return values
+
 def build(inventory_path,cache_path,membership_path,headers_path,old_path):
     inventory=json.loads(pathlib.Path(inventory_path).read_text());records=inventory['records']
     old=json.loads(pathlib.Path(old_path).read_text());annotations={g['orthogroup']:g for g in old['genes']}

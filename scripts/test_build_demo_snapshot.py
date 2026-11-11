@@ -1,6 +1,12 @@
 import pathlib,tempfile,json,sqlite3,unittest
-from build_demo_snapshot import build
+from build_demo_snapshot import build,meme_p_values
 class DemoImportTests(unittest.TestCase):
+ def test_meme_mixture_weights_are_not_test_p_values(self):
+  data={'MLE':{'headers':[['p<sup>+</sup>','Weight'],['p-value','Test probability']],'content':{'0':[[0,1],[.9,.001]]}}}
+  self.assertEqual(meme_p_values(data),[1,.001])
+  data['MLE']['headers']=[['p<sup>+</sup>','Weight']]
+  with self.assertRaises(ValueError):meme_p_values(data)
+
  def test_finished_with_exceptions_preserves_successes_and_never_fills_from_old_run(self):
   with tempfile.TemporaryDirectory() as temp:
    p=pathlib.Path(temp)
