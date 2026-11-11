@@ -22,6 +22,7 @@ it('uses the live dashboard for every demo gene, original reports, figures and l
   expect(screen.getByRole('combobox',{name:'Gene-count scale'}).value).toBe('log');
   expect(screen.getByRole('img',{name:'Top BUSTED genes ranked by selection evidence'})).toBeTruthy();
   expect(screen.getByRole('button',{name:'Calculate enrichment'}).disabled).toBe(false);
+  expect(await screen.findByRole('img',{name:'Gene-set enrichment running-score plot'})).toBeTruthy();
   screen.getByRole('button',{name:'Download table',exact:true}).click();expect((await blobs[0].text()).split('\n')).toHaveLength(9979);
   fireEvent.change(screen.getByRole('searchbox',{name:'Gene, alias, or accession'}),{target:{value:'ABCD3'}});
   screen.getByRole('button',{name:'View detailed report for ABCD3 (N0.HOG0004322)'}).click();

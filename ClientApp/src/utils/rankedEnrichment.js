@@ -42,3 +42,9 @@ export function runRankedEnrichment(ranked,sets,{permutations=999,minSize=15,max
     }
     const q=benjaminiHochberg(results.map(r=>({id:r.id,pValue:r.pValue})));return results.map(r=>({...r,qValue:q.get(r.id)})).sort((a,b)=>a.qValue-b.qValue||Math.abs(b.nes)-Math.abs(a.nes));
 }
+
+// Math.log10 can differ by a few ulps between JavaScript engines. Stable IDs
+// and a tight relative tolerance distinguish that from a different ranking.
+export function rankingsMatch(left,right) {
+    return Array.isArray(left)&&Array.isArray(right)&&left.length===right.length&&left.every((row,i)=>row.id===right[i].id&&Number.isFinite(row.score)&&Number.isFinite(right[i].score)&&Math.abs(row.score-right[i].score)<=1e-12*Math.max(1,Math.abs(row.score)));
+}

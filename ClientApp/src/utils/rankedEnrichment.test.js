@@ -1,6 +1,12 @@
 import {describe,it,expect} from 'vitest';
-import {runningScore,prepareRankedFamily,runRankedEnrichment,parseGmt} from './rankedEnrichment';
+import {runningScore,prepareRankedFamily,runRankedEnrichment,parseGmt,rankingsMatch} from './rankedEnrichment';
 describe('ranked gene-set enrichment',()=>{
+ it('accepts cross-engine floating-point noise without reusing a different gene ranking',()=>{
+  const original=[{id:'A',score:3.14159265358979},{id:'B',score:1}];
+  expect(rankingsMatch(original,[{id:'A',score:3.141592653589791},{id:'B',score:1}])).toBe(true);
+  expect(rankingsMatch(original,[{id:'A',score:3.15},{id:'B',score:1}])).toBe(false);
+  expect(rankingsMatch(original,[{id:'B',score:3.14159265358979},{id:'A',score:1}])).toBe(false);
+ });
  it('places top and bottom hits on the correct side of the running score',()=>{
   expect(runningScore([4,3,2,1],[0,1],true).es).toBeCloseTo(1);
   expect(runningScore([4,3,2,1],[2,3],true).es).toBeCloseTo(-1);

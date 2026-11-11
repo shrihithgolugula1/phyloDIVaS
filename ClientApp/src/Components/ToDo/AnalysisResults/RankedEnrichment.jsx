@@ -1,5 +1,5 @@
 import React,{useMemo,useState,useRef,useEffect} from 'react';
-import {parseGmt,prepareRankedFamily,runningScore} from '../../../utils/rankedEnrichment';
+import {parseGmt,prepareRankedFamily,runningScore,rankingsMatch} from '../../../utils/rankedEnrichment';
 import {downloadSvg,downloadSvgPng,downloadText} from '../../../utils/downloads';
 import {rowsToDelimited} from '../../../utils/hyphyDashboard';
 import styles from './AnalysisResults.module.css';
@@ -16,7 +16,7 @@ export default function RankedEnrichment({genes,geneSets=null,familyReady=true})
  useEffect(()=>{
   worker.current?.terminate();setProgress(null);
   const cached=!uploaded&&geneSets?.precomputed;
-  const matches=cached?.methodVersion===1&&cached.ranking.length===family.ranked.length&&cached.ranking.every((row,i)=>row.id===family.ranked[i].id&&row.score===family.ranked[i].score);
+  const matches=cached?.methodVersion===1&&rankingsMatch(cached.ranking,family.ranked);
   setResults(matches?cached.results:null);setSelected(matches?(cached.results.find(r=>r.nes>0)||cached.results[0]||null):null);
   return()=>worker.current?.terminate();
  },[family,geneSets,uploaded]);
