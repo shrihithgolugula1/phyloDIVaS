@@ -1,14 +1,13 @@
 # Supervised lab readiness — 11 November 2026
 
 This continuation supersedes the historical 10 November findings below. **The
-small, new downstream smoke run passed all three tools. Large-history browser
-verification is still in progress; a fresh genome-to-results run is not verified.**
+small, new downstream smoke run passed all three tools. The bat browser viewer now recovers the result inventory and selected-gene reports; a fresh genome-to-results run is not verified.**
 
 ## Continuation: verified changes and evidence
 
 - The user installation was fast-forwarded without resetting its nested clone.
-  Frontend and Analysis API expose the running revision; the current code build
-  is `7d94727`. The authoritative source and clean publication checkout remain
+  Frontend and Analysis API expose the running revision; the verified backend code build
+  is `7d94727` (frontend count corrections were subsequently hot-reloaded). The authoritative source and clean publication checkout remain
   separate. Existing bat histories were inspected read-only.
 - Removed fallback Galaxy credentials. Keys are request-scoped; changing keys
   invalidates request caches. Browser results are session-memory only; legacy
@@ -39,6 +38,35 @@ verification is still in progress; a fresh genome-to-results run is not verified
   stale-readiness, pagination-boundary/count-mismatch and essential-inventory
   fixtures pass. Seven loading/cache/credential-file frontend tests pass. Analysis
   API builds with zero errors; existing dependency warnings remain.
+
+## Live browser outcome
+
+Normal Resume Existing recovered the eight-tip OrthoFinder tree and all 9,978
+HOG IDs per method. Actual browser tabs were opened for BUSTED (p=0.5), aBSREL
+(13 tested branches, none significant), MEME (739 sites, none significant), and
+native Markdown summaries for N0.HOG0000107. A failure elsewhere does not block
+those outputs. The retrieval table now includes all 26 paused genes per method,
+17 MEME failures, parsed files and pending retrieval separately. The genome-wide
+tab correctly withholds summaries until explicit full-family retrieval.
+
+Measured request times in the repaired browser session: attach 19.11 seconds,
+status 18.45 seconds, result inventory 95.55 seconds. Selected JSON retrieval was
+sub-second per file. First selected-gene results were available approximately
+134 seconds after connect (sum of sequential server request durations, excluding
+rendering); this is not a stopwatch measurement or a full-family parsing time.
+
+Clicking Load OrthoFinder results recovered **9,261 current selectable strict
+root 1:1 groups**. That is distinct from the **9,978 previously submitted HOGs**
+in the old history's HyPhy collections. Do not overwrite either count or claim
+that the historic analysis used today's eligibility filter. Membership loaded,
+but detailed table pagination and all source download-save events were not
+verified. The tree-download automation stalled; direct source/API content checks
+are the download evidence, not a confirmed browser save event.
+
+Remaining live checks: fresh-session/navigate-away recovery, all-file genome-wide
+statistics, all 17 error diagnostics, paused-job causes, clean-machine setup and
+a real second authorized account. Fresh genome-to-OrthoFinder execution is not
+part of the downstream smoke pass. Use only supervised lab operation.
 
 ## Bounded new submission
 
