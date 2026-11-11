@@ -707,10 +707,11 @@ function AnalysisResults({
         return () => { cancelled = true; };
     }, [selectedGene?.id, historyId, galaxyApiKey]);
 
+    const evidenceById=useMemo(()=>new Map(genes.map(gene=>[gene.id,evaluateGeneEvidence(gene,thresholds)])),[genes,thresholds]);
     const matchingGenes = useMemo(() => {
         const normalizedQuery = query.trim().toLowerCase();
         return genes.filter((gene) => {
-            const evidence = evaluateGeneEvidence(gene, thresholds);
+            const evidence = evidenceById.get(gene.id);
             if (normalizedQuery && !gene.searchText.includes(normalizedQuery)) return false;
             if (statusFilter !== "all" && gene.analysisStatus !== statusFilter) return false;
             if (evidenceFilter === "any" && !evidence.any) return false;
@@ -720,15 +721,15 @@ function AnalysisResults({
             if (evidenceFilter === "none" && evidence.any) return false;
             return true;
         });
-    }, [genes, query, statusFilter, evidenceFilter, thresholds]);
+    }, [genes, query, statusFilter, evidenceFilter, evidenceById]);
 
     const activeGenes = useMemo(() => subsetIds
         ? matchingGenes.filter((gene) => subsetIds.has(gene.id))
         : matchingGenes, [matchingGenes, subsetIds]);
 
     const sortedGenes = useMemo(() => [...activeGenes].sort((left, right) => {
-        const leftEvidence = evaluateGeneEvidence(left, thresholds);
-        const rightEvidence = evaluateGeneEvidence(right, thresholds);
+        const leftEvidence = evidenceById.get(left.id);
+        const rightEvidence = evidenceById.get(right.id);
         const value = (gene, evidence) => {
             if (sortKey === "p") return gene.bustedPValue ?? Number.POSITIVE_INFINITY;
             if (sortKey === "q") return gene.bustedQValue ?? Number.POSITIVE_INFINITY;
@@ -743,7 +744,7 @@ function AnalysisResults({
         if (leftValue === rightValue) return left.displayName.localeCompare(right.displayName);
         const comparison = leftValue > rightValue ? 1 : -1;
         return sortDirection === "asc" ? comparison : -comparison;
-    }), [activeGenes, sortKey, sortDirection, thresholds]);
+    }), [activeGenes, sortKey, sortDirection, evidenceById]);
 
     useEffect(() => setPage(1), [query, evidenceFilter, statusFilter, subsetIds, pageSize, sortKey, sortDirection]);
     const pageCount = Math.max(1, Math.ceil(sortedGenes.length / pageSize));
@@ -757,7 +758,7 @@ function AnalysisResults({
 
     const completion = calculateAnalysisCompletion(genes, collectionInventory.geneIds.length);
     const qualityWarningCount = genes.filter((gene) => gene.warnings.length > 0).length;
-    const allEvidence = useMemo(()=>genes.map((gene) => evaluateGeneEvidence(gene, thresholds)),[genes,thresholds]);
+    const allEvidence = useMemo(()=>[...evidenceById.values()],[evidenceById]);
     const metrics = {
         requested: completion.requested,
         complete: completion.complete,
@@ -769,7 +770,7 @@ function AnalysisResults({
 
     const fullLineageMatrix=useMemo(()=>buildLineageSelectionMatrix(genes,thresholds),[genes,thresholds.absrelP]);
     const lineageMatrix=useMemo(()=>{const ids=new Set(activeGenes.map(g=>g.id));return {...fullLineageMatrix,rows:fullLineageMatrix.rows.filter(row=>ids.has(row.gene.id))};},[fullLineageMatrix,activeGenes]);
-    const evidencePositiveGenes = useMemo(() => activeGenes.filter((gene) => evaluateGeneEvidence(gene, thresholds).any), [activeGenes, thresholds]);
+    const evidencePositiveGenes = useMemo(() => activeGenes.filter((gene) => evidenceById.get(gene.id).any), [activeGenes, evidenceById]);
     const enrichmentBackground = useMemo(() => genes.filter((gene) => gene.analysisStatus === "complete"), [genes]);
     const enrichmentResults = useMemo(() => calculateGoEnrichment(evidencePositiveGenes, enrichmentBackground), [evidencePositiveGenes, enrichmentBackground]);
     const hasGoAnnotations = enrichmentBackground.some((gene) => gene.goTerms.length > 0);
