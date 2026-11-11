@@ -36,6 +36,7 @@ import {
 import OrthologousGroupSelector from "../OrthologousGroupSelector/OrthologousGroupSelector";
 import AnalysisResults from "../ToDo/AnalysisResults/AnalysisResults";
 import { getSpeciesSilhouette } from "../../utils/phylopic";
+import { parseGalaxyCredentialFile } from "../../utils/galaxyCredentialFile";
 
 const MIN_SPECIES_COUNT = 3;
 const MAX_SPECIES_COUNT = 10;
@@ -2881,6 +2882,23 @@ const renderSpeciesTree = useCallback(() => {
                                     </div>
                                 </div>
 
+                                <Form.Group className="mt-3">
+                                    <Form.Label htmlFor="galaxy-local-credentials">Optional: load key and history from a local text file</Form.Label>
+                                    <Form.Control id="galaxy-local-credentials" type="file" accept=".txt,.rtf" onChange={async event => {
+                                        const input = event.currentTarget;
+                                        try {
+                                            const file = input.files?.[0];
+                                            if (!file) return;
+                                            if (file.size > 65536) throw new Error('Choose a credential text file smaller than 64 KB.');
+                                            const values = parseGalaxyCredentialFile(await file.text());
+                                            setResumeGalaxyApiKey(values.key);
+                                            setResumeHistoryId(values.historyId);
+                                            setErrorMessage(null);
+                                        } catch (error) { setErrorMessage(error.message); }
+                                        finally { input.value = ''; }
+                                    }} />
+                                    <Form.Text>Read only on this device. The file is not uploaded or saved; the key remains in page memory until refresh. Loading a file does not submit an analysis.</Form.Text>
+                                </Form.Group>
                                 <div className="d-flex align-items-center justify-content-between mt-3">
                                     <div className="d-flex align-items-center gap-2">
                                         <Form.Label className="mb-0 fw-semibold">Galaxy API Key</Form.Label>
