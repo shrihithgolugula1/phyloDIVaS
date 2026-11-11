@@ -1526,7 +1526,7 @@ namespace AnalysisAPI.Controllers
                         .Select(item => new GalaxyHistoryStatusItem(
                             item.TryGetProperty("id", out var id) ? id.GetString() : null,
                             item.TryGetProperty("name", out var name) ? name.GetString() ?? "Unnamed Galaxy item" : "Unnamed Galaxy item",
-                            item.TryGetProperty("state", out var state) ? state.GetString() ?? "unknown" : "unknown",
+                            GalaxyCompletionEvidence.RecordState(item),
                             item.TryGetProperty("hid", out var hid) && hid.TryGetInt32(out var hidValue) ? hidValue : 0,
                             item.TryGetProperty("history_content_type", out var type) ? type.GetString() ?? "dataset" : "dataset"))
                         .OrderByDescending(item => item.Hid)

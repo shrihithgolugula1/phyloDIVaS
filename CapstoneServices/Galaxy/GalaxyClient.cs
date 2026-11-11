@@ -358,7 +358,7 @@ namespace CapstoneServices.Galaxy
                 throw new InvalidOperationException("A history read cache scope is required.");
 
             var escapedHistoryId = Uri.EscapeDataString(historyId);
-            const string keys = "id,name,state,hid,history_content_type,extension,deleted,visible,elements_datatypes,element_identifier";
+            const string keys = "id,name,state,hid,history_content_type,extension,deleted,visible,elements_datatypes,element_identifier,elements_states,element_count,populated_state";
             var baseUrl = $"/api/histories/{escapedHistoryId}/contents?v=dev&include_hidden=true&keys={keys}";
 
             // Galaxy's unfiltered history-content endpoint becomes very slow for
