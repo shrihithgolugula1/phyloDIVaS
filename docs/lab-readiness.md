@@ -1,3 +1,82 @@
+# Supervised lab readiness — 11 November 2026
+
+This continuation supersedes the historical 10 November findings below. **The
+small, new downstream smoke run passed all three tools. Large-history browser
+verification is still in progress; a fresh genome-to-results run is not verified.**
+
+## Continuation: verified changes and evidence
+
+- The user installation was fast-forwarded without resetting its nested clone.
+  Frontend and Analysis API expose the running revision; the current code build
+  is `7d94727`. The authoritative source and clean publication checkout remain
+  separate. Existing bat histories were inspected read-only.
+- Removed fallback Galaxy credentials. Keys are request-scoped; changing keys
+  invalidates request caches. Browser results are session-memory only; legacy
+  unscoped persistent caches are disabled. Missing-key negative checks and nested
+  two-key fixture tests pass. Real two-account isolation remains untested.
+- Added optional local `.txt`/`.rtf` credential-file import to Resume Existing.
+  The file is read on the device, not uploaded or saved. Normal browser history
+  loading was exercised with the authorized file; refreshing clears the key.
+- Fixed upload readiness polling that reused a stale request history snapshot.
+  It now polls the dataset directly. This was the confirmed smoke-submission
+  stall; a regression primes a stale snapshot and verifies fresh polling.
+- OrthoFinder reads no longer change history visibility. Species-tree discovery
+  reuses the compact nondeleted snapshot instead of enumerating the entire
+  history. Live source/tree recovery took 19.15 seconds in the API check and
+  21.96 seconds in an earlier browser-triggered request; eight scientific species
+  labels were visible. Raw N0 downloads are explicitly labelled as unfiltered.
+- Result inventory reads compact collection-child pages (2,000 elements, bounded
+  concurrency three), checks exact element counts, and deduplicates with hash
+  sets. Full dataset expansion and quadratic duplicate scans are avoided.
+  Essential collection-inventory failure is a connection failure, never proof
+  of a running or completed pipeline. Status no longer blocks on detailed job
+  diagnostics, and repeated tool generations are grouped by method/output type.
+- Individual gene inspection fetches only that gene's three JSON results.
+  Genome-wide retrieval is explicit; full-family statistics and BH correction
+  are withheld until complete loading. Discovery has a loading/error boundary;
+  an unreadable result is not interpreted as a negative biological finding.
+- Focused validation: 90 pipeline assertions plus credential, collection-route,
+  stale-readiness, pagination-boundary/count-mismatch and essential-inventory
+  fixtures pass. Seven loading/cache/credential-file frontend tests pass. Analysis
+  API builds with zero errors; existing dependency warnings remain.
+
+## Bounded new submission
+
+New, separate Galaxy history: `11ac94870d0bb33a4ae0a021e61ad5d7`.
+Invocation: `4724191d5e6b6071`. One reused orthogroup, `N0.HOG0000107`,
+with eight bat sequences and 739 codons was submitted through the production
+HyPhy-only retry endpoint. Source history inputs were copied, never edited.
+
+Observed: distinct history creation, normalized-input collections, workflow
+invocation acceptance, scheduled workflow, and Galaxy-OK BUSTED, aBSREL and
+MEME output collections (one element each). Downloaded and parsed all three
+new native JSON files; all report eight sequences and 739 sites. Acceptance
+following the readiness repair took 2.89 seconds. Jobs completed while local
+services were restarted, demonstrating Galaxy-side execution after submission.
+
+This is a **downstream-only smoke pass**, not a new genome download, OrthoFinder,
+MSA or tree-inference pass. No unrestricted genome-wide test was submitted.
+
+## Downloads and diagnostic limits
+
+One successful native JSON per tool was downloaded through the local API and
+semantically matched its Galaxy source. A real NCBI TP53 gene package (GeneID
+7157) and E. coli genome package (GCF_000005845.2) were ZIP-validated and their
+FASTA identifiers checked. Browser download-save events and every table format
+remain separate checks; they are not implied by successful API downloads.
+
+Two of the 17 MEME error jobs were inspected read-only: exit code 1 with MPI
+abort/PMIX `NO-PERMISSIONS` messages. Those messages may be secondary; the root
+cause for all 17 is not established. Two paused jobs supplied no diagnostic
+message. All paused/error results must remain unavailable, not nonsignificant.
+
+The table below in the historical API replay remains valid: 9,978 identical
+HOG IDs per method; BUSTED/aBSREL 9,952 OK + 26 paused; MEME 9,935 OK + 26 paused
++ 17 errors; 9,935 genes OK across all three methods. These are metadata counts,
+not a claim that every native JSON has been parsed or biologically interpreted.
+
+## Historical readiness report (10 November)
+
 # Supervised lab readiness — 10 November 2026
 
 **Verdict: blocked for an independently verified end-to-end analysis stress test.**
