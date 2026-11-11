@@ -718,7 +718,7 @@ namespace CapstoneServices.Galaxy
 
         public async Task<JsonElement> GetCollectionDetailsAsync(string historyId, string collectionId, CancellationToken ct = default)
         {
-            var resp = await SendAsync(HttpMethod.Get, $"/api/dataset_collections/{Uri.EscapeDataString(collectionId)}", null, ct);
+            var resp = await SendAsync(HttpMethod.Get, $"/api/histories/{Uri.EscapeDataString(historyId)}/contents/dataset_collections/{Uri.EscapeDataString(collectionId)}", null, ct);
             await EnsureSuccessAsync(resp, "get collection details", ct);
             using var s = await resp.Content.ReadAsStreamAsync(ct);
             return (await JsonSerializer.DeserializeAsync<JsonElement>(s, JsonOpts, ct));

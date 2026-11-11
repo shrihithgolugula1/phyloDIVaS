@@ -6069,17 +6069,17 @@ namespace CapstoneServices.Galaxy
                 var markdown = new List<HyphyOutput>();
                 var json = new List<HyphyOutput>();
                 var collectionOutputMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var seenOutputIds = new HashSet<(bool Markdown, string Id)>();
+                var seenOutputGenes = new HashSet<(bool Markdown, string Method, string Gene)>();
 
                 void AddUnique(List<HyphyOutput> list, HyphyOutput item)
                 {
                     var match = Regex.Match(item.ElementIdentifier ?? string.Empty, @"\bN\d+\.HOG\d+\b", RegexOptions.IgnoreCase);
                     if (!match.Success) return;
                     item = item with { ElementIdentifier = match.Value.ToUpperInvariant() };
-                    if (list.Any(existing =>
-                            existing.Id == item.Id ||
-                            (!string.IsNullOrWhiteSpace(existing.ElementIdentifier) &&
-                             existing.ElementIdentifier == item.ElementIdentifier &&
-                             string.Equals(existing.Method, item.Method, StringComparison.OrdinalIgnoreCase))))
+                    var isMarkdown = ReferenceEquals(list, markdown);
+                    if (!seenOutputIds.Add((isMarkdown, item.Id)) ||
+                        !seenOutputGenes.Add((isMarkdown, (item.Method ?? "").ToUpperInvariant(), item.ElementIdentifier)))
                         return;
                     var label = item.ElementIdentifier ?? item.Name;
                     list.Add(item with
@@ -6201,7 +6201,8 @@ namespace CapstoneServices.Galaxy
                         {
                             // Prefer contents_url for accurate element identifiers
                             JsonElement? collectionContents = null;
-                            if (item.TryGetProperty("contents_url", out var urlProp) && urlProp.ValueKind == JsonValueKind.String)
+                            try { collectionContents = await _galaxy.GetCollectionDetailsAsync(historyId, id, ct); } catch { }
+                            if (collectionContents is null && item.TryGetProperty("contents_url", out var urlProp) && urlProp.ValueKind == JsonValueKind.String)
                             {
                                 try { collectionContents = await _galaxy.GetCollectionContentsAsync(urlProp.GetString()!, ct); } catch { /* fall back */ }
                             }
