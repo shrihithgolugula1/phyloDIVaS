@@ -920,8 +920,9 @@ const GenomeAnalysisPage = () => {
         if (fromMetadata.length > 0) {
             return Array.from(new Set(fromMetadata));
         }
-        return selectedSpecies;
-    }, [genomeAnalysisData, selectedSpecies]);
+        if (selectedSpecies.length) return selectedSpecies;
+        return [...new Set(collectLeafNames(speciesTreeData).map(name => name.replace(/_protein\.faa$/i, "").replace(/_/g, " ")))];
+    }, [genomeAnalysisData, selectedSpecies, speciesTreeData]);
 
     const normalizeOutputItem = (o) => {
         if (!o) return null;
