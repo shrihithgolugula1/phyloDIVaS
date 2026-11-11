@@ -8,7 +8,7 @@ modified, cancelled, deleted, or resubmitted during this audit.
 | Severity | Finding and evidence | Repair / status |
 | --- | --- | --- |
 | P0 | Status endpoint declares completion when any HyPhy dataset is OK, even with missing methods | Fixed: requires all three method record types, all available records OK, and no active downstream evidence. Three new regression assertions pass. Collection gene coverage remains a separate viewer check. |
-| P0 | Existing history retrieval previously timed out; complete replay not established | Fresh authenticated history replay required |
+| P0 | Existing history retrieval previously timed out; complete replay not established | Subsequent authorized read-only audit reached the eight-bat history and full BUSTED/aBSREL collections. UI replay still required. |
 | P0 | Multi-user cache/request isolation not demonstrated | Inspect credential scopes and run focused tests; no load claim |
 | P1 | Fresh users need SDK/Node/certificate and separate account/database setup | Existing launcher tests; verify clean source, document lab path |
 | P1 | Search stale-query/download behavior | Fixed stale success/error/loading overwrites in genome and gene searches; organism changes invalidate old gene requests. Download errors preserve results; ZIP signature checked before saving. 23 isolated browser tests pass. |
@@ -28,7 +28,7 @@ source is exported separately, without credentials or private audit data.
 | Automated fixtures | 87 pipeline assertions, including strict N0 filtering, protein/CDS pairs, workflow wiring, completion evidence. 38 frontend results tests; 12 launcher/export tests. API build passes (0 errors). 23 additional Chrome browser tests cover search races/grouping/download errors, including HTTP-200 HTML rejection. | Fixture-based, not Galaxy job execution. |
 | Real local output parsing | Three native pilot JSON files, eight sequences/34 codons; read+parse+summarize = 9.1 ms on maintainer Mac, Node 22. | Local pilot, not the older bat history; no network latency included. |
 | Synthetic performance | 30,000 method cards / 10,000 genes, normalization plus BH = 195.1 ms on maintainer Mac. | Repeated pilot summaries with unique HOG IDs; not real large-history retrieval or browser rendering timing. |
-| Completed-history replay | Not executed in this audit: no currently connected key/history in the open app. | A key/history was requested through the app; prior timeout evidence is not a passing replay test. |
+| Completed-history replay | Subsequent read-only Galaxy API inspection succeeded using the user-specified credential file, with no key printed or persisted. Latest BUSTED/aBSREL JSON and Markdown collections each contain 9,978 elements: 9,952 OK and 26 paused. An actual aBSREL JSON sample parses: 8 sequences, 739 codons, 13 tested branches, minimum corrected p=1. | This is API replay, not full authenticated browser recovery or all-file parsing. MEME/unique affected-gene reconciliation pending final audit completion. |
 | Live smoke submission | Not executed. | No current authenticated Galaxy session; no genomes submitted. |
 
 ## Remaining P0/P1 reproduction and next actions
@@ -76,6 +76,18 @@ live verification of this patch. Do not repeatedly clone inside an existing clon
    input warning; this is a remaining minor frontend issue.
 6. Backend progress fixes are compiled but require a controlled API restart before
    live validation. Do not interrupt an active orchestration request to load them.
+
+### Subsequent live collection-state fix
+
+The real Galaxy collection metadata distinguishes `populated_state=ok` from
+successful element states. Progress snapshot queries now retain `elements_states`
+and derive status from those counts, rather than treating a populated collection
+as a complete analysis. The observed 9,952 OK / 26 paused case is a regression
+assertion; 88 pipeline checks now pass and the API compiles with zero errors.
+History-wide counts of errors/paused datasets include upstream steps and old
+attempts and must not be reported as failed genes. Targeted collection discovery
+took 14.23 seconds in this live audit; this does not include subsequent collection
+expansion/sample downloads or browser rendering.
 
 ### Focused reproduction commands
 
