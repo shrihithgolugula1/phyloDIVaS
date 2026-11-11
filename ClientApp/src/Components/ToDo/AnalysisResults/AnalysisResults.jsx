@@ -488,7 +488,8 @@ function AnalysisResults({
     const [retryResults, setRetryResults] = useState(0);
     const [artifacts, setArtifacts] = useState([]);
     const [artifactError, setArtifactError] = useState(null);
-    const [resultView, setResultView] = useState("genome-wide");
+    const [resultView, setResultView] = useState("gene-specific");
+    const [loadAllResults, setLoadAllResults] = useState(false);
     const [selectedGeneId, setSelectedGeneId] = useState(null);
     const [geneTab, setGeneTab] = useState("summary");
     const [geneSearch, setGeneSearch] = useState("");
@@ -530,6 +531,7 @@ function AnalysisResults({
         return map;
     }, [allGroups]);
 
+    const geneToRetrieve = loadAllResults ? null : selectedGeneId;
     useEffect(() => {
         let cancelled = false;
         let lastProgressUpdate = 0;
@@ -545,7 +547,9 @@ function AnalysisResults({
             seen.add(identity);
             outputs.push(output);
         });
-        setLoadProgress({ complete: 0, total: outputs.length });
+        const gene = geneToRetrieve || normalizeIdentifier(resultIdentifier(outputs[0]));
+        const requested = loadAllResults ? outputs : outputs.filter(output => normalizeIdentifier(resultIdentifier(output)) === gene);
+        setLoadProgress({ complete: 0, total: requested.length });
         setIsPreparingResults(true);
         setHyphyCards([]);
         setLoadError(null);
@@ -556,7 +560,7 @@ function AnalysisResults({
             return () => { cancelled = true; };
         }
 
-        mapWithConcurrency(outputs, NATIVE_LOAD_CONCURRENCY, async (output) => {
+        mapWithConcurrency(requested, NATIVE_LOAD_CONCURRENCY, async (output) => {
             if (cancelled) return null;
             const method = resultMethod(output);
             let elementIdentifier = canonicalOrthogroupIdentifier(resultIdentifier(output));
@@ -588,7 +592,11 @@ function AnalysisResults({
             }
         }).then((cards) => {
             if (cancelled) return;
-            setHyphyCards(cards.filter(Boolean));
+            const loaded = new Map(cards.filter(Boolean).map(card => [card.json.id, card]));
+            setHyphyCards(outputs.map(output => loaded.get(output.id) || {
+                method: resultMethod(output), elementIdentifier: canonicalOrthogroupIdentifier(resultIdentifier(output)),
+                json: output, pending: true
+            }));
             if (cards.some((card) => card?.error)) setLoadError(`${cards.filter((card) => card?.error).length} native result files could not be read.`);
             setIsPreparingResults(false);
             setResolvedOutputs(hyphyJsonOutputs);
@@ -599,7 +607,7 @@ function AnalysisResults({
             setResolvedOutputs(hyphyJsonOutputs);
         });
         return () => { cancelled = true; };
-    }, [hyphyJsonOutputs, galaxyApiKey, retryResults]);
+    }, [hyphyJsonOutputs, galaxyApiKey, retryResults, loadAllResults, geneToRetrieve]);
 
     useEffect(() => {
         let cancelled = false;
@@ -618,8 +626,8 @@ function AnalysisResults({
     const genes = useMemo(() => isPreparingResults ? [] : buildNormalizedGeneResults(hyphyCards, allGroups, {
         expectedSpeciesCount: analysisSpecies.length || null,
         requestedGroupIds,
-        loading: false
-    }), [hyphyCards, allGroups, analysisSpecies.length, requestedGroupIds, isPreparingResults]);
+        loading: !loadAllResults
+    }), [hyphyCards, allGroups, analysisSpecies.length, requestedGroupIds, isPreparingResults, loadAllResults]);
 
     useEffect(() => {
         if (!genes.length) return;
@@ -881,7 +889,7 @@ function AnalysisResults({
         <section className={styles.resultsLoading} aria-labelledby="results-loading-title" aria-busy="true">
             <Spinner animation="border" aria-hidden="true" />
             <h4 id="results-loading-title">Preparing your Galaxy results</h4>
-            <p>Retrieving and validating BUSTED, aBSREL, and MEME outputs. The dashboard will appear when this finishes.</p>
+            <p>{loadAllResults ? "Retrieving the requested full result family for genome-wide statistics." : "Retrieving the selected gene’s BUSTED, aBSREL, and MEME outputs. Other genes load when selected."}</p>
             <progress aria-label="Result files processed" value={loadProgress.complete} max={loadProgress.total || 1} />
             <p role="status" aria-live="polite">{loadProgress.total > 0
                 ? `${loadProgress.complete.toLocaleString()} of ${loadProgress.total.toLocaleString()} result files processed`
@@ -929,6 +937,7 @@ function AnalysisResults({
                     {loading && <div className={styles.loadingStatus} role="status"><Spinner size="sm" /><span>Normalizing {loadProgress.complete.toLocaleString()} of {loadProgress.total.toLocaleString()} results</span></div>}
                 </div>
                 {loadError && <Alert variant="warning">{loadError} Retrieval failures are distinct from failed Galaxy jobs. <Button size="sm" onClick={() => setRetryResults(value => value + 1)}>Retry unreadable results</Button></Alert>}
+                {!loadAllResults && <Alert variant="info">Gene-first view: only the selected gene is retrieved. Other gene files remain pending, not failed or nonsignificant. <Button size="sm" onClick={() => setLoadAllResults(true)}>Load full result family for genome-wide statistics</Button></Alert>}
                 {loading && <Alert variant="info">Partial results: files are still being retrieved. Unloaded methods are pending, not negative tests. BUSTED BH q-values will be calculated after retrieval finishes, using all valid BUSTED tests, independently of display filters.</Alert>}
                 <p role="status">Galaxy collection orthogroups: {METHODS.map((method) => `${method}: ${collectionInventory.counts[method]}`).join(" · ")}. {collectionInventory.consistent ? "All three tools contain the same genes." : "Collection gene sets do not yet match; review missing tool outputs."}</p>
                 <Table size="sm" responsive aria-label="Method result retrieval status"><thead><tr><th>Method</th><th>Parsed</th><th>Pending retrieval / Galaxy processing</th><th>Galaxy failures</th><th>Unreadable</th></tr></thead><tbody>{METHODS.map(method => <tr key={method}><th>{method}</th>{["complete", "pending", "failed", "unreadable"].map(state => <td key={state}>{genes.filter(gene => gene.methodStatus[method] === state).length.toLocaleString()}</td>)}</tr>)}</tbody></Table>
