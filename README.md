@@ -105,10 +105,19 @@ For separate service windows while debugging, run:
 
 ### Saved results demo
 
-On Run Analysis, choose **View demo results**, or open `/Demo` on the local
-application. The demo requires no Galaxy key. It contains
-one verified eight-bat orthogroup (739 codons), with original BUSTED, aBSREL and
-MEME statistics and Markdown reports. Private Galaxy identifiers and working-file
-paths are omitted. This is a teaching sample, not a genome-wide biological
-conclusion. Figures, per-tool downloads and a combined demo JSON download work
-locally; the larger demo data is loaded only when the demo page is opened.
+Choose **View demo results** on Run Analysis, or open `/Demo` locally. No Galaxy
+key or new job is required. OrthoFinder is a first-class result: an exported
+species tree with credited, locally cached pictures; zoom and branch lengths;
+searchable membership tables; and Newick, raw N0, strict-root and historical
+submission downloads. The current strict-root set has 9,261 groups; the historical
+run submitted 9,978, and the demo keeps those sets distinct.
+
+The genome-wide panel is a frozen partial snapshot of that historical run,
+with 3,177 genes having at least one completed method and 288 having all three.
+It includes gene annotations, a BUSTED distribution, method-specific coverage,
+search/sort/pagination and CSV/JSON downloads. Unfinished/failed outputs are not
+negative findings. Full native JSON for three representative genes supports
+interactive BUSTED, aBSREL and MEME inspection; other genes retain their saved
+summary statistics. Example Markdown is generated from JSON and labelled as such.
+Private Galaxy IDs and working-file paths are excluded. Source paths and images
+are packaged locally so the demo requires no external API calls.
