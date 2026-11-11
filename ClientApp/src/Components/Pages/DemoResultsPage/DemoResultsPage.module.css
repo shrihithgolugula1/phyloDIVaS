@@ -31,3 +31,8 @@
 :global(body.dark-mode) .stats strong { color: #a1e3ba; }
 :global(body.dark-mode) .tableViewport table { --bs-table-bg: #1d3029; --bs-table-color: #e6efeb; --bs-table-striped-color: #e6efeb; --bs-table-striped-bg: #293f35; }
 @media(max-width:600px) { .page { padding: 18px 4px; } .section { padding: 14px; } .stats { grid-template-columns: repeat(2,minmax(0,1fr)); } .actions > * { max-width: 100%; } }
+
+.workspace { width: 100%; min-width: 0; color: inherit; }
+.workspace section { min-width: 0; }
+.workspace table { font-size: .93rem; }
+.workspace button, .workspace a { border-radius: 6px; }

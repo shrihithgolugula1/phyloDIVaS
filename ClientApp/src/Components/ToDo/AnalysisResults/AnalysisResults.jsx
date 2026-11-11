@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import ResultsWorkspace from "./ResultsWorkspace";
 import { readResultSummary, cacheResultSummary, clearResultCaches } from "../../../utils/hyphyResultCache";
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Alert, Button, Form, Spinner, Table } from "react-bootstrap";
@@ -920,7 +921,7 @@ function AnalysisResults({
     );
 
     return (
-        <div className={`${styles.alignment} ${demoMode ? styles.demoWorkspace : ""}`}>
+        <ResultsWorkspace><div className={`${styles.alignment} ${styles.demoWorkspace}`}>
             {(statusMessage || errorMessage) && <Alert variant={errorMessage ? "danger" : "info"}>{errorMessage || statusMessage}</Alert>}
 
             <section className={styles.analysisOverview} aria-labelledby="analysis-overview-title">
@@ -1147,7 +1148,7 @@ function AnalysisResults({
                 <div className={styles.jobDetailsHeader}><Button size="sm" variant="outline-secondary" onClick={() => downloadJson(provenance, "phylodivas_provenance.json")}>Download provenance</Button></div>
                 <pre className={styles.jobPayload}>{JSON.stringify({ provenance, job: safeJobInfo }, null, 2)}</pre>
             </details>
-        </div>
+        </div></ResultsWorkspace>
     );
 }
 

@@ -4,6 +4,7 @@ import OrthoFinderDemoResults from './OrthoFinderDemoResults';
 import GenomeWideDemoResults from './GenomeWideDemoResults';
 import {readDemoAsset,parseMembership} from './demoData';
 import styles from './DemoResultsPage.module.css';
+import ResultsWorkspace from '../../ToDo/AnalysisResults/ResultsWorkspace';
 
 export default function DemoResultsPage() {
     const [data,setData]=useState(null);const [error,setError]=useState('');const [attempt,setAttempt]=useState(0);
@@ -24,8 +25,8 @@ export default function DemoResultsPage() {
         {!data&&!error&&<p role="status">Loading saved OrthoFinder and genome-wide results…</p>}
         {error&&<div role="alert"><p>{error}</p><button className="btn btn-outline-primary" onClick={()=>setAttempt(n=>n+1)}>Retry demo loading</button></div>}
         {data&&<>
-            <OrthoFinderDemoResults {...data}/>
-            <GenomeWideDemoResults snapshot={data.snapshot} examples={data.examples}/>
+            <ResultsWorkspace><OrthoFinderDemoResults {...data}/>
+            <GenomeWideDemoResults snapshot={data.snapshot} examples={data.examples}/></ResultsWorkspace>
         </>}
     </main>;
 }
