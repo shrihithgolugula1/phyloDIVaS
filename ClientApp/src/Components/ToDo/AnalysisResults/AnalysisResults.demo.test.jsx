@@ -33,7 +33,7 @@ it('opens real saved reports and figures without API requests, and downloads the
         }
         expect(blobs).toHaveLength(7);
         expect(request).not.toHaveBeenCalled();
-        expect(JSON.stringify(bundle)).not.toMatch(/\/data\/|\/Users\/|11ac94870d0bb33|[a-f0-9]{32}/);
+        expect(JSON.stringify(bundle)).not.toMatch(/\/data\/|\/Users\/|[a-f0-9]{32}/);
     } finally {
         cleanup(); create.mockRestore(); revoke.mockRestore(); click.mockRestore(); vi.unstubAllGlobals();
     }

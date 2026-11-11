@@ -1089,7 +1089,7 @@ function AnalysisResults({
                         {selectedGene && (
                             <article className={styles.geneWorkspace}>
                                 <header className={styles.geneHeader}>
-                                    <div><p className={styles.eyebrow}>Strict 1:1 ortholog</p><h4>{selectedGene.displayName}</h4><p>{selectedGene.fullName && selectedGene.fullName !== selectedGene.displayName ? selectedGene.fullName : selectedGene.orthogroupId}</p></div>
+                                    <div><p className={styles.eyebrow}>{demoMode ? "Saved orthogroup example" : "Strict 1:1 ortholog"}</p><h4>{selectedGene.displayName}</h4><p>{selectedGene.fullName && selectedGene.fullName !== selectedGene.displayName ? selectedGene.fullName : selectedGene.orthogroupId}</p></div>
                                     <div className={styles.geneHeaderActions}>
                                         <Button size="sm" variant="outline-primary" onClick={() => downloadJson({
                                             gene: normalizedGeneRows([selectedGene], thresholds)[0],
