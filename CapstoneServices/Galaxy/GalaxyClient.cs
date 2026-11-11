@@ -379,7 +379,7 @@ namespace CapstoneServices.Galaxy
             // filters; without it Galaxy silently enumerates the complete history.
             var queries = new[]
             {
-                $"{baseUrl}&q=history_content_type-eq&qv=dataset_collection&limit=100&order=hid-dsc",
+                $"{baseUrl}&q=history_content_type-eq&qv=dataset_collection&limit=30&order=hid-dsc",
                 $"{baseUrl}&q=name-contains&qv={Uri.EscapeDataString("phyloDIVaS")}&limit=100&order=hid-dsc",
                 $"{baseUrl}&q=name-contains&qv={Uri.EscapeDataString("Orthogroup")}&limit=100&order=hid-dsc",
                 $"{baseUrl}&q=name-contains&qv={Uri.EscapeDataString("OrthoFinder")}&limit=50&order=hid-dsc",
@@ -413,10 +413,12 @@ namespace CapstoneServices.Galaxy
                 }
                 catch (OperationCanceledException) when (!ct.IsCancellationRequested)
                 {
+                    if (query == queries[0]) throw new TimeoutException("Galaxy collection inventory timed out. No pipeline stage can be inferred from an incomplete inventory; retry the connection.");
                     return default;
                 }
                 catch (GalaxyHttpException)
                 {
+                    if (query == queries[0]) throw;
                     return default;
                 }
                 finally { snapshotConcurrency.Release(); }
