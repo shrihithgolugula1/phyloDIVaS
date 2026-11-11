@@ -1661,7 +1661,15 @@ namespace AnalysisAPI.Controllers
                 var detail = "Galaxy history found; waiting for genome datasets.";
                 var failedDownstreamItems = downstreamItems.Where(item => IsFailed(item.State)).ToList();
                 var failedHyphyItems = hyphyItems.Where(item => IsFailed(item.State)).ToList();
-                if (failedDownstreamItems.Count > 0 || failedHyphyItems.Count > 0)
+                if (GalaxyCompletionEvidence.AllMethodsSettled(hyphyItems.Select(item => (item.Name, item.State))) &&
+                    !downstreamItems.Any(item => IsActive(item.State)))
+                {
+                    stage = "workflow_complete";
+                    detail = failedHyphyItems.Count > 0 || hyphyItems.Any(item => item.State == "paused")
+                        ? "Finished with gene-level exceptions. No HyPhy jobs are active. Successful results are available; failed and paused genes remain listed separately and are not negative findings."
+                        : "All available HyPhy method records have finished. Review gene-level results and coverage below.";
+                }
+                else if (failedDownstreamItems.Count > 0 || failedHyphyItems.Count > 0)
                 {
                     stage = "workflow_failed";
                     var failedItem = failedDownstreamItems.Concat(failedHyphyItems)

@@ -13,6 +13,11 @@ void Check(string name, bool condition)
 }
 
 Check("one completed tool cannot imply full completion", !GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("HyPhy-BUSTED", "ok") }));
+Check("finished methods with gene exceptions remain reviewable", GalaxyCompletionEvidence.AllMethodsSettled(new[] { ("BUSTED", "paused"), ("MEME", "error"), ("aBSREL", "ok") }));
+Check("queued methods are not settled", !GalaxyCompletionEvidence.AllMethodsSettled(new[] { ("BUSTED", "ok"), ("MEME", "queued"), ("aBSREL", "ok") }));
+Check("missing methods are not settled", !GalaxyCompletionEvidence.AllMethodsSettled(new[] { ("BUSTED", "ok") }));
+using var mixedCollection = System.Text.Json.JsonDocument.Parse("{\"elements_states\":{\"ok\":8,\"error\":1,\"running\":1}}");
+Check("active genes cannot be masked by a failed sibling", GalaxyCompletionEvidence.RecordState(mixedCollection.RootElement) == "running");
 Check("retry generation groups by method and artifact type, not collection name", GalaxyCompletionEvidence.SelectionOutputKey("HyPhy-aBSREL on collection 1") == GalaxyCompletionEvidence.SelectionOutputKey("HyPhy-aBSREL on collection 2"));
 Check("Markdown and JSON stay distinct during retry selection", GalaxyCompletionEvidence.SelectionOutputKey("MEME Report (Markdown)") != GalaxyCompletionEvidence.SelectionOutputKey("HyPhy-MEME"));
 Check("paused method prevents full completion", !GalaxyCompletionEvidence.AllMethodsComplete(new[] { ("BUSTED", "ok"), ("MEME", "paused"), ("aBSREL", "ok") }));
