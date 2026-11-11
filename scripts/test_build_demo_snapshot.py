@@ -20,4 +20,7 @@ class DemoImportTests(unittest.TestCase):
    self.assertIsNone(result['genes'][0]['MEME_sites_raw01']);self.assertEqual(result['genes'][0]['meme_status'],'error')
    rows[0]['id']='not-retrieved';(p/'inventory.json').write_text(json.dumps({'records':rows,'coverage':result['methods'],'capturedAt':'fixture'}))
    with self.assertRaisesRegex(ValueError,'Publication refused'):build(p/'inventory.json',p/'cache.sqlite',p/'members.tsv',p/'headers.txt',p/'old.json')
+   rows[0]['id']='N0.HOG0000001busted';rows[0]['gene']='N0.HOG9999999'
+   (p/'inventory.json').write_text(json.dumps({'records':rows,'coverage':result['methods'],'capturedAt':'fixture'}))
+   with self.assertRaisesRegex(ValueError,'membership sets'):build(p/'inventory.json',p/'cache.sqlite',p/'members.tsv',p/'headers.txt',p/'old.json')
 if __name__=='__main__':unittest.main()
