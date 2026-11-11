@@ -1,0 +1,66 @@
+{
+  "Phyllostomus discolor": {
+    "url": "/demo/bats/silhouette-0d386ce5-28e2-407c-b985-c1aac350bd1a.png",
+    "credit": "Margot Michaud",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://www.phylopic.org/images/0d386ce5-28e2-407c-b985-c1aac350bd1a",
+    "taxon": "Chiroptera",
+    "fallback": true
+  },
+  "Molossus molossus": {
+    "url": "/demo/bats/silhouette-0d386ce5-28e2-407c-b985-c1aac350bd1a.png",
+    "credit": "Margot Michaud",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://www.phylopic.org/images/0d386ce5-28e2-407c-b985-c1aac350bd1a",
+    "taxon": "Chiroptera",
+    "fallback": true
+  },
+  "Eptesicus fuscus": {
+    "url": "/demo/bats/silhouette-e7da460a-e04d-42f4-989f-1b2c6b51350b.png",
+    "credit": "Margot Michaud",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://www.phylopic.org/images/e7da460a-e04d-42f4-989f-1b2c6b51350b",
+    "taxon": "Eptesicus fuscus",
+    "fallback": false
+  },
+  "Pipistrellus kuhlii": {
+    "url": "/demo/bats/silhouette-fb007db0-cc86-4215-afdd-18f954244e2f.png",
+    "credit": "Margot Michaud",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://www.phylopic.org/images/fb007db0-cc86-4215-afdd-18f954244e2f",
+    "taxon": "Pipistrellus",
+    "fallback": true
+  },
+  "Myotis myotis": {
+    "url": "/demo/bats/silhouette-a9e7b688-7921-4038-92df-62c8699f8489.png",
+    "credit": "August Specht",
+    "license": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "source": "https://www.phylopic.org/images/a9e7b688-7921-4038-92df-62c8699f8489",
+    "taxon": "Myotis myotis",
+    "fallback": false
+  },
+  "Myotis lucifugus": {
+    "url": "/demo/bats/silhouette-15f040d4-d9db-4751-8b97-286fcc60288d.png",
+    "credit": "Archibald Thorburn",
+    "license": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "source": "https://www.phylopic.org/images/15f040d4-d9db-4751-8b97-286fcc60288d",
+    "taxon": "Myotis",
+    "fallback": true
+  },
+  "Rousettus aegyptiacus": {
+    "url": "/demo/bats/silhouette-59899f62-b475-4f97-acc9-9c058965ed2a.png",
+    "credit": "Steven Traver",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://www.phylopic.org/images/59899f62-b475-4f97-acc9-9c058965ed2a",
+    "taxon": "Rousettus aegyptiacus",
+    "fallback": false
+  },
+  "Rhinolophus ferrumequinum": {
+    "url": "/demo/bats/silhouette-0d386ce5-28e2-407c-b985-c1aac350bd1a.png",
+    "credit": "Margot Michaud",
+    "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://www.phylopic.org/images/0d386ce5-28e2-407c-b985-c1aac350bd1a",
+    "taxon": "Rhinolophus",
+    "fallback": true
+  }
+}
