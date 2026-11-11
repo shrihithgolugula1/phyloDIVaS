@@ -12,7 +12,7 @@ import re
 import subprocess
 import time
 
-EXCLUDED = {".git", ".vs", "node_modules", "bin", "obj", "build", "dist", ".local-run", "__pycache__"}
+EXCLUDED = {".git", ".vs", "node_modules", "bin", "obj", "build", "dist", ".local-run", "__pycache__", "__screenshots__"}
 
 
 def git(root, *args):
