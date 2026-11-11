@@ -44,9 +44,8 @@ live verification of this patch. Do not repeatedly clone inside an existing clon
 1. **History recovery/coverage (P0):** Resume Existing → enter an owning user's
    key and a known completed history → Load Existing History. Reproduce the
    previous long wait; compare exact per-method element states and unique HOG
-   IDs against Galaxy. Repeat for an older and a partially failed history. Reload
-   and reconnect using a fresh browser session. Exact success/failure counts remain
-   unknown; neither 9,978 discovered genes nor a workflow badge proves success.
+   IDs against Galaxy. API-level reconciliation below is now verified for the bat history. Repeat browser recovery for an older and a partially failed history. Reload
+   and reconnect using a fresh browser session. Neither discovered genes nor a workflow badge alone proves successful parsing.
 2. **New submission/automatic transitions (P0):** after authentication, use a
    distinct clearly named small run with three eligible Drosophila proteomes
    (minimum accepted by UI), and select only one or two strict 1:1 groups once
@@ -88,6 +87,38 @@ History-wide counts of errors/paused datasets include upstream steps and old
 attempts and must not be reported as failed genes. Targeted collection discovery
 took 14.23 seconds in this live audit; this does not include subsequent collection
 expansion/sample downloads or browser rendering.
+
+### Completed authorized API replay
+
+All six latest HyPhy collections were inspected read-only. They contain identical
+sets of 9,978 HOG IDs. JSON and Markdown state maps agree within each method;
+the representative JSON/Markdown samples also refer to the same gene.
+
+| Method | Galaxy OK elements | Paused elements | Error elements |
+| --- | ---: | ---: | ---: |
+| BUSTED | 9,952 | 26 | 0 |
+| aBSREL | 9,952 | 26 | 0 |
+| MEME | 9,935 | 26 | 17 |
+
+The same 26 genes are paused across all methods. There are 17 unique genes with
+a JSON error, all in MEME. The intersection of Galaxy-OK gene sets is 9,935.
+These are Galaxy metadata counts, not a claim that every JSON has been parsed.
+One real successful JSON per method parses correctly: eight sequences and 739
+codons; BUSTED p=0.5; aBSREL minimum corrected p=1; MEME minimum site p≈0.163037.
+No selection is detected for those sampled tests at the configured thresholds;
+this is not a genome-wide conclusion.
+
+Discovery plus six collection expansions and six sample downloads took 137.55
+seconds (bounded concurrency two); collection discovery alone took 14.23 seconds.
+Private evidence and raw samples are stored outside the source/public repository
+under the workspace's `outputs/lab-readonly-audit/`. Credentials were read only
+from the user-specified local file into request memory, never placed in URLs,
+command arguments, saved reports, or Git. Existing analyses were not modified.
+
+Remaining: inspect the 17 MEME error diagnostics, determine paused-job causes,
+recover OrthoFinder tables/tree in the UI, test authenticated browser reload,
+measure full viewer loading, and run the bounded new smoke submission. The live
+API replay improves the evidence but does not by itself clear the readiness block.
 
 ### Focused reproduction commands
 
