@@ -163,6 +163,7 @@ const evidenceColor = (evidence) => {
 
 export function EvidenceScatterplot({ genes, thresholds, onOpenGene }) {
     const svgRef = useRef(null);
+    const [hovered,setHovered]=useState(null);
     const points = useMemo(() => genes.flatMap((gene) => {
         if (gene.bustedPValue == null || !Number.isFinite(Number(gene.bustedPValue)) || gene.bustedPValue < 0 || gene.bustedPValue > 1) return [];
         const evidence = evaluateGeneEvidence(gene, thresholds);
@@ -182,6 +183,18 @@ export function EvidenceScatterplot({ genes, thresholds, onOpenGene }) {
     const plot = { left: 58, top: 22, right: 20, bottom: 52 };
     const chartWidth = width - plot.left - plot.right;
     const chartHeight = height - plot.top - plot.bottom;
+    const projected=useMemo(()=>displayed.map(point=>({...point,cx:plot.left+point.x/12*chartWidth,cy:plot.top+chartHeight-point.y/maxY*chartHeight})),[points,maxY]);
+    const paths=useMemo(()=>{
+        const buckets=new Map();
+        projected.forEach(point=>{const color=evidenceColor(point.evidence),r=point.evidence.any?5:3.5,x=(point.cx-r).toFixed(2),y=point.cy.toFixed(2);buckets.set(color,(buckets.get(color)||'')+`M${x},${y}a${r},${r} 0 1,0 ${2*r},0a${r},${r} 0 1,0 ${-2*r},0`);});
+        return [...buckets].map(([color,d])=>({color,d}));
+    },[projected]);
+    const nearest=event=>{
+        const rect=svgRef.current.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*width,y=(event.clientY-rect.top)/rect.height*height;
+        let best=null,distance=100;
+        for(const point of projected){const d=(point.cx-x)**2+(point.cy-y)**2;if(d<distance){best=point;distance=d;}}
+        return best;
+    };
     const csv = rowsToDelimited(points.map((point) => ({
         gene: point.gene.displayName,
         orthogroup: point.gene.orthogroupId,
@@ -208,7 +221,7 @@ export function EvidenceScatterplot({ genes, thresholds, onOpenGene }) {
             csv={csv}
             note={points.length > displayed.length ? `The interactive plot shows the ${displayed.length} highest-evidence genes; the CSV includes all ${points.length}.` : null}
         >
-            <svg ref={svgRef} className={styles.figureSvg} viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="evidence-scatter-title evidence-scatter-desc">
+            <svg ref={svgRef} className={styles.figureSvg} viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="evidence-scatter-title evidence-scatter-desc" onPointerMove={event=>{const point=nearest(event);setHovered(old=>old?.gene.id===point?.gene.id?old:point);}} onPointerLeave={()=>setHovered(null)} onClick={event=>{const point=nearest(event);if(point)onOpenGene(point.gene);}}>
                 <title id="evidence-scatter-title">Cross-method selection evidence scatterplot</title>
                 <desc id="evidence-scatter-desc">Each point is a gene. The horizontal axis shows BUSTED evidence and the vertical axis shows selected aBSREL branches plus MEME sites.</desc>
                 <line x1={plot.left} y1={plot.top + chartHeight} x2={width - plot.right} y2={plot.top + chartHeight} className={styles.axisLine} />
@@ -219,31 +232,12 @@ export function EvidenceScatterplot({ genes, thresholds, onOpenGene }) {
                         <text x={plot.left + tick / 12 * chartWidth} y={height - 28} textAnchor="middle" className={styles.axisText}>{tick}</text>
                     </g>
                 ))}
-                {displayed.map((point) => {
-                    const x = plot.left + point.x / 12 * chartWidth;
-                    const y = plot.top + chartHeight - point.y / maxY * chartHeight;
-                    return (
-                        <circle
-                            key={point.gene.id}
-                            cx={x}
-                            cy={y}
-                            r={point.evidence.any ? 5 : 3.5}
-                            fill={evidenceColor(point.evidence)}
-                            className={styles.scatterPoint}
-                            role="button"
-                            tabIndex="0"
-                            onClick={() => onOpenGene(point.gene)}
-                            onKeyDown={(event) => {
-                                if (event.key === "Enter" || event.key === " ") onOpenGene(point.gene);
-                            }}
-                        >
-                            <title>{`${point.gene.displayName}: BUSTED p=${formatNumber(point.gene.bustedPValue)}, q=${formatNumber(point.gene.bustedQValue)}, ${point.evidence.selectedBranches} selected branches, ${point.evidence.selectedSites} selected sites`}</title>
-                        </circle>
-                    );
-                })}
+                {paths.map(path=><path key={path.color} d={path.d} fill={path.color} opacity="0.8"/>)}
+                {hovered&&<circle cx={hovered.cx} cy={hovered.cy} r="7" fill="none" stroke="#172b46" strokeWidth="2"/>}
                 <text x={plot.left + chartWidth / 2} y={height - 7} textAnchor="middle" className={styles.axisLabel}>-log10(BUSTED p-value)</text>
                 <text x={16} y={plot.top + chartHeight / 2} textAnchor="middle" transform={`rotate(-90 16 ${plot.top + chartHeight / 2})`} className={styles.axisLabel}>Selected branches + sites</text>
             </svg>
+            <p role="status">{hovered?`${hovered.gene.displayName}: BUSTED p=${formatNumber(hovered.gene.bustedPValue)}, q=${formatNumber(hovered.gene.bustedQValue)}; ${hovered.evidence.selectedBranches} branches, ${hovered.evidence.selectedSites} codons.`:"All readable genes are drawn. Use the gene table for keyboard access or overlapping points."}</p>
         </FigureShell>
     );
 }
