@@ -209,6 +209,8 @@ namespace CapstoneServices.Galaxy
         public async Task<OrthoFinderOutputs> GetOrthoFinderOutputsAsync(string historyId, string orthoFinderJobId, CancellationToken ct)
         {
             using var apiScope = UseApiKeyForHistory(historyId);
+            using var outputReadCache = _galaxy.UseHistoryReadCache();
+            await _galaxy.PrimeHistoryContentsCacheAsync(historyId, ct);
 
             var isLikelyJobId = !string.IsNullOrWhiteSpace(orthoFinderJobId) && orthoFinderJobId.Length >= 16;
             string? speciesTreeId = null;
@@ -225,7 +227,6 @@ namespace CapstoneServices.Galaxy
                     speciesTreeNewick = await _galaxy.DownloadDatasetAsync(historyId, speciesTreeId, ct);
                     var recovered = await TryRehydrateGenomesFromCollectionsAsync(historyId, ct);
                     speciesTreeNewick = NormalizeSpeciesTreeLeafLabels(speciesTreeNewick, recovered?.Genomes);
-                    await _galaxy.SetHistoryContentVisibilityAsync(historyId, speciesTreeId, true, ct);
                 }
             }
             catch (Exception ex)
@@ -258,11 +259,6 @@ namespace CapstoneServices.Galaxy
                 if (string.IsNullOrWhiteSpace(orthoGroupsDatasetId) && !string.IsNullOrWhiteSpace(hierarchicalDatasetId))
                     orthoGroupsDatasetId = hierarchicalDatasetId;
 
-                if (!string.IsNullOrWhiteSpace(orthoGroupsDatasetId))
-                    await _galaxy.SetHistoryContentVisibilityAsync(historyId, orthoGroupsDatasetId, true, ct);
-
-                if (!string.IsNullOrWhiteSpace(hierarchicalDatasetId))
-                    await _galaxy.SetHistoryContentVisibilityAsync(historyId, hierarchicalDatasetId, true, ct);
             }
             catch (Exception ex)
             {
@@ -280,14 +276,6 @@ namespace CapstoneServices.Galaxy
                 }
                 if (string.IsNullOrWhiteSpace(orthoGroupsDatasetId) && !string.IsNullOrWhiteSpace(hierarchicalDatasetId))
                     orthoGroupsDatasetId = hierarchicalDatasetId;
-                if (!string.IsNullOrWhiteSpace(orthoGroupsDatasetId))
-                {
-                    try { await _galaxy.SetHistoryContentVisibilityAsync(historyId, orthoGroupsDatasetId, true, ct); } catch { }
-                }
-                if (!string.IsNullOrWhiteSpace(hierarchicalDatasetId))
-                {
-                    try { await _galaxy.SetHistoryContentVisibilityAsync(historyId, hierarchicalDatasetId, true, ct); } catch { }
-                }
             }
 
             try
