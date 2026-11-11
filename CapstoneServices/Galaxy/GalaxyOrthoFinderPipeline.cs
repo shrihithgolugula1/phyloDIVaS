@@ -3999,23 +3999,9 @@ namespace CapstoneServices.Galaxy
 
         private async Task WaitForDatasetReadyAsync(string historyId, string datasetId, CancellationToken ct)
         {
-            var timeoutAt = DateTime.UtcNow.AddMinutes(90);
-            while (DateTime.UtcNow < timeoutAt)
-            {
-                var contents = await _galaxy.ListHistoryContentsAsync(historyId, ct, includeHidden: true, includeDeleted: false);
-                var match = contents.ValueKind == JsonValueKind.Array
-                    ? contents.EnumerateArray().FirstOrDefault(e => e.TryGetProperty("id", out var id) && id.GetString() == datasetId)
-                    : default;
-                if (match.ValueKind == JsonValueKind.Object && match.TryGetProperty("state", out var state))
-                {
-                    var value = state.GetString();
-                    if (value == "ok") return;
-                    if (value is "error" or "failed" or "deleted")
-                        throw new InvalidOperationException($"Galaxy dataset {datasetId} failed with state '{value}'.");
-                }
-                await Task.Delay(TimeSpan.FromSeconds(3), ct);
-            }
-            throw new TimeoutException($"Galaxy dataset {datasetId} did not finish within 90 minutes.");
+            // Never poll a request-scoped history snapshot: an upload first seen
+            // as 'new' would remain cached in that state for the entire request.
+            await WaitForDatasetReadyAsync(datasetId, ct, maxAttempts: 1800, delayMs: 3000);
         }
 
         private async Task RenameToolOutputAsync(string historyId, string datasetId, string name, CancellationToken ct)

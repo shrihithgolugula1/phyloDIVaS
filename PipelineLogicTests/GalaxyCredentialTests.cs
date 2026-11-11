@@ -20,6 +20,18 @@ internal static class GalaxyCredentialTests
             throw new Exception("Missing request credential was not rejected before transport/cache.");
         }
         await MissingScope();
+        using (client.UseApiKey("dummy-poll"))
+        using (client.UseHistoryReadCache())
+        {
+            await client.ListHistoryContentsAsync("stale-history");
+            var pipeline = new GalaxyOrthoFinderPipeline(client, null!, Options.Create(new GalaxyOptions()), Microsoft.Extensions.Logging.Abstractions.NullLogger<GalaxyOrthoFinderPipeline>.Instance);
+            var method = typeof(GalaxyOrthoFinderPipeline).GetMethod("WaitForDatasetReadyAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new[] { typeof(string), typeof(string), typeof(CancellationToken) }, null)!;
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            await (Task)method.Invoke(pipeline, new object[] { "stale-history", "fresh-dataset", timeout.Token })!;
+            if (handler.DatasetReads == 0) throw new Exception("Readiness polling reused the stale history snapshot.");
+            Console.WriteLine("PASS: readiness polling bypasses cached history snapshots");
+        }
+        handler.Keys.Clear();
         using (client.UseApiKey("dummy-a"))
         using (client.UseHistoryReadCache())
         {
@@ -39,10 +51,13 @@ internal static class GalaxyCredentialTests
     private sealed class FixtureHandler : HttpMessageHandler
     {
         public List<string> Keys { get; } = new();
+        public int DatasetReads { get; private set; }
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Keys.Add(request.Headers.GetValues("x-api-key").Single());
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("[]") });
+            var dataset = request.RequestUri!.AbsolutePath.Contains("/api/datasets/");
+            if (dataset) DatasetReads++;
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(dataset ? "{\"state\":\"ok\"}" : "[]") });
         }
     }
 }
