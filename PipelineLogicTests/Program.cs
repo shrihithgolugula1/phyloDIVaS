@@ -1,5 +1,7 @@
 using CapstoneServices.Galaxy;
 
+await GalaxyCredentialTests.RunAsync();
+
 var passed = 0;
 using var partialCollection = System.Text.Json.JsonDocument.Parse("{\"populated_state\":\"ok\",\"elements_states\":{\"ok\":9952,\"paused\":26}}");
 Check("populated collection with paused genes is not complete", GalaxyCompletionEvidence.RecordState(partialCollection.RootElement) == "paused");

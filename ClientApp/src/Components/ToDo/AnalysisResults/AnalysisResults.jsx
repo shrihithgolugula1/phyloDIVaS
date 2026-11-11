@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
-import { readResultSummary, cacheResultSummary } from "../../../utils/hyphyResultCache";
-import React, { useEffect, useMemo, useState } from "react";
+import { readResultSummary, cacheResultSummary, clearResultCaches } from "../../../utils/hyphyResultCache";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Alert, Button, Form, Spinner, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
@@ -467,6 +467,11 @@ function AnalysisResults({
     const jobState = jobInfo?.state || (jobInfo ? "unknown" : "idle");
     const historyId = historyIdProp || jobInfo?.historyId || null;
     const galaxyApiKey = jobInfo?.galaxyApiKey;
+    useLayoutEffect(() => {
+        // Clear before child passive effects can consult raw/markdown caches.
+        clearResultCaches(summaryCache, rawJsonCache, markdownCache);
+        return () => clearResultCaches(summaryCache, rawJsonCache, markdownCache);
+    }, [galaxyApiKey, historyId]);
     const hyphyJsonOutputs = useMemo(() => jobInfo?.hyphyJsonOutputs || [], [jobInfo?.hyphyJsonOutputs]);
     const hyphyMarkdownOutputs = useMemo(() => jobInfo?.hyphyMarkdownOutputs || [], [jobInfo?.hyphyMarkdownOutputs]);
     const analysisSpecies = useMemo(() => {

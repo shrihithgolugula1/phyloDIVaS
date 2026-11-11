@@ -30,13 +30,23 @@ namespace CapstoneServices.Galaxy
             _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private string? GetEffectiveApiKey() => ApiKeyOverride.Value ?? _opts.ApiKey;
+        private string GetEffectiveApiKey() => ApiKeyOverride.Value
+            ?? throw new InvalidOperationException("A request-scoped Galaxy API key is required.");
 
         private sealed class ApiKeyScope : IDisposable
         {
             private readonly string? _previous;
-            public ApiKeyScope(string? previous) => _previous = previous;
-            public void Dispose() => ApiKeyOverride.Value = _previous;
+            private readonly Dictionary<string, JsonElement>? _previousCache;
+            public ApiKeyScope(string? previous, Dictionary<string, JsonElement>? previousCache)
+            {
+                _previous = previous;
+                _previousCache = previousCache;
+            }
+            public void Dispose()
+            {
+                ApiKeyOverride.Value = _previous;
+                HistoryReadCache.Value = _previousCache;
+            }
         }
 
         private sealed class HistoryReadCacheScope : IDisposable
@@ -49,8 +59,10 @@ namespace CapstoneServices.Galaxy
         public IDisposable UseApiKey(string? apiKey)
         {
             var prior = ApiKeyOverride.Value;
+            var priorCache = HistoryReadCache.Value;
+            HistoryReadCache.Value = priorCache is null ? null : new Dictionary<string, JsonElement>(StringComparer.Ordinal);
             ApiKeyOverride.Value = string.IsNullOrWhiteSpace(apiKey) ? null : apiKey;
-            return new ApiKeyScope(prior);
+            return new ApiKeyScope(prior, priorCache);
         }
 
         public IDisposable UseHistoryReadCache()
@@ -332,6 +344,7 @@ namespace CapstoneServices.Galaxy
             int? limit = null,
             string? order = null)
         {
+            _ = GetEffectiveApiKey(); // Require credentials before consulting cached data.
             var query = new List<string>();
             if (includeHidden) query.Add("include_hidden=true");
             if (includeDeleted) query.Add("include_deleted=true");

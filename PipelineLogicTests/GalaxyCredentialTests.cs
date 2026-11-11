@@ -1,0 +1,48 @@
+using System.Net;
+using CapstoneServices.Galaxy;
+using Microsoft.Extensions.Options;
+
+internal static class GalaxyCredentialTests
+{
+    public static async Task RunAsync()
+    {
+        using var handler = new FixtureHandler();
+        using var http = new HttpClient(handler);
+        var client = new GalaxyClient(http, Options.Create(new GalaxyOptions
+        {
+            BaseUrl = "https://galaxy.invalid", ApiKey = "dummy-config-must-not-be-used"
+        }));
+        async Task MissingScope()
+        {
+            var count = handler.Keys.Count;
+            try { await client.ListHistoryContentsAsync("same-history"); }
+            catch (InvalidOperationException) when (handler.Keys.Count == count) { return; }
+            throw new Exception("Missing request credential was not rejected before transport/cache.");
+        }
+        await MissingScope();
+        using (client.UseApiKey("dummy-a"))
+        using (client.UseHistoryReadCache())
+        {
+            await client.ListHistoryContentsAsync("same-history");
+            await client.ListHistoryContentsAsync("same-history");
+            if (handler.Keys.Count != 1) throw new Exception("Same-scope cache missed.");
+            using (client.UseApiKey("dummy-b"))
+                await client.ListHistoryContentsAsync("same-history");
+            using (client.UseApiKey(" ")) await MissingScope();
+            await client.ListHistoryContentsAsync("same-history");
+            if (!handler.Keys.SequenceEqual(new[] { "dummy-a", "dummy-b" }))
+                throw new Exception("Credential/cache scope was not isolated/restored.");
+        }
+        await MissingScope();
+        Console.WriteLine("PASS: Galaxy request credentials and nested account-cache isolation (fixture transport)");
+    }
+    private sealed class FixtureHandler : HttpMessageHandler
+    {
+        public List<string> Keys { get; } = new();
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Keys.Add(request.Headers.GetValues("x-api-key").Single());
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("[]") });
+        }
+    }
+}
