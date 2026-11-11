@@ -781,6 +781,7 @@ namespace AnalysisAPI.Controllers
                     speciesTreeNewick = outputs.SpeciesTreeNewick,
                     orthogroupsDatasetId = outputs.OrthogroupsDatasetId,
                     singleCopyDatasetId = outputs.SingleCopyDatasetId,
+                    singleCopySourceIsFiltered = outputs.SingleCopySourceIsFiltered,
                     outputs = outputs.Outputs.Select(o => new
                     {
                         o.Label,

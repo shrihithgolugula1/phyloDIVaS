@@ -187,7 +187,8 @@ namespace CapstoneServices.Galaxy
             string? SpeciesTreeNewick,
             string? OrthogroupsDatasetId,
             string? SingleCopyDatasetId,
-            List<OrthoFinderOutputItem> Outputs);
+            List<OrthoFinderOutputItem> Outputs,
+            bool SingleCopySourceIsFiltered = false);
 
         [Obsolete("Galaxy API keys are request-scoped and are never cached by history.")]
         public void RememberApiKeyForHistory(string historyId, string? apiKey)
@@ -292,9 +293,9 @@ namespace CapstoneServices.Galaxy
             if (!string.IsNullOrWhiteSpace(orthoGroupsDatasetId))
             {
                 downloads.Add(new OrthoFinderOutputItem(
-                    "Hierarchical Orthogroups (N0.tsv)",
+                    "OrthoFinder membership table",
                     orthoGroupsDatasetId,
-                    "Primary OrthoFinder orthogroups output (hierarchical N0 table).",
+                    "Available primary orthogroup membership output; not necessarily the strict 1:1 subset.",
                     "tsv"));
             }
 
@@ -316,6 +317,10 @@ namespace CapstoneServices.Galaxy
                     "nwk"));
             }
 
+            if (string.IsNullOrWhiteSpace(singleCopyDatasetId) && !string.IsNullOrWhiteSpace(hierarchicalDatasetId))
+                downloads.Add(new OrthoFinderOutputItem("Raw hierarchical orthogroups (N0)", hierarchicalDatasetId,
+                    "Unfiltered source table. The application applies strict root 1:1 filtering in memory; this download contains the original rows.", "tsv"));
+
             return new OrthoFinderOutputs(
                 historyId,
                 orthoFinderJobId,
@@ -323,7 +328,8 @@ namespace CapstoneServices.Galaxy
                 speciesTreeNewick,
                 orthoGroupsDatasetId,
                 singleCopyDatasetId ?? hierarchicalDatasetId,
-                downloads);
+                downloads,
+                !string.IsNullOrWhiteSpace(singleCopyDatasetId));
         }
 
         private static string StandardizeSpeciesName(string species)
