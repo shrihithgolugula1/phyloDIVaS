@@ -25,7 +25,7 @@ def files(source):
                    and not name.endswith((".user", ".log", ".zip", ".pfx", ".pem", ".key"))
                    and not Path(name).name.startswith(".env")
                    and not Path(name).name.startswith("results-viewer-audit-")
-                   and Path(name).name not in {"local-config.json", "AGENTS.md"} and (source / name).is_file()
+                   and Path(name).name not in {"local-config.json", "AGENTS.md", "lab-readiness.md"} and (source / name).is_file()
                    and not (source / name).is_symlink()})
 
 

@@ -6,6 +6,14 @@ import publish_current as p
 
 
 class PublicationTests(unittest.TestCase):
+    def test_private_readiness_and_live_audit_documents_are_not_exported(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / 'docs').mkdir()
+            names = ['docs/lab-readiness.md', 'docs/results-viewer-audit-private.md', 'README.md']
+            for name in names: (root / name).write_text('fixture')
+            with patch.object(p.subprocess, 'check_output', return_value=('\0'.join(names) + '\0').encode()):
+                self.assertEqual(p.files(root), ['README.md'])
     def test_secrets_removed_from_settings(self):
         value = {"ConnectionStrings": {"Db": "private"}, "AWS": {"ClientSecret": "private"}, "Galaxy": {"ApiKey": "private", "BaseUrl": "https://usegalaxy.eu"}}
         clean = p.scrub_config(value)
