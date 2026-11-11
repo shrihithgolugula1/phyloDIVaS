@@ -1,5 +1,8 @@
 # phyloDIVaS
 
+New to Terminal? Start with the [first-time installation guide](docs/installation.md)
+for exact macOS and Windows commands, including prerequisite installation.
+
 ## Portable installation from GitHub
 
 Install Git, Python 3.10+, the **.NET 8 SDK**, and **Node.js 22 with npm** first.
