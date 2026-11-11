@@ -1175,3 +1175,4 @@ AnalysisResults.defaultProps = {
 };
 
 export default AnalysisResults;
+export { MethodResultPanel };

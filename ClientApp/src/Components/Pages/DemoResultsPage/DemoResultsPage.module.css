@@ -1,0 +1,33 @@
+.page { width: min(1400px, 96%); margin: 0 auto; padding: 32px 12px; color: var(--text-color, #263835); }
+.intro { max-width: 85ch; line-height: 1.6; }
+.section { margin: 30px 0; padding: 24px; border: 1px solid #d6e2df; border-radius: 12px; background: var(--surface-color, #fff); min-width: 0; }
+.section h2 { margin-bottom: 20px; }
+.section h3 { margin-top: 28px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 20px 0; }
+.stats > div { display: flex; flex-direction: column; padding: 16px; border-radius: 8px; border: 1px solid #d6e2df; background: #f1f7f5; }
+.stats strong { font-size: 1.8rem; color: #17695e; }
+.stats span { font-size: .9rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 18px 0; }
+.actions label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.actions input[type="search"], .actions select { padding: 8px; border: 1px solid #889d97; border-radius: 6px; max-width: 100%; }
+.treeViewport, .tableViewport { overflow: auto; max-width: 100%; border: 1px solid #dce7e3; border-radius: 6px; margin: 12px 0; }
+.treeViewport { background: #fff; padding: 10px; }
+.treeViewport svg { display: block; max-width: none; }
+.branch { stroke: #466e64; stroke-width: 2; }
+.guide { stroke: #c3d2cc; stroke-dasharray: 2 4; }
+.branchLabel { fill: #445c54; font-size: 12px; }
+.speciesLabel { fill: #1b3e33; font: italic 15px system-ui, sans-serif; }
+.tableViewport th, .tableViewport td { padding: 10px; vertical-align: middle; }
+.tableViewport table { margin: 0; }
+.methodBars { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 16px; margin: 22px 0; }
+.methodBars button { background: #f2f7f5; color: #183f33; border: 1px solid #96b7a9; border-radius: 8px; text-align: left; padding: 18px; }
+.methodBars span { display: block; margin: 6px 0; }
+.methodBars progress { width: 100%; accent-color: #23765d; }
+.inspector { border-left: 4px solid #23765d; padding: 20px; margin: 25px 0; min-width: 0; overflow-wrap: anywhere; }
+.page button:focus-visible, .page a:focus-visible, .page input:focus-visible, .page select:focus-visible { outline: 3px solid #136bbd; outline-offset: 3px; }
+:global(body.dark-mode) .page { color: #e6efeb; }
+:global(body.dark-mode) .section, :global(body.dark-mode) .inspector { background: #1d3029; color: #e6efeb; }
+:global(body.dark-mode) .stats > div, :global(body.dark-mode) .methodBars button { background: #293f35; color: #eef7f1; }
+:global(body.dark-mode) .stats strong { color: #a1e3ba; }
+:global(body.dark-mode) .tableViewport table { --bs-table-bg: #1d3029; --bs-table-color: #e6efeb; --bs-table-striped-color: #e6efeb; --bs-table-striped-bg: #293f35; }
+@media(max-width:600px) { .page { padding: 18px 4px; } .section { padding: 14px; } .stats { grid-template-columns: repeat(2,minmax(0,1fr)); } .actions > * { max-width: 100%; } }
