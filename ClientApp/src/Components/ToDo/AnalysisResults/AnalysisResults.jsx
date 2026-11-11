@@ -57,7 +57,7 @@ const formatNumber = (value, digits = 3) => {
     return Math.abs(number) < 0.001 ? number.toExponential(2) : number.toPrecision(digits);
 };
 
-const formatPercent = (value) => Number.isFinite(value) ? `${Math.round(value * 100)}%` : "N/A";
+const formatPercent = (value) => Number.isFinite(value) ? `${value>=1?100:Math.min(99.9,Math.round(value*1000)/10)}%` : "N/A";
 
 const safeDownloadName = (value) => String(value || "result")
     .replace(/[^a-z0-9._-]+/gi, "_")
@@ -933,13 +933,13 @@ function AnalysisResults({
     if (jobInfo?.hyphyOutputsLoading || isPreparingResults || resolvedOutputs !== hyphyJsonOutputs) return (
         <section className={styles.resultsLoading} aria-labelledby="results-loading-title" aria-busy="true">
             <Spinner animation="border" aria-hidden="true" />
-            <h4 id="results-loading-title">Preparing your Galaxy results</h4>
-            <p>{loadAllResults ? "Retrieving the requested full result family for genome-wide statistics." : "Retrieving the selected gene’s BUSTED, aBSREL, and MEME outputs. Other genes load when selected."}</p>
+            <h4 id="results-loading-title">{demoMode?"Preparing saved results":"Preparing your Galaxy results"}</h4>
+            <p>{demoMode?"Reading the saved local result family for genome-wide statistics.":loadAllResults ? "Retrieving the requested full result family for genome-wide statistics." : "Retrieving the selected gene’s BUSTED, aBSREL, and MEME outputs. Other genes load when selected."}</p>
             <progress aria-label="Result files processed" value={loadProgress.complete} max={loadProgress.total || 1} />
             <p role="status" aria-live="polite">{loadProgress.total > 0
                 ? `${loadProgress.complete.toLocaleString()} of ${loadProgress.total.toLocaleString()} result files processed`
                 : "Discovering result files…"}</p>
-            <p>Large histories may take several minutes. Successfully read results are reused within this connected session. No API key or private result cache is saved for another session.</p>
+            <p>{demoMode?"Detailed tool reports load locally when a gene is opened.":"Large histories may take several minutes. Successfully read results are reused within this connected session. No API key or private result cache is saved for another session."}</p>
             <small>This is viewer loading progress, not Galaxy analysis progress. Unreadable files will be identified separately once loading finishes.</small>
         </section>
     );
@@ -1004,7 +1004,7 @@ function AnalysisResults({
                     <div id="genome-wide-panel" role="tabpanel" aria-labelledby="genome-wide-tab" className={styles.resultPanel}>
                         <div className={styles.metricGrid}>
                             <article><span>Successfully analyzed</span><strong>{metrics.complete.toLocaleString()}</strong><small>all three methods readable</small></article>
-                            <article><span>Incomplete / skipped</span><strong>{metrics.incomplete.toLocaleString()}</strong><small>kept distinct from nonsignificant</small></article>
+                            <article><span>Gene-level exceptions</span><strong>{metrics.incomplete.toLocaleString()}</strong><small>paused, failed or unavailable methods</small></article>
                             <article><span>BUSTED FDR</span><strong>{metrics.busted.toLocaleString()}</strong><small>genes at BH q {"<="} {thresholds.bustedQ}</small></article>
                             <article><span>aBSREL</span><strong>{metrics.absrel.toLocaleString()}</strong><small>genes with selected branches</small></article>
                             <article><span>MEME</span><strong>{metrics.meme.toLocaleString()}</strong><small>genes with selected sites</small></article>

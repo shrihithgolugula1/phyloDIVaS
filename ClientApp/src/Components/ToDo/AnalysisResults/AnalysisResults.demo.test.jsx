@@ -13,6 +13,7 @@ it('uses the live dashboard for every demo gene, original reports, figures and l
   await screen.findByRole('heading',{name:'OrthoFinder results'},{timeout:15000});
   await screen.findByRole('heading',{name:'Selection results dashboard'},{timeout:30000});
   expect(screen.getByText('Genes requested',{exact:true}).parentElement.textContent).toContain('9,978');
+  expect(screen.getByText('Parsed three-method coverage',{exact:true}).parentElement.textContent).toContain('99.6%');
   const table=screen.getByRole('table',{name:'OrthoFinder orthogroup membership'});expect(table.querySelectorAll('tbody tr')).toHaveLength(25);
   expect(screen.queryByText('groups submitted in the historical run',{exact:true})).toBeNull();expect(screen.queryByRole('combobox',{name:'Orthogroup table'})).toBeNull();
   const disclosure=screen.getByText('1:1 ortholog table (9,978 orthogroups)',{exact:true});disclosure.click();expect(table.checkVisibility()).toBe(false);disclosure.click();
