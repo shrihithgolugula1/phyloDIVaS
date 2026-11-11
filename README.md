@@ -106,7 +106,7 @@ For separate service windows while debugging, run:
 ### Saved results demo
 
 On Run Analysis, choose **View demo results**, or open `/Demo` on the local
-application. The demo opens separately and requires no Galaxy key. It contains
+application. The demo requires no Galaxy key. It contains
 one verified eight-bat orthogroup (739 codons), with original BUSTED, aBSREL and
 MEME statistics and Markdown reports. Private Galaxy identifiers and working-file
 paths are omitted. This is a teaching sample, not a genome-wide biological

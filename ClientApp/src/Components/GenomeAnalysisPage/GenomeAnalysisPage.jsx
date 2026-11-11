@@ -2262,8 +2262,8 @@ const renderSpeciesTree = useCallback(() => {
                     <h1 className={`${analysisPageStyles.title} mb-2`}>dN/dS selection pressure analysis</h1>
                     <small>Application revision: {import.meta.env.VITE_APP_REVISION || "development"}</small>
                     <div className="my-3">
-                        <Button as={Link} to="/Demo" target="_blank" rel="noopener noreferrer" variant="outline-success">View demo results</Button>
-                        <small className="d-block mt-1">Saved bat example · no Galaxy key needed · opens in a new tab</small>
+                        <Button as={Link} to="/Demo" variant="outline-success">View demo results</Button>
+                        <small className="d-block mt-1">Saved bat example · no Galaxy key needed · no jobs submitted</small>
                     </div>
                     <p className={analysisPageStyles.subtitle}>
                         Select annotated RefSeq genomes, identify orthologous genes with OrthoFinder, and test selection pressure with HyPhy BUSTED.
