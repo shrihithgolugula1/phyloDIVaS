@@ -888,6 +888,7 @@ function AnalysisResults({
     const loading = loadProgress.total > 0 && loadProgress.complete < loadProgress.total;
     const safeJobInfo = useMemo(() => redactSensitiveValues(jobInfo), [jobInfo]);
 
+    if (jobInfo?.hyphyDiscoveryError) return <Alert variant="warning">Result discovery is unavailable: {jobInfo.hyphyDiscoveryError} Use “Refresh now” above to retry. No biological conclusion can be drawn from this retrieval failure.</Alert>;
     if (jobInfo?.hyphyOutputsLoading || isPreparingResults || resolvedOutputs !== hyphyJsonOutputs) return (
         <section className={styles.resultsLoading} aria-labelledby="results-loading-title" aria-busy="true">
             <Spinner animation="border" aria-hidden="true" />

@@ -1536,7 +1536,7 @@ const renderSpeciesTree = useCallback(() => {
                 // The status endpoint intentionally returns only lightweight history
                 // evidence. Hydrate completed collection elements separately.
                 if (!hyphyResultsHydratedRef.current) {
-                    setCurrentJobInfo(previous => ({...previous, hyphyOutputsLoading: true}));
+                    setCurrentJobInfo(previous => ({...previous, hyphyOutputsLoading: true, hyphyDiscoveryError: null}));
                     const completed = await getHyphyOutputs(historyId, apiKey);
                     setCurrentJobInfo((previous) => ({
                         ...(previous || {}),
@@ -1571,6 +1571,9 @@ const renderSpeciesTree = useCallback(() => {
             return status;
         } catch (error) {
             const message = error?.message || String(error);
+            setCurrentJobInfo(previous => previous?.hyphyOutputsLoading
+                ? {...previous, hyphyOutputsLoading: false, hyphyDiscoveryError: message}
+                : previous);
             if (error?.transient) {
                 setErrorMessage(null);
                 setGalaxyStatusWarning(
