@@ -18,6 +18,8 @@ import SavedSearches from "./Components/SavedSearches/SavedSearches";
 import ProfilePage from "./Components/Pages/ProfilePage/ProfilePage";
 import AboutPage from "./Components/Pages/AboutPage/AboutPage";
 import CitationsPage from "./Components/Pages/CitationsPage/CitationsPage";
+import { lazy, Suspense } from "react";
+const DemoResultsPage = lazy(() => import("./Components/Pages/DemoResultsPage/DemoResultsPage"));
 import "./Components/Accessibility/accessibility.css";
 import "./Components/Accessibility/accessibility.js";
 
@@ -37,6 +39,7 @@ const PAGE_TITLES = {
     "/disclaimer": "phyloDIVaS | Disclaimer",
     "/about": "phyloDIVaS | About",
     "/citations": "phyloDIVaS | Research Tool Citations",
+    "/demo": "phyloDIVaS | Demo Results",
 };
 
 const DEFAULT_TITLE = "phyloDIVaS";
@@ -63,6 +66,7 @@ function App() {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/Search" element={<GenomeSearchPage />} />
                     <Route path="/Analysis" element={<GenomeAnalysisPage />} />
+                    <Route path="/Demo" element={<Suspense fallback={<p role="status">Loading saved demo results…</p>}><DemoResultsPage /></Suspense>} />
                     <Route path="/Login" element={<LoginPage />} />
                     <Route path="/Home" element={<HomePage />} />
                     <Route path="/Register" element={<RegisterPage />} />

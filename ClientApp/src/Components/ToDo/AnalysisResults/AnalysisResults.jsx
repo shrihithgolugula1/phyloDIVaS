@@ -121,6 +121,10 @@ const mapWithConcurrency = async (items, limit, mapper, onProgress) => {
 };
 
 const loadNativeSummary = async (output, galaxyApiKey) => {
+    if (output?.nativeJson) return {
+        summary: summarizeHyphyResult(output.nativeJson, resultMethod(output)),
+        provenance: { analysis: output.nativeJson.analysis, input: output.nativeJson.input }
+    };
     if (output?.summary) {
         return {
             summary: output.summary,
@@ -160,6 +164,7 @@ const loadNativeSummary = async (output, galaxyApiKey) => {
 };
 
 const loadRawJson = async (output, galaxyApiKey) => {
+    if (output?.nativeJson) return output.nativeJson;
     if (!output?.id) return null;
     if (rawJsonCache.has(output.id)) return rawJsonCache.get(output.id);
     const promise = downloadOrthoFinderOutput(output.id, { galaxyApiKey })
@@ -174,6 +179,7 @@ const loadRawJson = async (output, galaxyApiKey) => {
 };
 
 const loadMarkdownText = async (output, galaxyApiKey) => {
+    if (typeof output?.markdownText === "string") return output.markdownText;
     if (!output?.id) return null;
     if (markdownCache.has(output.id)) return markdownCache.get(output.id);
     const promise = downloadOrthoFinderOutput(output.id, { galaxyApiKey });
@@ -246,6 +252,8 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
 
     const downloadArtifact = async (item, filename) => {
         if (!item?.id) return;
+        if (item.nativeJson) return downloadJson(item.nativeJson, filename);
+        if (typeof item.markdownText === "string") return downloadText(item.markdownText, filename);
         await downloadOrthoFinderOutputFile(item.id, filename, galaxyApiKey);
     };
 
@@ -461,7 +469,8 @@ function AnalysisResults({
     analysisGroups = [],
     genomes = [],
     historyId: historyIdProp = null,
-    requestedGeneCount = 0
+    requestedGeneCount = 0,
+    demoMode = false
 }) {
     const jobState = jobInfo?.state || (jobInfo ? "unknown" : "idle");
     const historyId = historyIdProp || jobInfo?.historyId || null;
@@ -487,8 +496,8 @@ function AnalysisResults({
     const [retryResults, setRetryResults] = useState(0);
     const [artifacts, setArtifacts] = useState([]);
     const [artifactError, setArtifactError] = useState(null);
-    const [resultView, setResultView] = useState("gene-specific");
-    const [loadAllResults, setLoadAllResults] = useState(false);
+    const [resultView, setResultView] = useState(demoMode ? "genome-wide" : "gene-specific");
+    const [loadAllResults, setLoadAllResults] = useState(demoMode);
     const [selectedGeneId, setSelectedGeneId] = useState(null);
     const [geneTab, setGeneTab] = useState("summary");
     const [geneSearch, setGeneSearch] = useState("");
@@ -647,7 +656,7 @@ function AnalysisResults({
     useEffect(() => {
         let cancelled = false;
         setNameLoading(false);
-        if (!selectedGene || selectedGene.fullName || !nameAccessions.length) return;
+        if (demoMode || !selectedGene || selectedGene.fullName || !nameAccessions.length) return;
         const groupId = selectedGene.orthogroupId;
         const accession = nameAccessions[0];
         setNameLoading(true);
@@ -661,7 +670,7 @@ function AnalysisResults({
     }, [nameLookupKey]);
 
     useEffect(() => {
-        if (!selectedGene || Object.keys(selectedGene.speciesGenes || {}).length || !historyId) return;
+        if (demoMode || !selectedGene || Object.keys(selectedGene.speciesGenes || {}).length || !historyId) return;
         let cancelled = false;
         getOrthogroupGenes(historyId, selectedGene.orthogroupId, galaxyApiKey)
             .then((speciesGenes) => {
@@ -815,6 +824,13 @@ function AnalysisResults({
     const downloadAnalysisBundle = async () => {
         setIsBundling(true);
         try {
+            if (demoMode) {
+                downloadJson({ demo: true, scope: "One verified orthogroup from eight bats; not genome-wide results", species: analysisSpecies,
+                    jsonOutputs: hyphyJsonOutputs.map(output => ({ orthogroup: resultIdentifier(output), method: resultMethod(output), result: output.nativeJson })),
+                    markdownOutputs: hyphyMarkdownOutputs.map(output => ({ orthogroup: resultIdentifier(output), method: resultMethod(output), report: output.markdownText }))
+                }, "phylodivas_bat_demo_results.json");
+                return;
+            }
             const datasetMap = new Map();
             hyphyCards.forEach((card) => {
                 if (!card.json?.id) return;
@@ -916,7 +932,7 @@ function AnalysisResults({
                     <div className={styles.overviewActions}>
                         <Button size="sm" variant="outline-primary" disabled={!genes.length} onClick={() => downloadText(geneSummaryCsv, "phylodivas_gene_summary.csv", "text/csv;charset=utf-8")}>Download table</Button>
                         <Button size="sm" variant="primary" disabled={!genes.length || isBundling} onClick={downloadAnalysisBundle}>
-                            {isBundling ? <><Spinner size="sm" className="me-2" />Building bundle...</> : "Download complete analysis"}
+                            {isBundling ? <><Spinner size="sm" className="me-2" />Building bundle...</> : demoMode ? "Download demo results" : "Download complete analysis"}
                         </Button>
                     </div>
                 </div>
@@ -925,8 +941,8 @@ function AnalysisResults({
                     <div><dt>Genes requested</dt><dd>{metrics.requested.toLocaleString()}</dd></div>
                     <div><dt>Methods</dt><dd>BUSTED, aBSREL, MEME</dd></div>
                     <div><dt>Parsed three-method coverage</dt><dd>{metrics.complete.toLocaleString()} parsed ({formatPercent(metrics.requested ? metrics.complete / metrics.requested : 0)}) — not Galaxy job completion</dd></div>
-                    <div><dt>Galaxy state</dt><dd>{jobState.replaceAll("_", " ")}</dd></div>
-                    <div><dt>History</dt><dd>{historyId ? <code>{historyId}</code> : "Not available"}</dd></div>
+                    <div><dt>{demoMode ? "Results source" : "Galaxy state"}</dt><dd>{demoMode ? "Saved demonstration" : jobState.replaceAll("_", " ")}</dd></div>
+                    <div><dt>{demoMode ? "Scope" : "History"}</dt><dd>{demoMode ? "One-gene bat example" : historyId ? <code>{historyId}</code> : "Not available"}</dd></div>
                 </dl>
                 {analysisSpecies.length > 0 && <p className={styles.speciesLine}><strong>Species:</strong> {analysisSpecies.join(", ")}</p>}
                 {artifactError && <p className={styles.inlineWarning}>Alignment and tree download links could not be indexed: {artifactError.message}</p>}
@@ -1143,7 +1159,8 @@ AnalysisResults.propTypes = {
     analysisGroups: PropTypes.array,
     genomes: PropTypes.array,
     historyId: PropTypes.string,
-    requestedGeneCount: PropTypes.number
+    requestedGeneCount: PropTypes.number,
+    demoMode: PropTypes.bool
 };
 
 AnalysisResults.defaultProps = {
