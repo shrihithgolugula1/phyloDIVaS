@@ -13,7 +13,7 @@ export default function DemoNativeReports({example, species}) {
     const markdown=Object.entries(example.methods).map(([method,entry])=>({id:`saved-md-${method}`,method,elementIdentifier:example.gene,markdownText:entry.markdownText}));
     return <section aria-label={`Native reports for ${example.gene}`}>
         <h3>{example.symbol || example.gene}: saved native reports</h3>
-        <p>These are the native JSON outputs from the same saved snapshot. Markdown downloads are teaching summaries generated from those JSON files, not the original Galaxy Markdown. BUSTED q-values retain the full snapshot's 1,557-test correction family.</p>
+        <p>These are the native JSON outputs from the same saved snapshot. Markdown downloads are teaching summaries generated from those JSON files, not the original Galaxy Markdown. BUSTED q-values retain the full snapshot's {example.correctionFamilySize?.toLocaleString() || 'saved'}-test correction family.</p>
         <div role="group" aria-label="Choose a native report" className="d-flex flex-wrap gap-2 mb-3">{['BUSTED','aBSREL','MEME'].map(method=><button key={method} className={`btn ${tab===method?'btn-success':'btn-outline-success'}`} aria-pressed={tab===method} onClick={()=>setTab(method)}>{method}</button>)}</div>
         <MethodResultPanel key={`${example.gene}-${tab}`} gene={gene} method={tab} thresholds={DEFAULT_THRESHOLDS} markdownOutputs={markdown} artifacts={[]} galaxyApiKey={null}/>
     </section>;

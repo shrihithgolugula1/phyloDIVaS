@@ -44,7 +44,7 @@ export function layoutTree(root) {
 
 export async function readDemoAsset(path, text = false) {
     if (!path.startsWith('/demo/bats/')) throw new Error('Invalid demo asset.');
-    const response = await fetch(path);
+    const response = await fetch(path, {cache: 'no-store'});
     if (!response.ok) throw new Error('A saved demo file could not be loaded. Refresh to retry.');
     return text ? response.text() : response.json();
 }
