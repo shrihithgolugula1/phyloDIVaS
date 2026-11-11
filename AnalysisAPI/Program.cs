@@ -47,5 +47,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/api/build-info", () => new { application = "phyloDIVaS", revision = Environment.GetEnvironmentVariable("PHYLODIVAS_REVISION") ?? "development" });
 
 app.Run();

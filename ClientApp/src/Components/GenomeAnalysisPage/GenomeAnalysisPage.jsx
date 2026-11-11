@@ -2247,6 +2247,7 @@ const renderSpeciesTree = useCallback(() => {
                 <div className={analysisPageStyles.searchContainer}>
                     <p className={analysisPageStyles.eyebrow}>Comparative genomics workflow</p>
                     <h1 className={`${analysisPageStyles.title} mb-2`}>dN/dS selection pressure analysis</h1>
+                    <small>Application revision: {import.meta.env.VITE_APP_REVISION || "development"}</small>
                     <p className={analysisPageStyles.subtitle}>
                         Select annotated RefSeq genomes, identify orthologous genes with OrthoFinder, and test selection pressure with HyPhy BUSTED.
                     </p>

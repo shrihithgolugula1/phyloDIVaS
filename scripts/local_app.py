@@ -101,6 +101,12 @@ def environment():
     for key, value in ENV_URLS.items():
         env.setdefault(key, value)
     env["DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE"] = "false"
+    try:
+        revision = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        revision = "unversioned"
+    env["PHYLODIVAS_REVISION"] = revision
+    env["VITE_APP_REVISION"] = revision
     return env
 
 
