@@ -6006,7 +6006,13 @@ namespace CapstoneServices.Galaxy
                 JsonElement details;
                 try
                 {
-                    details = await _galaxy.GetCollectionDetailsAsync(historyId, collection.Id!, ct);
+                    if (collection.Item.TryGetProperty("contents_url", out var contentsUrl) && contentsUrl.ValueKind == JsonValueKind.String)
+                    {
+                        var count = collection.Item.TryGetProperty("element_count", out var countNode) && countNode.TryGetInt32(out var n) ? n : 0;
+                        var children = await _galaxy.GetCollectionElementsAsync(contentsUrl.GetString()!, count, ct);
+                        details = JsonSerializer.SerializeToElement(new { elements = children });
+                    }
+                    else details = await _galaxy.GetCollectionDetailsAsync(historyId, collection.Id!, ct);
                 }
                 catch (Exception ex)
                 {
@@ -6304,6 +6310,7 @@ namespace CapstoneServices.Galaxy
                         catch (Exception ex)
                         {
                             _log.LogWarning(ex, "Failed to inspect collection {CollectionId} for HYPHY outputs", id);
+                            throw;
                         }
 
                         continue;
@@ -6342,7 +6349,7 @@ namespace CapstoneServices.Galaxy
             catch (Exception ex)
             {
                 _log.LogWarning(ex, "Unable to scan history {HistoryId} for HYPHY outputs", historyId);
-                return (new List<HyphyOutput>(), new List<HyphyOutput>());
+                throw;
             }
         }
 
