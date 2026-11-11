@@ -1528,13 +1528,20 @@ const renderSpeciesTree = useCallback(() => {
             const stageIndex = getDetectedPipelineStage(status.stage, currentStep);
             setStatusProgress([10, 35, 60, 75, 90, 100][stageIndex]);
             if (status.stage === "workflow_complete" || status.stage === "workflow_failed") {
+                // Result discovery can be slow; do not leave a terminal history
+                // on the "analysis submitted/running" page while it is fetched.
+                setCurrentStep(WORKFLOW_STEPS.COMPLETED);
+                setIsAnalyzing(false);
+                analysisSubmissionInFlightRef.current = false;
                 // The status endpoint intentionally returns only lightweight history
                 // evidence. Hydrate completed collection elements separately.
                 if (!hyphyResultsHydratedRef.current) {
+                    setCurrentJobInfo(previous => ({...previous, hyphyOutputsLoading: true}));
                     const completed = await getHyphyOutputs(historyId, apiKey);
                     setCurrentJobInfo((previous) => ({
                         ...(previous || {}),
                         state: status.stage,
+                        hyphyOutputsLoading: false,
                         galaxyApiKey: apiKey,
                         hyphyMarkdownOutputs: Array.isArray(completed?.hyphyMarkdownOutputs) ? completed.hyphyMarkdownOutputs : [],
                         hyphyJsonOutputs: Array.isArray(completed?.hyphyJsonOutputs) ? completed.hyphyJsonOutputs : [],

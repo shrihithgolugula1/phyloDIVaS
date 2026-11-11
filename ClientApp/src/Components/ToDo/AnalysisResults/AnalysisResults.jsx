@@ -534,6 +534,10 @@ function AnalysisResults({
     useEffect(() => {
         let cancelled = false;
         let lastProgressUpdate = 0;
+        if (jobInfo?.hyphyOutputsLoading) {
+            setIsPreparingResults(true);
+            return () => { cancelled = true; };
+        }
         const outputs = [];
         const seen = new Set();
         hyphyJsonOutputs.forEach((output) => {
@@ -606,7 +610,7 @@ function AnalysisResults({
             setResolvedOutputs(hyphyJsonOutputs);
         });
         return () => { cancelled = true; };
-    }, [hyphyJsonOutputs, galaxyApiKey, retryResults, loadAllResults, geneToRetrieve]);
+    }, [hyphyJsonOutputs, galaxyApiKey, retryResults, loadAllResults, geneToRetrieve, jobInfo?.hyphyOutputsLoading]);
 
     useEffect(() => {
         let cancelled = false;
@@ -884,7 +888,7 @@ function AnalysisResults({
     const loading = loadProgress.total > 0 && loadProgress.complete < loadProgress.total;
     const safeJobInfo = useMemo(() => redactSensitiveValues(jobInfo), [jobInfo]);
 
-    if (isPreparingResults || resolvedOutputs !== hyphyJsonOutputs) return (
+    if (jobInfo?.hyphyOutputsLoading || isPreparingResults || resolvedOutputs !== hyphyJsonOutputs) return (
         <section className={styles.resultsLoading} aria-labelledby="results-loading-title" aria-busy="true">
             <Spinner animation="border" aria-hidden="true" />
             <h4 id="results-loading-title">Preparing your Galaxy results</h4>
