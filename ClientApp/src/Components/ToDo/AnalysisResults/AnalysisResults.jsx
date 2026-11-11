@@ -894,7 +894,7 @@ function AnalysisResults({
             <p role="status" aria-live="polite">{loadProgress.total > 0
                 ? `${loadProgress.complete.toLocaleString()} of ${loadProgress.total.toLocaleString()} result files processed`
                 : "Discovering result files…"}</p>
-            <p>Large histories may take several minutes on the first visit. Successfully read results are cached in this browser to speed up later visits. No API key is saved.</p>
+            <p>Large histories may take several minutes. Successfully read results are reused within this connected session. No API key or private result cache is saved for another session.</p>
             <small>This is viewer loading progress, not Galaxy analysis progress. Unreadable files will be identified separately once loading finishes.</small>
         </section>
     );
@@ -920,7 +920,7 @@ function AnalysisResults({
                     <div><dt>Species</dt><dd>{analysisSpecies.length || "Not recovered"}</dd></div>
                     <div><dt>Genes requested</dt><dd>{metrics.requested.toLocaleString()}</dd></div>
                     <div><dt>Methods</dt><dd>BUSTED, aBSREL, MEME</dd></div>
-                    <div><dt>Completion</dt><dd>{metrics.complete.toLocaleString()} complete ({formatPercent(metrics.requested ? metrics.complete / metrics.requested : 0)})</dd></div>
+                    <div><dt>Parsed three-method coverage</dt><dd>{metrics.complete.toLocaleString()} parsed ({formatPercent(metrics.requested ? metrics.complete / metrics.requested : 0)}) — not Galaxy job completion</dd></div>
                     <div><dt>Galaxy state</dt><dd>{jobState.replaceAll("_", " ")}</dd></div>
                     <div><dt>History</dt><dd>{historyId ? <code>{historyId}</code> : "Not available"}</dd></div>
                 </dl>
@@ -954,7 +954,8 @@ function AnalysisResults({
 
                 {!loading && genes.length === 0 && <Alert variant="secondary">No readable native HyPhy outputs are available for this completed history.</Alert>}
 
-                {genes.length > 0 && resultView === "genome-wide" && (
+                {genes.length > 0 && resultView === "genome-wide" && !loadAllResults && <Alert variant="info">Load the full result family above before calculating genome-wide summaries. Individual genes remain available in Gene-Specific Analysis.</Alert>}
+                {genes.length > 0 && resultView === "genome-wide" && loadAllResults && (
                     <div id="genome-wide-panel" role="tabpanel" aria-labelledby="genome-wide-tab" className={styles.resultPanel}>
                         <div className={styles.metricGrid}>
                             <article><span>Successfully analyzed</span><strong>{metrics.complete.toLocaleString()}</strong><small>all three methods readable</small></article>
