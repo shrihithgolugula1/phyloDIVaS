@@ -757,7 +757,7 @@ function AnalysisResults({
 
     const completion = calculateAnalysisCompletion(genes, collectionInventory.geneIds.length);
     const qualityWarningCount = genes.filter((gene) => gene.warnings.length > 0).length;
-    const allEvidence = genes.map((gene) => evaluateGeneEvidence(gene, thresholds));
+    const allEvidence = useMemo(()=>genes.map((gene) => evaluateGeneEvidence(gene, thresholds)),[genes,thresholds]);
     const metrics = {
         requested: completion.requested,
         complete: completion.complete,
@@ -767,7 +767,8 @@ function AnalysisResults({
         meme: allEvidence.filter((evidence) => evidence.meme).length
     };
 
-    const lineageMatrix = useMemo(() => buildLineageSelectionMatrix(activeGenes, thresholds), [activeGenes, thresholds]);
+    const fullLineageMatrix=useMemo(()=>buildLineageSelectionMatrix(genes,thresholds),[genes,thresholds.absrelP]);
+    const lineageMatrix=useMemo(()=>{const ids=new Set(activeGenes.map(g=>g.id));return {...fullLineageMatrix,rows:fullLineageMatrix.rows.filter(row=>ids.has(row.gene.id))};},[fullLineageMatrix,activeGenes]);
     const evidencePositiveGenes = useMemo(() => activeGenes.filter((gene) => evaluateGeneEvidence(gene, thresholds).any), [activeGenes, thresholds]);
     const enrichmentBackground = useMemo(() => genes.filter((gene) => gene.analysisStatus === "complete"), [genes]);
     const enrichmentResults = useMemo(() => calculateGoEnrichment(evidencePositiveGenes, enrichmentBackground), [evidencePositiveGenes, enrichmentBackground]);
