@@ -910,7 +910,7 @@ function AnalysisResults({
             <section className={styles.analysisOverview} aria-labelledby="analysis-overview-title">
                 <div className={styles.overviewHeader}>
                     <div>
-                        <p className={styles.eyebrow}>Completed comparative analysis</p>
+                        <p className={styles.eyebrow}>Comparative analysis results</p>
                         <h4 id="analysis-overview-title">Analysis overview</h4>
                     </div>
                     <div className={styles.overviewActions}>
@@ -944,7 +944,7 @@ function AnalysisResults({
                 {!loadAllResults && <Alert variant="info">Gene-first view: only the selected gene is retrieved. Other gene files remain pending, not failed or nonsignificant. <Button size="sm" onClick={() => setLoadAllResults(true)}>Load full result family for genome-wide statistics</Button></Alert>}
                 {loading && <Alert variant="info">Partial results: files are still being retrieved. Unloaded methods are pending, not negative tests. BUSTED BH q-values will be calculated after retrieval finishes, using all valid BUSTED tests, independently of display filters.</Alert>}
                 <p role="status">Galaxy collection orthogroups: {METHODS.map((method) => `${method}: ${collectionInventory.counts[method]}`).join(" · ")}. {collectionInventory.consistent ? "All three tools contain the same genes." : "Collection gene sets do not yet match; review missing tool outputs."}</p>
-                <Table size="sm" responsive aria-label="Method result retrieval status"><thead><tr><th>Method</th><th>Parsed</th><th>Pending retrieval / Galaxy processing</th><th>Galaxy failures</th><th>Unreadable</th></tr></thead><tbody>{METHODS.map(method => <tr key={method}><th>{method}</th>{["complete", "pending", "failed", "unreadable"].map(state => <td key={state}>{genes.filter(gene => gene.methodStatus[method] === state).length.toLocaleString()}</td>)}</tr>)}</tbody></Table>
+                <Table size="sm" responsive aria-label="Method result retrieval status"><thead><tr><th>Method</th><th>Parsed</th><th>Pending retrieval / Galaxy processing</th><th>Paused</th><th>Galaxy failures</th><th>Unreadable</th><th>Missing / inaccessible</th></tr></thead><tbody>{METHODS.map(method => <tr key={method}><th>{method}</th>{["complete", "pending", "paused", "failed", "unreadable"].map(state => <td key={state}>{genes.filter(gene => gene.methodStatus[method] === state).length.toLocaleString()}</td>)}<td>{genes.filter(gene => ["missing", "deleted", "inaccessible"].includes(gene.methodStatus[method])).length.toLocaleString()}</td></tr>)}</tbody></Table>
                 <p>Unique orthogroups with confirmed Galaxy failures: {genes.filter(gene => METHODS.some(method => gene.methodStatus[method] === "failed")).length.toLocaleString()}. BUSTED correction family: {genes.filter(gene => gene.methodStatus.BUSTED === "complete").length.toLocaleString()} valid tests{loading ? " retrieved so far; q-values withheld until retrieval finishes" : "; excludes unreadable and failed tests"}.</p>
 
                 <div className={styles.resultTabs} role="tablist" aria-label="Results dashboard views">

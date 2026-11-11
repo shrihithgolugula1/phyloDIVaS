@@ -3183,7 +3183,7 @@ const renderSpeciesTree = useCallback(() => {
                                 errorMessage=""
                                 orthologousGroups={orthologousGroups}
                                 analysisGroups={submittedGroups}
-                                genomes={genomeAnalysisData?.genomes || selectedSpecies}
+                                genomes={genomeAnalysisData?.genomes?.length ? genomeAnalysisData.genomes : analysisSpecies}
                                 historyId={genomeAnalysisData?.historyId || activeHistoryId}
                                 requestedGeneCount={currentJobInfo?.hyphyGeneCount || liveGalaxyStatus?.selectedOrthogroupCount || submittedGroups.length}
                             />
