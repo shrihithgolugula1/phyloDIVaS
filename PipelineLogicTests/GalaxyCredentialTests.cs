@@ -39,6 +39,18 @@ internal static class GalaxyCredentialTests
             }
             catch (InvalidOperationException) { }
             Console.WriteLine("PASS: collection pagination preserves boundary elements and rejects incomplete inventories");
+            using (client.UseHistoryReadCache())
+            {
+                handler.FailCollectionInventory = true;
+                try
+                {
+                    await client.PrimeHistoryContentsCacheAsync("incomplete-history");
+                    throw new Exception("Missing essential collection inventory was silently accepted.");
+                }
+                catch (GalaxyHttpException) { }
+                finally { handler.FailCollectionInventory = false; }
+                Console.WriteLine("PASS: failed essential collection inventory cannot become a partial pipeline snapshot");
+            }
         }
         using (client.UseApiKey("dummy-poll"))
         using (client.UseHistoryReadCache())
@@ -72,11 +84,14 @@ internal static class GalaxyCredentialTests
     {
         public List<string> Keys { get; } = new();
         public List<string> Paths { get; } = new();
+        public bool FailCollectionInventory { get; set; }
         public int DatasetReads { get; private set; }
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             Keys.Add(request.Headers.GetValues("x-api-key").Single());
             Paths.Add(request.RequestUri!.AbsolutePath);
+            if (FailCollectionInventory && request.RequestUri.Query.Contains("history_content_type-eq"))
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable) { Content = new StringContent("fixture unavailable") });
             if (request.RequestUri.AbsolutePath == "/fixture-elements")
             {
                 var offset = int.Parse(System.Text.RegularExpressions.Regex.Match(request.RequestUri.Query, @"offset=(\d+)").Groups[1].Value);
