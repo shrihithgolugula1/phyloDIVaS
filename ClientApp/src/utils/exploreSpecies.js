@@ -9,8 +9,9 @@ export function groupExactSpecies(rows, query) {
     const species = new Set(matches.map(row => normalize(row.organism.name)).filter(name => name && name !== 'n/a'));
     if (species.size !== 1) return { primary: rows, related: [] };
     const [name] = species;
+    const canonical = rows.find(row => normalize(row.organism.name) === name);
     return {
-        primary: rows.filter(row => normalize(row.organism.name) === name),
-        related: rows.filter(row => normalize(row.organism.name) !== name),
+        primary: [canonical],
+        related: rows.filter(row => row !== canonical),
     };
 }

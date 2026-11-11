@@ -4,6 +4,10 @@ async function downloadSequence(url, filename) {
         throw new Error(`NCBI download failed (HTTP ${response.status}). Please try again.`);
     }
     const blob = await response.blob();
+    const signature = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
+    if (signature.length < 4 || signature[0] !== 0x50 || signature[1] !== 0x4b) {
+        throw new Error('NCBI did not return a ZIP archive. No file was saved; please retry.');
+    }
     const objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     try {

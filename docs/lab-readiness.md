@@ -11,7 +11,7 @@ modified, cancelled, deleted, or resubmitted during this audit.
 | P0 | Existing history retrieval previously timed out; complete replay not established | Fresh authenticated history replay required |
 | P0 | Multi-user cache/request isolation not demonstrated | Inspect credential scopes and run focused tests; no load claim |
 | P1 | Fresh users need SDK/Node/certificate and separate account/database setup | Existing launcher tests; verify clean source, document lab path |
-| P1 | Search stale-query/download behavior | Targeted parallel audit; see final addendum |
+| P1 | Search stale-query/download behavior | Fixed stale success/error/loading overwrites in genome and gene searches; organism changes invalidate old gene requests. Download errors preserve results; ZIP signature checked before saving. 23 isolated browser tests pass. |
 | P1 | Record counts displayed without units; obsolete continuation label | Labels now explicitly say dataset/collection records and recover interrupted preparation |
 | P1 | Optional external tree context not validated; divergence-time flag could imply a universal saturation cutoff | External context disabled for lab beta; reference subtree remains. Flag now explicitly says time alone cannot establish saturation or invalidate an analysis. |
 
@@ -25,13 +25,21 @@ source is exported separately, without credentials or private audit data.
 | Type | Evidence | Limit |
 | --- | --- | --- |
 | Browser/live | Analysis first-use screen renders; missing species/key disables submission. Home → Learn More → About → Go to Search navigation works. Live Explore `human` returned Homo sapiens GCF_000001405.40 plus five related primates. | Not every link exercised; no narrow-viewport signoff; no real download verified. |
-| Automated fixtures | 87 pipeline assertions, including strict N0 filtering, protein/CDS pairs, workflow wiring, completion evidence. 38 frontend results tests; 12 launcher/export tests. API build passes (0 errors). | Fixture-based, not Galaxy job execution. |
+| Automated fixtures | 87 pipeline assertions, including strict N0 filtering, protein/CDS pairs, workflow wiring, completion evidence. 38 frontend results tests; 12 launcher/export tests. API build passes (0 errors). 23 additional Chrome browser tests cover search races/grouping/download errors, including HTTP-200 HTML rejection. | Fixture-based, not Galaxy job execution. |
 | Real local output parsing | Three native pilot JSON files, eight sequences/34 codons; read+parse+summarize = 9.1 ms on maintainer Mac, Node 22. | Local pilot, not the older bat history; no network latency included. |
 | Synthetic performance | 30,000 method cards / 10,000 genes, normalization plus BH = 195.1 ms on maintainer Mac. | Repeated pilot summaries with unique HOG IDs; not real large-history retrieval or browser rendering timing. |
 | Completed-history replay | Not executed in this audit: no currently connected key/history in the open app. | A key/history was requested through the app; prior timeout evidence is not a passing replay test. |
 | Live smoke submission | Not executed. | No current authenticated Galaxy session; no genomes submitted. |
 
 ## Remaining P0/P1 reproduction and next actions
+
+The observed localhost:3000 frontend serves a separate user clone at the prior
+published commit. Source edits are NOT automatically hot-reloaded into that clone.
+Its working tree has an untracked nested clone directory; preserve it. In the
+installation actually used for the session, run `git pull --ff-only`, then stop
+its launcher with Ctrl+C only when no orchestration request is active, and run
+`python3 scripts/local_app.py --setup`. New builds must be loaded before claiming
+live verification of this patch. Do not repeatedly clone inside an existing clone.
 
 1. **History recovery/coverage (P0):** Resume Existing → enter an owning user's
    key and a known completed history → Load Existing History. Reproduce the
@@ -60,8 +68,33 @@ source is exported separately, without credentials or private audit data.
    against NCBI, test ambiguous/common/clade queries and rapid edits, and check
    desktop plus 390px viewport. NCBI's official assembly page hit a browser-check
    gate in this audit; its contents were not verified.
+   Explore exact unique species queries now show one best-ranked assembly with
+   additional assemblies/related species collapsed. Ambiguous/clade queries stay
+   uncollapsed rather than guessing a species. Equivalent canonical grouping in
+   the analysis picker, all clade pagination boundaries, and narrow layouts have
+   not been verified. Test console still reports an uncontrolled-to-controlled
+   input warning; this is a remaining minor frontend issue.
 6. Backend progress fixes are compiled but require a controlled API restart before
    live validation. Do not interrupt an active orchestration request to load them.
+
+### Focused reproduction commands
+
+From the authoritative source checkout:
+
+```bash
+python3 -m unittest discover -s scripts -p 'test_*.py'
+dotnet run --project PipelineLogicTests/PipelineLogicTests.csproj
+dotnet build AnalysisAPI/AnalysisAPI.csproj
+cd ClientApp
+npm run test:hyphy-results
+npx vitest run --config vitest.explore.config.js
+npm run build
+```
+
+The isolated browser suite requires installed Chrome and permission to start its
+local test server. Its first sandboxed attempt failed EPERM before any tests;
+rerunning with local-server permission passed all 23. All browser API responses
+in that suite are fixtures, separate from the live human-search baseline.
 
 ## Tree and instructions provenance
 

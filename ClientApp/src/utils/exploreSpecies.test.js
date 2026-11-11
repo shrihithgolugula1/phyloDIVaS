@@ -8,7 +8,7 @@ const chimp = row('Pan troglodytes', 'chimpanzee');
 describe('exact Explore species grouping', () => {
     it.each(['human', ' HOMO SAPIENS '])('groups exact %s with all same-species assemblies', query => {
         expect(groupExactSpecies([chimp, human, humanAssembly], query)).toEqual({
-            primary: [human, humanAssembly], related: [chimp],
+            primary: [human], related: [chimp, humanAssembly],
         });
     });
     it.each(['primates', 'hom', '', '9606', 'GCF_123'])('leaves non-exact query %s intact', query => {
