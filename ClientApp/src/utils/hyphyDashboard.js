@@ -51,7 +51,7 @@ export const normalizeIdentifier = (value = "") => String(value)
 const normalizeAccession = (value = "") => String(value)
     .trim()
     .replace(/^['"]|['"]$/g, "")
-    .replace(/\.\d+$/, "")
+    .replace(/[_.]\d+$/, "")
     .toLowerCase();
 
 const asArray = (value) => {
@@ -230,7 +230,7 @@ export function buildNormalizedGeneResults(cards = [], groups = [], options = {}
                 ? "partial"
                 : failedMethodCount > 0
                     ? "failed"
-                    : "missing";
+                    : METHODS.some(m=>statuses[m]==="unreadable")?"unreadable":METHODS.some(m=>statuses[m]==="pending")?"pending":METHODS.some(m=>statuses[m]==="paused")?"paused":"missing";
         const speciesCoverage = expectedSpeciesCount && speciesCount !== null
             ? Math.min(1, speciesCount / expectedSpeciesCount)
             : null;

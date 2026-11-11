@@ -46,7 +46,6 @@ def build(inventory_path,cache_path,membership_path,headers_path,old_path):
         gene=row['HOG'];methods=by_gene[gene]
         states={m:r['state'] for m,r in methods.items()}
         if any(v!='ok' for v in states.values()):exceptions.append({'orthogroup':gene,'methods':states})
-        if not any(v=='ok' for v in states.values()):continue
         g={k:v for k,v in annotations.get(gene,{}).items() if k in ['orthogroup','consensus_bat_symbol','protein_name','mapping_confidence','members_with_headers','symbol_support']}
         members=[headers.get(acc,{}) for acc in list(row.values())[3:]];symbols=collections.Counter(h.get('gene','') for h in members if h.get('gene') and not h['gene'].startswith('LOC'));symbol=symbols.most_common(1)[0][0] if symbols else ''
         representative=next((h for h in members if h.get('gene')==symbol),next((h for h in members if h),{}))

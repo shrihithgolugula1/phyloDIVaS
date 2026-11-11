@@ -38,7 +38,11 @@ const citationGroups = [
         description: "Used after codon-aware alignment to test orthologous groups for gene-wide episodic diversifying selection.",
         citations: [
             ["HyPhy 2.5", "Evolutionary model fitting and hypothesis-testing engine", "Kosakovsky Pond, S.L., Poon, A.F.Y., Velazquez, R., et al.", "HyPhy 2.5-A Customizable Platform for Evolutionary Hypothesis Testing Using Phylogenies.", "Molecular Biology and Evolution 37(1), 295-299 (2020).", "10.1093/molbev/msz197"],
-            ["BUSTED", "Gene-wide test for episodic positive selection", "Murrell, B., Weaver, S., Smith, M.D., et al.", "Gene-wide identification of episodic selection.", "Molecular Biology and Evolution 32(5), 1365-1371 (2015).", "10.1093/molbev/msv035"]
+            ["BUSTED", "Gene-wide test for episodic positive selection", "Murrell, B., Weaver, S., Smith, M.D., et al.", "Gene-wide identification of episodic selection.", "Molecular Biology and Evolution 32(5), 1365-1371 (2015).", "10.1093/molbev/msv035"],
+            ["aBSREL", "Corrected branch-specific tests for episodic diversifying selection", "Smith, M.D., Wertheim, J.O., Weaver, S., et al.", "Less Is More: An Adaptive Branch-Site Random Effects Model for Efficient Detection of Episodic Diversifying Selection.", "Molecular Biology and Evolution 32(5), 1342-1353 (2015).", "10.1093/molbev/msv022"],
+            ["MEME", "Codon-specific tests for episodic diversifying selection", "Murrell, B., Wertheim, J.O., Moola, S., et al.", "Detecting Individual Sites Subject to Episodic Diversifying Selection.", "PLoS Genetics 8(7), e1002764 (2012).", "10.1371/journal.pgen.1002764"],
+            ["Preranked gene-set enrichment", "Exploratory weighted running-score plots; gene-set permutations and BH term correction are described in the viewer", "Subramanian, A., Tamayo, P., Mootha, V.K., et al.", "Gene set enrichment analysis: A knowledge-based approach for interpreting genome-wide expression profiles.", "PNAS 102(43), 15545-15550 (2005).", "10.1073/pnas.0506580102"],
+            ["UniProt", "Reference-bat GO annotations mapped through unambiguous RefSeq accession stems", "The UniProt Consortium", "UniProt: the Universal Protein Knowledgebase in 2025.", "Nucleic Acids Research 53(D1), D609-D617 (2025).", "10.1093/nar/gkae1010"]
         ]
     }
 ].map((group) => ({

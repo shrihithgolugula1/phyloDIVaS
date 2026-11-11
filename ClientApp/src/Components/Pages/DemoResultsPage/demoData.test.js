@@ -1,5 +1,6 @@
 import {expect,it} from 'vitest';
 import {readFileSync} from 'node:fs';
+import {gunzipSync} from 'node:zlib';
 import {parseMembership,parseTree,layoutTree} from './demoData';
 import {benjaminiHochberg} from '../../../utils/hyphyDashboard';
 import {summarizeHyphyResult} from '../../../utils/hyphyResults';
@@ -8,7 +9,7 @@ it('reconciles the complete saved cohort and preserves missing tests as unavaila
     const snapshot=JSON.parse(file('genome-summary.json'));
     expect(snapshot.finished).toBe(true);expect(snapshot.exceptions).toHaveLength(43);
     expect(snapshot.methods.busted.ok).toBe(9952);expect(snapshot.methods.absrel.ok).toBe(9952);expect(snapshot.methods.meme.ok).toBe(9935);
-    expect(snapshot.requested).toBe(9978);expect(snapshot.genes).toHaveLength(9952);
+    expect(snapshot.requested).toBe(9978);expect(snapshot.genes).toHaveLength(9978);expect(snapshot.successfulGeneCount).toBe(9952);
     expect(snapshot.genes.filter(g=>['busted_status','meme_status','absrel_status'].every(k=>g[k]==='valid'))).toHaveLength(9935);
     for(const method of ['busted','absrel','meme']) {
         expect(Object.values(snapshot.methods[method]).reduce((a,b)=>a+b,0)).toBe(snapshot.requested);
@@ -20,11 +21,16 @@ it('reconciles the complete saved cohort and preserves missing tests as unavaila
         else expect(g.BUSTED_p).toBeNull();
     }
 });
-it('includes downloadable strict and submitted memberships without conflating their counts',()=>{
+it('reproduces historical single-copy membership without filtering parent-clade metadata',()=>{
     const submitted=parseMembership(file('orthogroups.tsv'));const strict=parseMembership(file('strict-N0.tsv'));
-    expect(submitted.rows).toHaveLength(9978);expect(strict.rows).toHaveLength(9261);
+    expect(submitted.rows).toHaveLength(9978);expect(strict.rows).toHaveLength(9978);
+    const raw=parseMembership(file('raw-N0.tsv'));
+    const expected=raw.rows.filter(row=>row.slice(3).every(cell=>cell.trim()&&!cell.includes(',')));
+    expect(strict.rows).toEqual(expected);
+    expect(new Set(strict.rows.map(row=>row[0]))).toEqual(new Set(submitted.rows.map(row=>row[0])));
+    expect(strict.rows.filter(row=>row[2].toLowerCase()!=='n0')).toHaveLength(717);
     expect(new Set(strict.rows.map(row=>row[0])).size).toBe(strict.rows.length);
-    expect(strict.rows.every(row=>row[2].toLowerCase()==='n0'&&row.slice(3).every(cell=>cell&&!cell.includes(',')))).toBe(true);
+    expect(strict.rows.every(row=>row.slice(3).every(cell=>cell&&!cell.includes(',')))).toBe(true);
     expect(submitted.species).toHaveLength(8);
 });
 it('preserves a rectangular scaled tree and eight credited local pictures',()=>{
@@ -50,3 +56,25 @@ it('cross-checks every packaged native report against its genome-wide record',()
         }
     }
 });
+
+it('links every gene to its own original tool Markdown and matching visualization data',()=>{
+    const snapshot=JSON.parse(file('genome-summary.json'));const index=JSON.parse(file('report-index.json'));
+    expect(Object.keys(index)).toHaveLength(9978);
+    const byId=new Map(snapshot.genes.map(g=>[g.orthogroup,g]));let reports=0;
+    for(const path of new Set(Object.values(index))) {
+        const local=path.replace('/demo/bats/','');
+        const batch=JSON.parse(gunzipSync(readFileSync(new URL(`../../../../public/demo/bats/${local}`,import.meta.url))));
+        for(const [id,report] of Object.entries(batch)) {
+            expect(report.gene).toBe(id);const gene=byId.get(id);expect(gene).toBeTruthy();
+            for(const [method,entry] of Object.entries(report.methods)) {
+                reports++;expect(entry.markdownText.length).toBeGreaterThan(10);
+                const summary=summarizeHyphyResult(entry.nativeJson,method);expect(summary.resultAvailable).toBe(true);
+                if(method==='BUSTED')expect(summary.pValue).toBe(gene.BUSTED_p);
+                if(method==='aBSREL')expect(summary.selectedBranches).toBe(gene.aBSREL_branches_within_gene005);
+                if(method==='MEME')expect(summary.selectedSites).toBe(gene.MEME_sites_raw01);
+                expect(JSON.stringify(entry)).not.toMatch(/\/Users\/|\/data\/|\b[a-f0-9]{32}\b/);
+            }
+        }
+    }
+    expect(reports).toBe(29839);
+},60000);

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import { downloadSvg, downloadSvgPng, downloadText } from "../../../utils/downloads";
 import {
@@ -54,6 +54,7 @@ FigureShell.defaultProps = { note: null };
 
 export function BustedHistogram({ genes, thresholds, onOpenGene }) {
     const svgRef = useRef(null);
+    const [countScale,setCountScale]=useState("log");
     const values = useMemo(() => genes.flatMap((gene) => {
         if (gene.bustedPValue == null || !Number.isFinite(Number(gene.bustedPValue)) || gene.bustedPValue < 0 || gene.bustedPValue > 1) return [];
         return [{
@@ -86,6 +87,8 @@ export function BustedHistogram({ genes, thresholds, onOpenGene }) {
     const chartWidth = width - plot.left - plot.right;
     const chartHeight = height - plot.top - plot.bottom;
     const barWidth = chartWidth / bins.length;
+    const scaleCount=n=>(countScale==="log"?Math.log1p(n)/Math.log1p(maximum):n/maximum)*chartHeight;
+    const countTicks=countScale==="log"?[0,1,10,100,1000,10000].filter(n=>n<=maximum):[0,.25,.5,.75,1].map(f=>Math.round(f*maximum));
     const thresholdX = plot.left + Math.min(12, -Math.log10(thresholds.bustedP)) / 12 * chartWidth;
     const csv = rowsToDelimited(values.map((value) => ({
         gene: value.gene.displayName,
@@ -104,21 +107,23 @@ export function BustedHistogram({ genes, thresholds, onOpenGene }) {
     return (
         <FigureShell
             title="BUSTED p-value distribution"
-            description="Distribution of gene-wide BUSTED evidence on a -log10 scale. Dark segments pass the selected BH FDR threshold."
+            description="All readable BUSTED tests, grouped by evidence strength. Paired bars compare all genes (gray) with genes passing BH FDR (green)."
             count={values.length}
             filename="busted_p_value_distribution"
             svgRef={svgRef}
             csv={csv}
             note={`The vertical line marks raw p = ${thresholds.bustedP}. BH uses the full valid result family shown above, not this display subset. Genuine zero p-values are displayed at 12 using a 1e-12 plotting floor; exported p-values remain unchanged. Missing p-values are excluded.`}
         >
+            <label>Gene-count scale <select value={countScale} onChange={e=>setCountScale(e.target.value)}><option value="log">Logarithmic (reveals smaller counts)</option><option value="linear">Linear</option></select></label>
             <svg ref={svgRef} className={styles.figureSvg} viewBox={`0 0 ${width} ${height}`} role="img" aria-labelledby="busted-hist-title busted-hist-desc">
                 <title id="busted-hist-title">BUSTED p-value histogram</title>
                 <desc id="busted-hist-desc">Histogram of minus log ten BUSTED p-values for {values.length} genes.</desc>
                 <line x1={plot.left} y1={plot.top + chartHeight} x2={width - plot.right} y2={plot.top + chartHeight} className={styles.axisLine} />
                 <line x1={plot.left} y1={plot.top} x2={plot.left} y2={plot.top + chartHeight} className={styles.axisLine} />
+                {countTicks.map(n=><g key={n}><line x1={plot.left} x2={width-plot.right} y1={plot.top+chartHeight-scaleCount(n)} y2={plot.top+chartHeight-scaleCount(n)} className={styles.gridLine}/><text x={plot.left-6} y={plot.top+chartHeight-scaleCount(n)+4} textAnchor="end" className={styles.axisText}>{n.toLocaleString()}</text></g>)}
                 {bins.map((bin, index) => {
-                    const totalHeight = bin.count / maximum * chartHeight;
-                    const fdrHeight = bin.fdrCount / maximum * chartHeight;
+                    const totalHeight = scaleCount(bin.count);
+                    const fdrHeight = scaleCount(bin.fdrCount);
                     const x = plot.left + index * barWidth + 2;
                     const y = plot.top + chartHeight - totalHeight;
                     return (
@@ -128,15 +133,15 @@ export function BustedHistogram({ genes, thresholds, onOpenGene }) {
                                 if (bin.genes.length === 1 && (event.key === "Enter" || event.key === " ")) onOpenGene(bin.genes[0]);
                             }}>
                             <title>{`${bin.count} genes from ${bin.start} to ${bin.end} -log10(p); ${bin.fdrCount} pass FDR`}</title>
-                            <rect x={x} y={y} width={Math.max(1, barWidth - 4)} height={totalHeight} className={styles.histogramBar} />
-                            <rect x={x} y={plot.top + chartHeight - fdrHeight} width={Math.max(1, barWidth - 4)} height={fdrHeight} className={styles.histogramSignificant} />
+                            <rect x={x} y={y} width={Math.max(1, (barWidth - 6)/2)} height={totalHeight} className={styles.histogramBar} />
+                            <rect x={x+(barWidth-6)/2+2} y={plot.top + chartHeight - fdrHeight} width={Math.max(1, (barWidth - 6)/2)} height={fdrHeight} className={styles.histogramSignificant} />
                             {index % 2 === 0 && <text x={x + barWidth / 2} y={height - 28} textAnchor="middle" className={styles.axisText}>{bin.start}</text>}
                         </g>
                     );
                 })}
                 <line x1={thresholdX} y1={plot.top} x2={thresholdX} y2={plot.top + chartHeight} className={styles.thresholdLine} />
                 <text x={plot.left + chartWidth / 2} y={height - 7} textAnchor="middle" className={styles.axisLabel}>-log10(BUSTED p-value)</text>
-                <text x={16} y={plot.top + chartHeight / 2} textAnchor="middle" transform={`rotate(-90 16 ${plot.top + chartHeight / 2})`} className={styles.axisLabel}>Genes</text>
+                <text x={16} y={plot.top + chartHeight / 2} textAnchor="middle" transform={`rotate(-90 16 ${plot.top + chartHeight / 2})`} className={styles.axisLabel}>{countScale==="log"?"Genes (log1p scale)":"Genes"}</text>
             </svg>
         </FigureShell>
     );
@@ -170,7 +175,7 @@ export function EvidenceScatterplot({ genes, thresholds, onOpenGene }) {
     }), [genes, thresholds]);
     const displayed = [...points]
         .sort((left, right) => right.y - left.y || right.x - left.x)
-        .slice(0, 1200);
+        ;
     const maxY = Math.max(1, ...displayed.map((point) => point.y));
     const width = 720;
     const height = 330;
@@ -460,3 +465,11 @@ GoEnrichmentPlot.propTypes = {
     onChooseGenes: PropTypes.func.isRequired
 };
 
+
+export function RankedSelectionPlot({genes,thresholds,onOpenGene}) {
+ const svg=useRef(null);const ranked=useMemo(()=>genes.filter(g=>g.bustedPValue!=null&&g.methodStatus.BUSTED==='complete').sort((a,b)=>a.bustedPValue-b.bustedPValue||a.id.localeCompare(b.id)).slice(0,30),[genes]);
+ const score=p=>Math.min(16,-Math.log10(Math.max(p,1e-16))),maximum=Math.max(1,...ranked.map(g=>score(g.bustedPValue))),height=90+ranked.length*28;
+ return <FigureShell title="Strongest gene-wide selection signals" description="The 30 strongest BUSTED results from the full displayed family. Green bars pass the across-gene BH threshold. Select a gene to open its detailed report." count={genes.filter(g=>g.methodStatus.BUSTED==='complete').length} filename="ranked_busted_genes" svgRef={svg} csv={rowsToDelimited(ranked,[{label:'Gene',value:'displayName'},{label:'Orthogroup',value:'orthogroupId'},{label:'p-value',value:'bustedPValue'},{label:'BH q',value:'bustedQValue'}])} note="Bar length is −log10(p), capped at 16 for display; tooltips and exports retain the original p-values. This plot ranks evidence, not evolutionary effect size.">
+ <svg ref={svg} className={styles.figureSvg} viewBox={`0 0 800 ${height}`} role="img" aria-label="Top BUSTED genes ranked by selection evidence">{ranked.map((g,i)=><g key={g.id} role="button" tabIndex="0" onClick={()=>onOpenGene(g)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onOpenGene(g);}}}><title>{g.displayName}: p={g.bustedPValue}; BH q={g.bustedQValue}</title><text x="185" y={35+i*28} textAnchor="end" className={styles.axisText}>{g.displayName.length>24?g.displayName.slice(0,23)+'…':g.displayName}</text><rect x="195" y={23+i*28} height="18" width={score(g.bustedPValue)/maximum*520} fill={g.bustedQValue!=null&&g.bustedQValue<=thresholds.bustedQ?'#17796b':'#94a4b2'}/><text x={202+score(g.bustedPValue)/maximum*520} y={36+i*28} className={styles.axisText}>{score(g.bustedPValue).toFixed(1)}</text></g>)}<text x="440" y={height-15} textAnchor="middle" className={styles.axisLabel}>−log10(BUSTED p-value)</text></svg>
+ </FigureShell>;
+}

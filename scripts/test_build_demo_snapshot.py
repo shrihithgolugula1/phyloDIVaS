@@ -21,7 +21,7 @@ class DemoImportTests(unittest.TestCase):
    db.execute('insert into results values(?,?)',('N0.HOG0000001busted',json.dumps({'p':.5})))
    db.execute('insert into results values(?,?)',('N0.HOG0000001absrel',json.dumps({'tested':1,'selected':0,'minimum':1})));db.commit();db.close()
    result=build(p/'inventory.json',p/'cache.sqlite',p/'members.tsv',p/'headers.txt',p/'old.json')
-   self.assertTrue(result['finished']);self.assertEqual(len(result['genes']),1);self.assertEqual(len(result['exceptions']),2)
+   self.assertTrue(result['finished']);self.assertEqual(len(result['genes']),2);self.assertEqual(len(result['exceptions']),2)
    self.assertEqual(result['genes'][0]['BUSTED_p'],.5);self.assertEqual(result['genes'][0]['BUSTED_q_BH'],.5)
    self.assertIsNone(result['genes'][0]['MEME_sites_raw01']);self.assertEqual(result['genes'][0]['meme_status'],'error')
    rows[0]['id']='not-retrieved';(p/'inventory.json').write_text(json.dumps({'records':rows,'coverage':result['methods'],'capturedAt':'fixture'}))

@@ -202,6 +202,8 @@ export function summarizeHyphyResult(parsed, method) {
         method: normalized,
         sequences,
         sites,
+        geneTree: Object.values(input.trees || {})[0] || null,
+        geneTreePartition: Object.keys(input.trees || {})[0] || "0",
         omegaClasses,
         omegaLT1,
         omegaEQ1,

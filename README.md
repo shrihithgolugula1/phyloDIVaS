@@ -108,18 +108,36 @@ For separate service windows while debugging, run:
 Choose **View demo results** on Run Analysis, or open `/Demo` locally. No Galaxy
 key or new job is required. OrthoFinder is a first-class result: an exported
 species tree with credited, locally cached pictures; zoom and branch lengths;
-searchable membership tables; and Newick, raw N0, strict-root and historical
-submission downloads. The current strict-root set has 9,261 groups; the historical
-run submitted 9,978, and the demo keeps those sets distinct.
+searchable membership tables; and Newick, raw N0, single-copy and historical
+submission downloads. The N0 table contains 9,978 groups with one accession in
+every species column, matching the historical submission. Gene Tree Parent Clade
+is preserved as metadata, rather than used as an extra eligibility restriction.
 
-The genome-wide panel contains the finished historical run: 9,952 genes with
-completed BUSTED and aBSREL results, including 9,935 with completed MEME results.
-The 26 paused genes and 17 additional MEME failures are listed separately;
-successful methods remain visible for genes with a MEME failure.
-It includes gene annotations, a BUSTED distribution, method-specific coverage,
-search/sort/pagination and CSV/JSON downloads. Unfinished/failed outputs are not
-negative findings. Full native JSON for three representative genes supports
-interactive BUSTED, aBSREL and MEME inspection; other genes retain their saved
-summary statistics. Example Markdown is generated from JSON and labelled as such.
-Private Galaxy IDs and working-file paths are excluded. Source paths and images
-are packaged locally so the demo requires no external API calls.
+The demo and connected Galaxy histories use the same selection dashboard and gene
+report components. All 9,978 requested orthogroups appear, including 26 paused
+genes. BUSTED and aBSREL each have 9,952 successful results; MEME has 9,935, with
+17 additional failures. Missing or failed tests are never treated as negative
+findings. BUSTED BH correction uses the full readable test family.
+
+Genome-wide figures include a logarithmic-count histogram and a ranked BUSTED
+bar chart. Search by symbol, full name, or accession and select **Detailed report**
+for any gene. Reports load on demand from compressed static batches and contain
+original tool Markdown (private working paths redacted), complete MEME site
+statistics for a Manhattan plot, and aBSREL branch tests and a scaled gene tree.
+Demo JSON downloads contain the scientific visualization fields, with bulky
+auxiliary arrays omitted and the representation labelled explicitly. Live
+histories retain their original Galaxy JSON downloads.
+
+The ranked-enrichment panel supports GMT files for any analysis. The saved bat
+example also includes UniProt GO mappings for Rhinolophus ferrumequinum, matched
+unambiguously through RefSeq accession stems. It ranks all readable BUSTED tests
+with reference annotations, reports coverage, and uses 999 seeded gene-set
+permutations. NES, nominal p-values and BH term q-values are shown; BH q-values
+are not described as the pooled GSEA FDR statistic. This exploratory ranking is
+unsigned selection evidence, not differential expression, and does not control
+for alignment quality or gene-length bias. GO annotations may be inferred rather
+than experimentally validated. UniProt data are attributed under CC BY 4.0:
+https://www.uniprot.org/help/license.
+
+All demo scientific assets and pictures are packaged locally. No Galaxy API key
+or external API call is needed to display the demo or calculate its enrichment.

@@ -48,3 +48,50 @@ export async function readDemoAsset(path, text = false) {
     if (!response.ok) throw new Error('A saved demo file could not be loaded. Refresh to retry.');
     return text ? response.text() : response.json();
 }
+
+const reportCache=new Map();
+export async function readDemoReport(index,gene) {
+    const path=index[gene];
+    if(!path)return {gene,methods:{}};
+    if(!/^\/demo\/bats\/reports\/batch-[a-z0-9-]+\.json\.gz$/.test(path))throw Error('Invalid saved report path.');
+    if(!reportCache.has(path)) {
+        const promise=fetch(path).then(async response=>{
+            if(!response.ok)throw Error('The saved gene report could not be loaded.');
+            const bytes=new Uint8Array(await response.arrayBuffer());
+            const text=bytes[0]===31&&bytes[1]===139?await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text():new TextDecoder().decode(bytes);
+            return JSON.parse(text);
+        }).catch(error=>{reportCache.delete(path);throw error;});
+        reportCache.set(path,promise);if(reportCache.size>8)reportCache.delete(reportCache.keys().next().value);
+    }
+    const batch=await reportCache.get(path),report=batch[gene];
+    if(!report||report.gene!==gene)throw Error('The saved report does not match this orthogroup.');return report;
+}
+
+export function buildSavedAnalysis(snapshot,membership,geneSets,reportIndex) {
+    const byId=new Map(snapshot.genes.map(g=>[g.orthogroup,g]));
+    const exceptions=new Map((snapshot.exceptions||[]).map(g=>[g.orthogroup,g.methods]));
+    const cards=[],groups=[];
+    const definitions=[['BUSTED','busted'],['aBSREL','absrel'],['MEME','meme']];
+    membership.rows.forEach(row=>{
+        const id=row[0],g=byId.get(id)||{};
+        const speciesGenes=Object.fromEntries(membership.species.map((species,i)=>[species,row[i+3]]));
+        groups.push({groupId:id,symbol:g.consensus_bat_symbol||null,groupName:g.protein_name||id,speciesGenes});
+        definitions.forEach(([method,key])=>{
+            const status=g[key+'_status']||(exceptions.get(id)?.[key]||'missing'),state=status==='valid'?'ok':status;
+            let summary=null;
+            if(state==='ok') {
+                if(method==='aBSREL'&&!Array.isArray(g.aBSREL_branches))throw Error('The saved branch inventory is incomplete.');
+                if(method==='MEME'&&!Array.isArray(g.MEME_site_hits))throw Error('The saved site inventory is incomplete.');
+                summary={method,resultAvailable:true,sequences:snapshot.species.length,sites:g.alignment_codons,
+                    pValue:method==='BUSTED'?g.BUSTED_p:null,
+                    absrelBranchResults:g.aBSREL_branches||[],memeSiteResults:g.MEME_site_hits||[],
+                    selectedBranches:g.aBSREL_branches_within_gene005||0,selectedSites:g.MEME_sites_raw01||0,
+                    callLabel:'Saved tool result',conclusion:'Open the detailed report for the original tool summary and complete site or branch results.'};
+            }
+            const json={id:`saved-${id}-${method}`,method,elementIdentifier:id,state,summaryOnly:true};
+            cards.push({method,elementIdentifier:id,json,summary});
+        });
+    });
+    return {cards,groups,geneSets,loadReport:gene=>readDemoReport(reportIndex,gene),savedAt:snapshot.savedAt,
+        summaryThresholdCaps:{absrelP:.05,memeP:.1},source:'Saved genome-wide bat analysis'};
+}

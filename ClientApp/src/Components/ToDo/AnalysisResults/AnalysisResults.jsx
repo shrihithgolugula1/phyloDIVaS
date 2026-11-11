@@ -1,5 +1,8 @@
 import PropTypes from "prop-types";
 import ResultsWorkspace from "./ResultsWorkspace";
+import {MemeManhattan, AbsrelGeneTree} from "./GeneResultFigures";
+import RankedEnrichment from "./RankedEnrichment";
+import MarkdownReport from "./MarkdownReport";
 import { readResultSummary, cacheResultSummary, clearResultCaches } from "../../../utils/hyphyResultCache";
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Alert, Button, Form, Spinner, Table } from "react-bootstrap";
@@ -31,6 +34,7 @@ import {
 import { summarizeHyphyResult } from "../../../utils/hyphyResults";
 import {
     BustedHistogram,
+    RankedSelectionPlot,
     EvidenceScatterplot,
     GoEnrichmentPlot,
     LineageHeatmap,
@@ -194,10 +198,10 @@ const loadMarkdownText = async (output, galaxyApiKey) => {
 };
 
 const branchDisplayName = (gene, branchName) => {
-    const normalized = String(branchName || "").replace(/\.\d+$/, "").toLowerCase();
+    const normalized = String(branchName || "").replace(/[_.]\d+$/, "").toLowerCase();
     for (const [species, identifiers] of Object.entries(gene?.speciesGenes || {})) {
         const values = Array.isArray(identifiers) ? identifiers : String(identifiers || "").split(",");
-        if (values.some((identifier) => String(identifier).trim().replace(/\.\d+$/, "").toLowerCase() === normalized)) {
+        if (values.some((identifier) => String(identifier).trim().replace(/[_.]\d+$/, "").toLowerCase() === normalized)) {
             return `${species.replaceAll("_", " ")} (${branchName})`;
         }
     }
@@ -239,6 +243,7 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
     const tree = artifacts.find((artifact) => artifactMatchesGene(artifact, gene, "gene_tree"));
     const available = gene.methodStatus[method] === "complete";
     const selected = method === "BUSTED" ? evidence.bustedFdr : method === "aBSREL" ? evidence.absrel : evidence.meme;
+    const fdrPending=method==="BUSTED"&&available&&gene.bustedQValue==null;
 
     useEffect(() => {
         let cancelled = false;
@@ -262,7 +267,7 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
         return (
             <Alert variant="secondary" className={styles.methodUnavailable}>
                 <Alert.Heading>{method} output is unavailable</Alert.Heading>
-                <p className="mb-0">No {method} dataset for this gene was found in the completed Galaxy result collections.</p>
+                <p className="mb-0">Galaxy status for this gene’s {method} method: {gene.methodStatus[method] || "missing"}. No successful report is available.</p>
             </Alert>
         );
     }
@@ -275,14 +280,14 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
                     <h5>{methodQuestion[method]}</h5>
                     <p>{methodLimit[method]}</p>
                 </div>
-                <SelectionBadge available={available} selected={selected}>
-                    {!available ? "Result unavailable" : selected ? "Selection detected" : "No selection detected"}
+                <SelectionBadge available={available&&!fdrPending} selected={selected}>
+                    {!available ? "Result unavailable" : fdrPending?"Across-gene FDR pending":selected ? "Selection detected" : "No selection detected"}
                 </SelectionBadge>
             </div>
 
             <div className={`${styles.selectionCallout} ${!available ? styles.callUnavailable : selected ? styles.callPositive : styles.callNegative}`}>
-                <strong>{summary?.callLabel || "Result unavailable"}</strong>
-                <p>{summary?.conclusion || card.error?.message || "The Galaxy dataset could not be interpreted."}</p>
+                <strong>{!available?"Result unavailable":fdrPending?"Across-gene correction requires the full BUSTED family":selected?"Evidence detected at the selected threshold":"The selected threshold is not reached"}</strong>
+                <p><b>Native tool summary at its default threshold:</b> {summary?.conclusion || card.error?.message || "The Galaxy dataset could not be interpreted."}</p>
                 {method === "BUSTED" && available && (
                     <p><b>Across-gene correction:</b> p = {formatNumber(gene.bustedPValue)}; BH q = {formatNumber(gene.bustedQValue)} across all readable BUSTED tests.</p>
                 )}
@@ -299,13 +304,13 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
             </div>
 
             <div className={styles.artifactActions} aria-label={`${method} downloads`}>
-                <Button size="sm" variant="outline-primary" onClick={() => downloadArtifact(card.json, `${safeDownloadName(gene.displayName)}_${method}.json`)}>JSON</Button>
+                <Button size="sm" variant="outline-primary" onClick={() => downloadArtifact(card.json, `${safeDownloadName(gene.displayName)}_${method}.json`)}>{card.json?.compact?"Report data (JSON)":"JSON"}</Button>
                 <Button size="sm" variant="outline-primary" disabled={!markdown} onClick={() => downloadArtifact(markdown, `${safeDownloadName(gene.displayName)}_${method}.md`)}>Markdown</Button>
                 <Button size="sm" variant="outline-primary" disabled={!alignment} onClick={() => downloadArtifact(alignment, `${safeDownloadName(gene.displayName)}_codon_alignment.fasta`)}>Alignment</Button>
                 <Button size="sm" variant="outline-primary" disabled={!tree} onClick={() => downloadArtifact(tree, `${safeDownloadName(gene.displayName)}_gene_tree.nwk`)}>Tree</Button>
                 <Button size="sm" variant="outline-secondary" href="https://vision.hyphy.org/" target="_blank" rel="noopener noreferrer">Open HyPhy Vision</Button>
             </div>
-            <p className={styles.visionNote}>HyPhy Vision cannot receive private Galaxy data automatically. Download this JSON and open it in HyPhy Vision for the complete upstream interactive report.</p>
+            <p className={styles.visionNote}>{card.json?.compact?"Saved report data retain the original values needed for these figures; bulk auxiliary arrays are omitted. The original Galaxy Markdown reports are included below. Use the complete original Galaxy JSON for HyPhy Vision.":"HyPhy Vision cannot receive private Galaxy data automatically. Download this JSON and open it in HyPhy Vision for the complete upstream interactive report."}</p>
 
             {method === "BUSTED" && summary?.omegaClasses?.length > 0 && (
                 <section className={styles.nativeResultSection} aria-labelledby="busted-rates-title">
@@ -333,6 +338,7 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
             {method === "aBSREL" && summary?.absrelBranchResults?.length > 0 && (
                 <section className={styles.nativeResultSection} aria-labelledby="absrel-results-title">
                     <h6 id="absrel-results-title">Branch-level results</h6>
+                    <AbsrelGeneTree gene={gene} summary={summary} threshold={thresholds.absrelP}/>
                     <div className={styles.nativeTableWrapTall}>
                         <table className={styles.nativeTable}>
                             <thead><tr><th scope="col">Branch</th><th scope="col">Corrected p</th><th scope="col">Uncorrected p</th><th scope="col">LRT</th><th scope="col">Rate classes</th><th scope="col">Call</th></tr></thead>
@@ -357,14 +363,7 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
             {method === "MEME" && summary?.memeSiteResults?.length > 0 && (
                 <section className={styles.nativeResultSection} aria-labelledby="meme-results-title">
                     <h6 id="meme-results-title">Site-level results</h6>
-                    <div className={styles.memeSitePlot} role="img" aria-label="MEME site p-values by codon">
-                        {summary.memeSiteResults.map((site) => {
-                            const score = Math.min(6, -Math.log10(Math.max(Number(site.pValue) || 1, 1e-6)));
-                            const significant = Number(site.pValue) <= thresholds.memeP;
-                            return <span key={`${site.partition}-${site.site}`} className={significant ? styles.memeSitePositive : styles.memeSitePoint}
-                                style={{ height: `${Math.max(3, score / 6 * 100)}%` }} title={`Codon ${site.site}: p=${formatNumber(site.pValue)}`} />;
-                        })}
-                    </div>
+                    <MemeManhattan sites={summary.memeSiteResults} threshold={thresholds.memeP} geneId={gene.orthogroupId}/>
                     <div className={styles.nativeTableWrapTall}>
                         <table className={styles.nativeTable}>
                             <thead><tr><th scope="col">Codon</th><th scope="col">Raw p-value</th><th scope="col">LRT</th><th scope="col">Beta+</th><th scope="col">Call</th></tr></thead>
@@ -385,8 +384,9 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
                 </section>
             )}
 
+            <GeneMarkdownSummaries gene={gene} markdownOutputs={markdownOutputs} galaxyApiKey={galaxyApiKey} onlyMethod={method}/>
             <details className={styles.rawNativeResult} onToggle={(event) => setShowRaw(event.currentTarget.open)}>
-                <summary>Inspect raw native JSON</summary>
+                <summary>{card.json?.compact?"Inspect saved report data (JSON)":"Inspect raw native JSON"}</summary>
                 {!showRaw && <p>Expand to retrieve this result directly from Galaxy.</p>}
                 {showRaw && !rawJson && !rawError && <div className={styles.rawLoading}><Spinner animation="border" size="sm" /> Loading native JSON...</div>}
                 {rawError && <Alert variant="warning">Unable to retrieve the raw JSON: {rawError.message}</Alert>}
@@ -396,7 +396,7 @@ function MethodResultPanel({ gene, method, thresholds, markdownOutputs, artifact
     );
 }
 
-function GeneMarkdownSummaries({ gene, markdownOutputs, galaxyApiKey }) {
+function GeneMarkdownSummaries({ gene, markdownOutputs, galaxyApiKey, onlyMethod=null }) {
     const [summaries, setSummaries] = useState({});
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -406,7 +406,7 @@ function GeneMarkdownSummaries({ gene, markdownOutputs, galaxyApiKey }) {
         setSummaries({});
         setError(null);
         setLoading(true);
-        const matches = METHODS.map((method) => ({
+        const matches = METHODS.filter(method=>!onlyMethod||method===onlyMethod).map((method) => ({
             method,
             output: markdownOutputs.find((item) => outputMatchesGene(item, gene, method))
         })).filter((item) => item.output);
@@ -424,7 +424,7 @@ function GeneMarkdownSummaries({ gene, markdownOutputs, galaxyApiKey }) {
             if (!cancelled) { setError(loadError); setLoading(false); }
         });
         return () => { cancelled = true; };
-    }, [gene.id, markdownOutputs, galaxyApiKey]);
+    }, [gene.id, markdownOutputs, galaxyApiKey, onlyMethod]);
 
     return (
         <section className={styles.geneMarkdownSummaries} aria-labelledby="galaxy-markdown-summary-title">
@@ -432,9 +432,9 @@ function GeneMarkdownSummaries({ gene, markdownOutputs, galaxyApiKey }) {
             <p>These summaries are loaded from the separate Markdown result files for this gene. Use the tool tabs for the interactive JSON outputs.</p>
             {error && <Alert variant="warning">The Galaxy Markdown summaries could not be loaded: {error.message}</Alert>}
             {METHODS.map((method) => summaries[method] ? (
-                <details key={method} open className={styles.markdownSummary}>
+                <details key={method} className={styles.markdownSummary}>
                     <summary>{method} summary</summary>
-                    <pre>{summaries[method]}</pre>
+                    <MarkdownReport text={summaries[method]}/>
                 </details>
             ) : null)}
             {loading && <p role="status">Loading tool summaries...</p>}
@@ -446,7 +446,8 @@ function GeneMarkdownSummaries({ gene, markdownOutputs, galaxyApiKey }) {
 GeneMarkdownSummaries.propTypes = {
     gene: PropTypes.object.isRequired,
     markdownOutputs: PropTypes.array.isRequired,
-    galaxyApiKey: PropTypes.string
+    galaxyApiKey: PropTypes.string,
+    onlyMethod: PropTypes.string
 };
 
 GeneMarkdownSummaries.defaultProps = { galaxyApiKey: null };
@@ -471,7 +472,8 @@ function AnalysisResults({
     genomes = [],
     historyId: historyIdProp = null,
     requestedGeneCount = 0,
-    demoMode = false
+    demoMode = false,
+    savedResults = null
 }) {
     const jobState = jobInfo?.state || (jobInfo ? "unknown" : "idle");
     const historyId = historyIdProp || jobInfo?.historyId || null;
@@ -488,6 +490,10 @@ function AnalysisResults({
         return [...new Set(source.map((genome) => typeof genome === "string" ? genome : genome?.species).filter(Boolean))];
     }, [genomes, jobInfo?.genomes]);
     const [hyphyCards, setHyphyCards] = useState([]);
+    const [detailReport,setDetailReport]=useState(null);
+    const [detailError,setDetailError]=useState("");
+    const [detailAttempt,setDetailAttempt]=useState(0);
+    const [showDiagnostics,setShowDiagnostics]=useState(false);
     const [resultAnnotations, setResultAnnotations] = useState({});
     const [nameLoading, setNameLoading] = useState(false);
     const [loadProgress, setLoadProgress] = useState({ complete: 0, total: 0 });
@@ -544,6 +550,10 @@ function AnalysisResults({
     useEffect(() => {
         let cancelled = false;
         let lastProgressUpdate = 0;
+        if(savedResults) {
+            setHyphyCards(savedResults.cards);setIsPreparingResults(false);setResolvedOutputs(hyphyJsonOutputs);setLoadError(null);setLoadProgress({complete:savedResults.cards.length,total:savedResults.cards.length});
+            return()=>{cancelled=true;};
+        }
         if (jobInfo?.hyphyOutputsLoading) {
             setIsPreparingResults(true);
             return () => { cancelled = true; };
@@ -620,7 +630,7 @@ function AnalysisResults({
             setResolvedOutputs(hyphyJsonOutputs);
         });
         return () => { cancelled = true; };
-    }, [hyphyJsonOutputs, galaxyApiKey, retryResults, loadAllResults, geneToRetrieve, jobInfo?.hyphyOutputsLoading]);
+    }, [hyphyJsonOutputs, galaxyApiKey, retryResults, loadAllResults, geneToRetrieve, jobInfo?.hyphyOutputsLoading, savedResults]);
 
     useEffect(() => {
         let cancelled = false;
@@ -649,7 +659,20 @@ function AnalysisResults({
         }
     }, [genes, selectedGeneId]);
 
-    const selectedGene = genes.find((gene) => gene.id === selectedGeneId) || null;
+    const selectedGeneBase = genes.find((gene) => gene.id === selectedGeneId) || null;
+    useEffect(()=>{
+        let active=true;setDetailReport(null);setDetailError("");
+        if(!savedResults||resultView!=="gene-specific"||!selectedGeneBase)return()=>{active=false;};
+        savedResults.loadReport(selectedGeneBase.orthogroupId).then(value=>{if(active)setDetailReport(value);}).catch(error=>{if(active)setDetailError(error.message);});
+        return()=>{active=false;};
+    },[savedResults,selectedGeneBase?.id,resultView,detailAttempt]);
+    const selectedGene=useMemo(()=>{
+        if(!selectedGeneBase||!savedResults||detailReport?.gene!==selectedGeneBase.orthogroupId)return selectedGeneBase;
+        const cards=Object.entries(detailReport.methods).map(([method,entry])=>({method,elementIdentifier:detailReport.gene,json:{id:`saved-report-${detailReport.gene}-${method}`,method,elementIdentifier:detailReport.gene,state:'ok',nativeJson:entry.nativeJson,compact:true},summary:summarizeHyphyResult(entry.nativeJson,method)}));
+        const updated=buildNormalizedGeneResults(cards,[selectedGeneBase.group],{expectedSpeciesCount:analysisSpecies.length,requestedGroupIds:[selectedGeneBase.orthogroupId]})[0];
+        return {...selectedGeneBase,...updated,bustedQValue:selectedGeneBase.bustedQValue,analysisStatus:selectedGeneBase.analysisStatus,warnings:selectedGeneBase.warnings,methodStatus:{...selectedGeneBase.methodStatus,...Object.fromEntries(cards.map(c=>[c.method,'complete']))}};
+    },[selectedGeneBase,savedResults,detailReport,analysisSpecies.length]);
+    const selectedMarkdownOutputs=useMemo(()=>savedResults&&detailReport&&selectedGeneBase&&detailReport.gene===selectedGeneBase.orthogroupId?Object.entries(detailReport.methods).map(([method,entry])=>({id:`saved-md-${detailReport.gene}-${method}`,method,elementIdentifier:detailReport.gene,markdownText:entry.markdownText})):hyphyMarkdownOutputs,[savedResults,detailReport,selectedGeneBase?.orthogroupId,hyphyMarkdownOutputs]);
 
     const nameAccessions = (selectedGene?.accessions || []).flatMap((value) =>
         String(value).match(/(?:[A-Z]{1,4}_?\d+)(?:\.\d+)?/g) || []);
@@ -826,8 +849,9 @@ function AnalysisResults({
         setIsBundling(true);
         try {
             if (demoMode) {
-                downloadJson({ demo: true, scope: "One verified orthogroup from eight bats; not genome-wide results", species: analysisSpecies,
-                    jsonOutputs: hyphyJsonOutputs.map(output => ({ orthogroup: resultIdentifier(output), method: resultMethod(output), result: output.nativeJson })),
+                downloadJson({ demo: true, scope: "Genome-wide saved results; complete tool reports load per gene", species: analysisSpecies,
+                    geneSummary: normalizedGeneRows(genes,thresholds),
+                    jsonOutputs: hyphyJsonOutputs.map(output => ({ orthogroup: resultIdentifier(output), method: resultMethod(output), state: output.state })),
                     markdownOutputs: hyphyMarkdownOutputs.map(output => ({ orthogroup: resultIdentifier(output), method: resultMethod(output), report: output.markdownText }))
                 }, "phylodivas_bat_demo_results.json");
                 return;
@@ -943,7 +967,7 @@ function AnalysisResults({
                     <div><dt>Methods</dt><dd>BUSTED, aBSREL, MEME</dd></div>
                     <div><dt>Parsed three-method coverage</dt><dd>{metrics.complete.toLocaleString()} parsed ({formatPercent(metrics.requested ? metrics.complete / metrics.requested : 0)}) — not Galaxy job completion</dd></div>
                     <div><dt>{demoMode ? "Results source" : "Galaxy state"}</dt><dd>{demoMode ? "Saved demonstration" : jobState.replaceAll("_", " ")}</dd></div>
-                    <div><dt>{demoMode ? "Scope" : "History"}</dt><dd>{demoMode ? "One-gene bat example" : historyId ? <code>{historyId}</code> : "Not available"}</dd></div>
+                    <div><dt>{demoMode ? "Scope" : "History"}</dt><dd>{demoMode ? `${metrics.requested.toLocaleString()} submitted orthogroups` : historyId ? <code>{historyId}</code> : "Not available"}</dd></div>
                 </dl>
                 {analysisSpecies.length > 0 && <p className={styles.speciesLine}><strong>Species:</strong> {analysisSpecies.join(", ")}</p>}
                 {artifactError && <p className={styles.inlineWarning}>Alignment and tree download links could not be indexed: {artifactError.message}</p>}
@@ -967,7 +991,7 @@ function AnalysisResults({
                 <div className={styles.resultTabs} role="tablist" aria-label="Results dashboard views">
                     <button type="button" id="genome-wide-tab" role="tab" aria-selected={resultView === "genome-wide"} aria-controls="genome-wide-panel"
                         tabIndex={resultView === "genome-wide" ? 0 : -1} className={`${styles.resultTab} ${resultView === "genome-wide" ? styles.activeResultTab : ""}`}
-                        onClick={() => setResultView("genome-wide")} onKeyDown={handlePrimaryTabKeyDown}>Genome-wide Insights</button>
+                        onClick={() => {setLoadAllResults(true);setResultView("genome-wide");}} onKeyDown={handlePrimaryTabKeyDown}>Genome-wide Insights</button>
                     <button type="button" id="gene-specific-tab" role="tab" aria-selected={resultView === "gene-specific"} aria-controls="gene-specific-panel"
                         tabIndex={resultView === "gene-specific" ? 0 : -1} className={`${styles.resultTab} ${resultView === "gene-specific" ? styles.activeResultTab : ""}`}
                         onClick={() => setResultView("gene-specific")} onKeyDown={handlePrimaryTabKeyDown}>Gene-Specific Analysis</button>
@@ -998,12 +1022,12 @@ function AnalysisResults({
                                     <option value="all">All evidence states</option><option value="any">Any method</option><option value="busted">BUSTED FDR</option><option value="absrel">aBSREL branch</option><option value="meme">MEME site</option><option value="none">No detected evidence</option>
                                 </Form.Select></Form.Group>
                                 <Form.Group controlId="result-status-filter"><Form.Label>Analysis status</Form.Label><Form.Select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                                    <option value="all">All statuses</option><option value="complete">Complete</option><option value="partial">Partial</option><option value="failed">Failed</option><option value="missing">Missing</option>
+                                    <option value="all">All statuses</option><option value="complete">Complete</option><option value="partial">Partial</option><option value="failed">Failed</option><option value="missing">Missing</option><option value="paused">Paused</option><option value="pending">Pending</option><option value="unreadable">Unreadable</option>
                                 </Form.Select></Form.Group>
                                 <Form.Group controlId="threshold-busted-p"><Form.Label>BUSTED raw p</Form.Label><Form.Control type="number" min="0.0001" max="1" step="0.01" value={thresholds.bustedP} onChange={(event) => setThresholds((current) => ({ ...current, bustedP: Number(event.target.value) }))} /></Form.Group>
                                 <Form.Group controlId="threshold-busted-q"><Form.Label>BUSTED BH q</Form.Label><Form.Control type="number" min="0.0001" max="1" step="0.01" value={thresholds.bustedQ} onChange={(event) => setThresholds((current) => ({ ...current, bustedQ: Number(event.target.value) }))} /></Form.Group>
-                                <Form.Group controlId="threshold-absrel"><Form.Label>aBSREL corrected p</Form.Label><Form.Control type="number" min="0.0001" max="1" step="0.01" value={thresholds.absrelP} onChange={(event) => setThresholds((current) => ({ ...current, absrelP: Number(event.target.value) }))} /></Form.Group>
-                                <Form.Group controlId="threshold-meme"><Form.Label>MEME raw site p</Form.Label><Form.Control type="number" min="0.0001" max="1" step="0.01" value={thresholds.memeP} onChange={(event) => setThresholds((current) => ({ ...current, memeP: Number(event.target.value) }))} /></Form.Group>
+                                <Form.Group controlId="threshold-absrel"><Form.Label>aBSREL corrected p</Form.Label><Form.Control type="number" min="0.0001" max={savedResults?.summaryThresholdCaps.absrelP||1} step="0.01" value={thresholds.absrelP} onChange={(event) => setThresholds((current) => ({ ...current, absrelP: Math.min(savedResults?.summaryThresholdCaps.absrelP||1,Math.max(.0001,Number(event.target.value))) }))} /></Form.Group>
+                                <Form.Group controlId="threshold-meme"><Form.Label>MEME raw site p</Form.Label><Form.Control type="number" min="0.0001" max={savedResults?.summaryThresholdCaps.memeP||1} step="0.01" value={thresholds.memeP} onChange={(event) => setThresholds((current) => ({ ...current, memeP: Math.min(savedResults?.summaryThresholdCaps.memeP||1,Math.max(.0001,Number(event.target.value))) }))} /></Form.Group>
                             </div>
                             <div className={styles.subsetControls}>
                                 <Button size="sm" variant="outline-primary" onClick={() => setSubsetIds(new Set(matchingGenes.map((gene) => gene.id)))}>Use matching genes as subset</Button>
@@ -1017,18 +1041,16 @@ function AnalysisResults({
                             </div>
                         </section>
 
+                        {savedResults?.summaryThresholdCaps&&<p className={styles.figureNote}>Saved aggregate site calls support thresholds up to MEME p = 0.1 and aBSREL corrected p = 0.05. Detailed reports include all codons and branches. BUSTED correction always uses the full readable family.</p>}
                         <div className={styles.figureGrid}>
+                            <RankedSelectionPlot genes={activeGenes} thresholds={thresholds} onOpenGene={openGene} />
                             <BustedHistogram genes={activeGenes} thresholds={thresholds} onOpenGene={(gene) => openGene(gene, "BUSTED")} />
                             <EvidenceScatterplot genes={activeGenes} thresholds={thresholds} onOpenGene={openGene} />
                             <MethodOverlapPlot genes={activeGenes} thresholds={thresholds} onChooseGenes={chooseGenes} />
                             <LineageHeatmap matrix={lineageMatrix} count={activeGenes.length} thresholds={thresholds} onOpenGene={(gene) => openGene(gene, "aBSREL")} />
-                            {hasGoAnnotations ? (
+                            <RankedEnrichment genes={genes} geneSets={savedResults?.geneSets} familyReady={loadAllResults&&!loading}/>
+                            {hasGoAnnotations && (
                                 <GoEnrichmentPlot results={enrichmentResults} backgroundCount={enrichmentBackground.length} targetCount={evidencePositiveGenes.length} onChooseGenes={(ids) => chooseGenes(ids.map((id) => genes.find((gene) => gene.id === id)).filter(Boolean))} />
-                            ) : (
-                                <section className={styles.dashboardFigure} aria-labelledby="go-unavailable-title">
-                                    <div className={styles.figureHeader}><div><h5 id="go-unavailable-title">GO enrichment</h5><p>Functional enrichment requires structured Gene Ontology annotations.</p></div></div>
-                                    <div className={styles.unavailableFigure}><strong>Not calculated</strong><span>No GO term metadata is present for the tested genes. No annotations or enrichment statistics were inferred.</span></div>
-                                </section>
                             )}
                         </div>
 
@@ -1054,12 +1076,12 @@ function AnalysisResults({
                                             <tr key={gene.id}>
                                                 <td><Form.Check checked={included} onChange={() => toggleGeneSubset(gene.id)} aria-label={`${included ? "Exclude" : "Include"} ${gene.displayName}`} /></td>
                                                 <th scope="row"><span className={styles.geneFamilyName}>{gene.displayName}</span><span>{gene.orthogroupId}</span></th>
-                                                <td><SelectionBadge available={gene.analysisStatus !== "missing" && gene.analysisStatus !== "failed"} selected={gene.analysisStatus === "complete"}>{gene.analysisStatus}</SelectionBadge></td>
+                                                <td><SelectionBadge available={["complete","partial"].includes(gene.analysisStatus)} selected={gene.analysisStatus === "complete"}>{gene.analysisStatus}</SelectionBadge></td>
                                                 <td>{formatNumber(gene.bustedPValue)} / {formatNumber(gene.bustedQValue)}{evidence.bustedFdr && <span className={styles.tableEvidence}>FDR</span>}</td>
                                                 <td>{evidence.selectedBranches.toLocaleString()}</td>
                                                 <td>{evidence.selectedSites.toLocaleString()}</td>
                                                 <td>{gene.speciesCount ?? "N/A"}{gene.expectedSpeciesCount ? ` / ${gene.expectedSpeciesCount}` : ""}</td>
-                                                <td><Button size="sm" variant="outline-primary" onClick={() => openGene(gene)}>View gene</Button></td>
+                                                <td><Button size="sm" variant="outline-primary" aria-label={`View detailed report for ${gene.displayName} (${gene.orthogroupId})`} onClick={() => openGene(gene)}>Detailed report</Button></td>
                                             </tr>
                                         );
                                     })}</tbody>
@@ -1087,7 +1109,7 @@ function AnalysisResults({
                             {geneSelectorOptions.length === 200 && <small>Showing the first 200 matches. Refine the search to narrow the list.</small>}
                         </aside>
 
-                        {selectedGene && (
+                        {selectedGene && (!savedResults||detailReport?.gene===selectedGene.orthogroupId) && (
                             <article className={styles.geneWorkspace}>
                                 <header className={styles.geneHeader}>
                                     <div><p className={styles.eyebrow}>{demoMode ? "Saved orthogroup example" : "Strict 1:1 ortholog"}</p><h4>{selectedGene.displayName}</h4><p>{selectedGene.fullName && selectedGene.fullName !== selectedGene.displayName ? selectedGene.fullName : selectedGene.orthogroupId}</p></div>
@@ -1121,7 +1143,7 @@ function AnalysisResults({
                                             <div><dt>Species coverage</dt><dd>{selectedGene.speciesCount ?? "N/A"}{selectedGene.expectedSpeciesCount ? ` of ${selectedGene.expectedSpeciesCount} (${formatPercent(selectedGene.speciesCoverage)})` : ""}</dd></div>
                                         </dl>
                                         <section className={styles.functionalAnnotation}><h5>Functional annotation</h5><p>{selectedGene.description || "No reference-species functional annotation is available."}</p>{selectedGene.aliases.length > 0 && <p><strong>Aliases:</strong> {selectedGene.aliases.join(", ")}</p>}{selectedGene.annotationSourceUrl && <a href={selectedGene.annotationSourceUrl} target="_blank" rel="noopener noreferrer">View source annotation</a>}</section>
-                                        <GeneMarkdownSummaries gene={selectedGene} markdownOutputs={hyphyMarkdownOutputs} galaxyApiKey={galaxyApiKey} />
+                                        <GeneMarkdownSummaries gene={selectedGene} markdownOutputs={selectedMarkdownOutputs} galaxyApiKey={galaxyApiKey} />
                                         <div className={styles.geneEvidenceGrid}>
                                             {METHODS.map((method) => {
                                                 const evidence = evaluateGeneEvidence(selectedGene, thresholds);
@@ -1135,18 +1157,19 @@ function AnalysisResults({
                                         <details className={styles.speciesGeneDetails}><summary>Species-specific accessions ({Object.keys(selectedGene.speciesGenes).length})</summary><dl>{Object.entries(selectedGene.speciesGenes).map(([species, identifiers]) => <div key={species}><dt>{species.replaceAll("_", " ")}</dt><dd>{String(identifiers)}</dd></div>)}</dl></details>
                                     </div>
                                 ) : (
-                                    <MethodResultPanel gene={selectedGene} method={geneTab} thresholds={thresholds} markdownOutputs={hyphyMarkdownOutputs} artifacts={artifacts} galaxyApiKey={galaxyApiKey} />
+                                    <MethodResultPanel gene={selectedGene} method={geneTab} thresholds={thresholds} markdownOutputs={selectedMarkdownOutputs} artifacts={artifacts} galaxyApiKey={galaxyApiKey} />
                                 )}
                             </article>
                         )}
+                        {selectedGene&&savedResults&&detailReport?.gene!==selectedGene.orthogroupId&&<section className={styles.geneWorkspace} aria-busy={!detailError}>{detailError?<Alert variant="warning">{detailError} <Button onClick={()=>setDetailAttempt(n=>n+1)}>Retry gene report</Button></Alert>:<p role="status">Loading the three-tool report for {selectedGene.displayName}…</p>}</section>}
                     </div>
                 )}
             </section>
 
-            <details className={styles.jobDetails}>
+            <details className={styles.jobDetails} onToggle={event=>setShowDiagnostics(event.currentTarget.open)}>
                 <summary>Analysis provenance and diagnostic payload</summary>
                 <div className={styles.jobDetailsHeader}><Button size="sm" variant="outline-secondary" onClick={() => downloadJson(provenance, "phylodivas_provenance.json")}>Download provenance</Button></div>
-                <pre className={styles.jobPayload}>{JSON.stringify({ provenance, job: safeJobInfo }, null, 2)}</pre>
+                {showDiagnostics&&<pre className={styles.jobPayload}>{JSON.stringify({ provenance, job: safeJobInfo }, null, 2)}</pre>}
             </details>
         </div></ResultsWorkspace>
     );
@@ -1161,7 +1184,8 @@ AnalysisResults.propTypes = {
     genomes: PropTypes.array,
     historyId: PropTypes.string,
     requestedGeneCount: PropTypes.number,
-    demoMode: PropTypes.bool
+    demoMode: PropTypes.bool,
+    savedResults: PropTypes.object
 };
 
 AnalysisResults.defaultProps = {
