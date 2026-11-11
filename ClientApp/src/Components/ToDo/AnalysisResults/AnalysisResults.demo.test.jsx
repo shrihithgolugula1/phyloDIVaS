@@ -14,7 +14,8 @@ it('loads OrthoFinder and genome-wide results with native reports and local down
   render(<MemoryRouter><DemoResultsPage/></MemoryRouter>);
   await screen.findByRole('heading',{name:'OrthoFinder results'},{timeout:15000});
   expect(screen.getByRole('heading',{name:'Genome-wide selection results'})).toBeTruthy();
-  expect(screen.getByText('9,952',{exact:true})).toBeTruthy();expect(screen.getByText('9,935',{exact:true})).toBeTruthy();
+  expect(screen.getAllByText('9,952',{exact:true}).length).toBeGreaterThanOrEqual(3);expect(screen.getAllByText('9,935',{exact:true}).length).toBeGreaterThanOrEqual(2);
+  expect(screen.getByText('Gene-level exceptions (43 genes)',{exact:true})).toBeTruthy();
   const table=screen.getByRole('table',{name:'OrthoFinder orthogroup membership'});expect(table.querySelectorAll('tbody tr')).toHaveLength(25);
   expect(screen.getByRole('link',{name:'Download species tree (Newick)'}).getAttribute('href')).toBe('/demo/bats/species-tree.nwk');
   expect(screen.getByRole('link',{name:'Download raw N0 table'}).getAttribute('download')).not.toBeNull();

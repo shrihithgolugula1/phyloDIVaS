@@ -7,6 +7,7 @@ const file=name=>readFileSync(new URL(`../../../../public/demo/bats/${name}`,imp
 it('reconciles the complete saved cohort and preserves missing tests as unavailable',()=>{
     const snapshot=JSON.parse(file('genome-summary.json'));
     expect(snapshot.finished).toBe(true);expect(snapshot.exceptions).toHaveLength(43);
+    expect(snapshot.methods.busted.ok).toBe(9952);expect(snapshot.methods.absrel.ok).toBe(9952);expect(snapshot.methods.meme.ok).toBe(9935);
     expect(snapshot.requested).toBe(9978);expect(snapshot.genes).toHaveLength(9952);
     expect(snapshot.genes.filter(g=>['busted_status','meme_status','absrel_status'].every(k=>g[k]==='valid'))).toHaveLength(9935);
     for(const method of ['busted','absrel','meme']) {
