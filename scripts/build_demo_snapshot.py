@@ -8,21 +8,29 @@ import argparse,collections,csv,json,pathlib,re,sqlite3
 def build(inventory_path,cache_path,membership_path,headers_path,old_path):
     inventory=json.loads(pathlib.Path(inventory_path).read_text());records=inventory['records']
     old=json.loads(pathlib.Path(old_path).read_text());annotations={g['orthogroup']:g for g in old['genes']}
-    membership=list(csv.DictReader(pathlib.Path(membership_path).open(),delimiter='\t'))
+    with pathlib.Path(membership_path).open() as stream:
+        membership=list(csv.DictReader(stream,delimiter='\t'))
     headers={}
     wanted={v for row in membership for v in list(row.values())[3:]}
-    for line in pathlib.Path(headers_path).open():
+    with pathlib.Path(headers_path).open() as stream:
+      for line in stream:
         if not line.startswith('>'):continue
         accession=line[1:].split()[0]
         if accession not in wanted:continue
         fields=dict(re.findall(r'\[([^=\]]+)=([^\]]+)\]',line));headers[accession]=fields
-    db=sqlite3.connect(cache_path);summaries={r[0]:json.loads(r[1]) for r in db.execute('select id,summary from results')}
+    with sqlite3.connect(cache_path) as db:
+        summaries={r[0]:json.loads(r[1]) for r in db.execute('select id,summary from results')}
     missing=[r for r in records if r['state']=='ok' and r['id'] not in summaries]
     if missing:raise ValueError(f'{len(missing)} successful Galaxy records have not been retrieved/validated. Publication refused.')
     by_gene=collections.defaultdict(dict)
     for r in records:by_gene[r['gene']][r['method']]=r
     requested=len(membership)
-    assert all(len([r for r in records if r['method']==m])==requested for m in ['busted','absrel','meme'])
+    expected={row['HOG'] for row in membership}
+    if len(expected)!=requested:raise ValueError('Duplicate membership identifiers')
+    for method in ['busted','absrel','meme']:
+        rows=[r for r in records if r['method']==method]
+        if len(rows)!=requested or {r['gene'] for r in rows}!=expected:raise ValueError('Method membership sets do not match')
+        if dict(collections.Counter(r['state'] for r in rows))!=inventory['coverage'][method]:raise ValueError('Method coverage does not reconcile')
     genes=[];exceptions=[]
     for row in membership:
         gene=row['HOG'];methods=by_gene[gene]

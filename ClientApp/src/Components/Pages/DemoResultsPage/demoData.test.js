@@ -6,8 +6,9 @@ import {summarizeHyphyResult} from '../../../utils/hyphyResults';
 const file=name=>readFileSync(new URL(`../../../../public/demo/bats/${name}`,import.meta.url),'utf8');
 it('reconciles the complete saved cohort and preserves missing tests as unavailable',()=>{
     const snapshot=JSON.parse(file('genome-summary.json'));
-    expect(snapshot.requested).toBe(9978);expect(snapshot.genes).toHaveLength(3177);
-    expect(snapshot.genes.filter(g=>['busted_status','meme_status','absrel_status'].every(k=>g[k]==='valid'))).toHaveLength(288);
+    expect(snapshot.finished).toBe(true);expect(snapshot.exceptions).toHaveLength(43);
+    expect(snapshot.requested).toBe(9978);expect(snapshot.genes).toHaveLength(9952);
+    expect(snapshot.genes.filter(g=>['busted_status','meme_status','absrel_status'].every(k=>g[k]==='valid'))).toHaveLength(9935);
     for(const method of ['busted','absrel','meme']) {
         expect(Object.values(snapshot.methods[method]).reduce((a,b)=>a+b,0)).toBe(snapshot.requested);
         expect(snapshot.genes.filter(g=>g[`${method}_status`]==='valid')).toHaveLength(snapshot.methods[method].ok);
@@ -38,7 +39,7 @@ it('cross-checks every packaged native report against its genome-wide record',()
     const snapshot=JSON.parse(file('genome-summary.json'));const examples=JSON.parse(file('examples.json'));
     for(const item of examples) {
         const example=JSON.parse(file(item.gene+'.json'));const record=snapshot.genes.find(g=>g.orthogroup===example.gene);
-        expect(record).toBeTruthy();
+        expect(record).toBeTruthy();expect(example.correctionFamilySize).toBe(9952);expect(example.bustedQ).toBe(record.BUSTED_q_BH);
         for(const [method,entry] of Object.entries(example.methods)) {
             const summary=summarizeHyphyResult(entry.nativeJson,method);expect(summary.resultAvailable).toBe(true);expect(summary.sequences).toBe(8);
             if(method==='BUSTED')expect(summary.pValue).toBeCloseTo(record.BUSTED_p,12);

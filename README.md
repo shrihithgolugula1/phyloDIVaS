@@ -112,8 +112,10 @@ searchable membership tables; and Newick, raw N0, strict-root and historical
 submission downloads. The current strict-root set has 9,261 groups; the historical
 run submitted 9,978, and the demo keeps those sets distinct.
 
-The genome-wide panel is a frozen partial snapshot of that historical run,
-with 3,177 genes having at least one completed method and 288 having all three.
+The genome-wide panel contains the finished historical run: 9,952 genes with
+completed BUSTED and aBSREL results, including 9,935 with completed MEME results.
+The 26 paused genes and 17 additional MEME failures are listed separately;
+successful methods remain visible for genes with a MEME failure.
 It includes gene annotations, a BUSTED distribution, method-specific coverage,
 search/sort/pagination and CSV/JSON downloads. Unfinished/failed outputs are not
 negative findings. Full native JSON for three representative genes supports

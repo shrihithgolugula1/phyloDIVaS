@@ -14,13 +14,13 @@ it('loads OrthoFinder and genome-wide results with native reports and local down
   render(<MemoryRouter><DemoResultsPage/></MemoryRouter>);
   await screen.findByRole('heading',{name:'OrthoFinder results'},{timeout:15000});
   expect(screen.getByRole('heading',{name:'Genome-wide selection results'})).toBeTruthy();
-  expect(screen.getByText('3,177',{exact:true})).toBeTruthy();expect(screen.getByText('288',{exact:true})).toBeTruthy();
+  expect(screen.getByText('9,952',{exact:true})).toBeTruthy();expect(screen.getByText('9,935',{exact:true})).toBeTruthy();
   const table=screen.getByRole('table',{name:'OrthoFinder orthogroup membership'});expect(table.querySelectorAll('tbody tr')).toHaveLength(25);
   expect(screen.getByRole('link',{name:'Download species tree (Newick)'}).getAttribute('href')).toBe('/demo/bats/species-tree.nwk');
   expect(screen.getByRole('link',{name:'Download raw N0 table'}).getAttribute('download')).not.toBeNull();
   const tree=screen.getByRole('img',{name:/OrthoFinder species phylogeny/});expect(tree.querySelectorAll('image')).toHaveLength(8);
   fireEvent.change(screen.getByRole('searchbox',{name:'Find orthogroup or accession'}),{target:{value:'N0.HOG0004322'}});expect(table.querySelectorAll('tbody tr')).toHaveLength(1);
-  screen.getByRole('button',{name:'Download genome-wide results table'}).click();expect((await blobs[0].text()).split('\n')).toHaveLength(3178);
+  screen.getByRole('button',{name:'Download genome-wide results table'}).click();expect((await blobs[0].text()).split('\n')).toHaveLength(9953);
   screen.getByRole('button',{name:'Open ABCD3 reports'}).click();await screen.findByText('Native HyPhy BUSTED result',{}, {timeout:10000});
   for(const method of ['BUSTED','aBSREL','MEME']) {
    screen.getByRole('button',{name:method,exact:true}).click();await screen.findByText(`Native HyPhy ${method} result`);
