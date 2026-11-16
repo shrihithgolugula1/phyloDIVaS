@@ -17,6 +17,8 @@ namespace CapstoneServices.Galaxy
 {
     public sealed class GalaxyOrthoFinderPipeline
     {
+        public const int SelectionBatchThreshold = 10_000;
+        public const int SelectionBatchSize = 1_000;
         public const int MinSpeciesCount = 3;
         public const int MaxSpeciesCount = 10;
 
@@ -2407,6 +2409,7 @@ namespace CapstoneServices.Galaxy
             if (!string.Equals(alignment?.Trim(), "mafft", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("The integrated phyloDIVaS v2 Galaxy workflow currently requires MAFFT.");
 
+            var batches = PlanSelectionBatches(selectedGroups);
             var selectedN0 = BuildSelectedN0Subset(selectedGroups, genomes);
             var batchStamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss-fff", CultureInfo.InvariantCulture);
             var selectedN0Id = await _galaxy.UploadTextContentAsync(
@@ -2445,6 +2448,26 @@ namespace CapstoneServices.Galaxy
             await WaitForDatasetReadyAsync(historyId, mergedProteomeId, ct);
             await WaitForDatasetReadyAsync(historyId, mergedCdsId, ct);
             var workflowJson = BuildBackgroundSelectionWorkflowDefinition(LoadSelectionWorkflowDefinition());
+            string selectionInputId = selectedN0Id;
+            var selectionInputSource = "hda";
+            if (batches.Count > 1)
+            {
+                // Upload every bounded input before invoking Galaxy. Once invoked,
+                // Galaxy owns all fan-out/fan-in dependencies; no browser callbacks.
+                var batchInputs = new List<(string name, string datasetId)>();
+                for (var i = 0; i < batches.Count; i++)
+                {
+                    var batchId = await _galaxy.UploadTextContentAsync(historyId,
+                        BuildSelectedN0Subset(batches[i], genomes),
+                        $"phyloDIVaS N0 batch {i + 1:D4} of {batches.Count} {batchStamp}.tsv", "tabular", ct);
+                    await WaitForDatasetReadyAsync(historyId, batchId, ct);
+                    batchInputs.Add(($"batch{i + 1:D4}", batchId));
+                }
+                selectionInputId = await _galaxy.CreateListCollectionAsync(historyId,
+                    $"phyloDIVaS bounded N0 inputs ({selectedGroups.Count} orthogroups, {batches.Count} batches) {batchStamp}", batchInputs, ct);
+                selectionInputSource = "hdca";
+                workflowJson = BuildBatchedSelectionWorkflowDefinition(workflowJson);
+            }
             ValidateUninterruptedSelectionWorkflow(workflowJson);
             var versionedWorkflow = VersionWorkflowDefinition(workflowJson);
             var workflowId = await _galaxy.EnsureWorkflowImportedAsync(
@@ -2454,7 +2477,7 @@ namespace CapstoneServices.Galaxy
 
             var workflowInputs = new Dictionary<string, object>
             {
-                ["0"] = new { src = "hda", id = selectedN0Id },
+                ["0"] = new { src = selectionInputSource, id = selectionInputId },
                 ["1"] = new { src = "hda", id = mergedProteomeId },
                 ["2"] = new { src = "hda", id = mergedCdsId }
             };
@@ -2479,9 +2502,52 @@ namespace CapstoneServices.Galaxy
                     ["workflow_id"] = workflowId,
                     ["workflow_invocation"] = invocationId,
                     ["selected_n0"] = selectedN0Id,
+                    ["selection_batch_count"] = batches.Count.ToString(CultureInfo.InvariantCulture),
+                    ["selection_batch_collection"] = selectionInputId,
                     ["merged_proteomes"] = mergedProteomeId,
                     ["merged_cds"] = mergedCdsId
                 })).ToList();
+        }
+
+        internal static List<List<OrthologousGroup>> PlanSelectionBatches(IReadOnlyList<OrthologousGroup> groups)
+        {
+            if (groups.Count == 0) throw new InvalidOperationException("Select at least one orthogroup.");
+            if (groups.Any(g => !Regex.IsMatch(g.GroupId ?? "", @"^N\d+\.HOG\d+$", RegexOptions.IgnoreCase)) ||
+                groups.Select(g => g.GroupId).Distinct(StringComparer.OrdinalIgnoreCase).Count() != groups.Count)
+                throw new InvalidOperationException("Orthogroup identifiers must be unique canonical HOG IDs.");
+            var size = groups.Count >= SelectionBatchThreshold ? SelectionBatchSize : groups.Count;
+            return groups.Chunk(size).Select(batch => batch.ToList()).ToList();
+        }
+
+        internal static string BuildBatchedSelectionWorkflowDefinition(string workflowJson)
+        {
+            var workflow = JsonNode.Parse(workflowJson)!.AsObject();
+            var steps = workflow["steps"]!.AsObject();
+            steps["0"] = new JsonObject
+            {
+                ["id"] = 0, ["type"] = "data_collection_input", ["name"] = "Input dataset collection",
+                ["label"] = "Bounded N0 batches", ["input_connections"] = new JsonObject(),
+                ["inputs"] = new JsonArray(new JsonObject { ["name"] = "Bounded N0 batches", ["description"] = "", ["collection_type"] = "list" }),
+                ["outputs"] = new JsonArray(), ["position"] = new JsonObject { ["left"] = 0, ["top"] = 0 },
+                ["tool_state"] = "{\"collection_type\":\"list\"}", ["workflow_outputs"] = new JsonArray()
+            };
+            // AWK and split map over the outer list. Flatten references existing
+            // datasets (it does not discover/create 10,000+ datasets in one job).
+            steps["16"] = new JsonObject
+            {
+                ["id"] = 16, ["type"] = "tool", ["name"] = "Merge orthogroup batches",
+                ["tool_id"] = "__FLATTEN__", ["content_id"] = "__FLATTEN__", ["tool_version"] = "1.0.0",
+                ["tool_state"] = "{\"input\":{\"__class__\":\"ConnectedValue\"},\"join_identifier\":\":\"}",
+                ["input_connections"] = new JsonObject { ["input"] = new JsonObject { ["id"] = 4, ["output_name"] = "split_output" } },
+                ["inputs"] = new JsonArray(), ["outputs"] = new JsonArray(new JsonObject { ["name"] = "output", ["type"] = "list" }),
+                ["position"] = new JsonObject { ["left"] = 700, ["top"] = 0 },
+                ["post_job_actions"] = new JsonObject(),
+                ["workflow_outputs"] = new JsonArray(new JsonObject { ["label"] = "all_orthogroup_gene_maps", ["output_name"] = "output" })
+            };
+            steps["5"]!["input_connections"]!["input"] = new JsonObject { ["id"] = 16, ["output_name"] = "output" };
+            workflow["name"] = "phyloDIVaS bounded parallel selection v1";
+            workflow.Remove("uuid"); workflow.Remove("id");
+            return workflow.ToJsonString();
         }
 
         internal static string BuildSelectedN0Subset(
