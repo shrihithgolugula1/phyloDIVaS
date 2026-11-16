@@ -144,3 +144,23 @@ https://www.uniprot.org/help/license.
 
 All demo scientific assets and pictures are packaged locally. No Galaxy API key
 or external API call is needed to display the demo or calculate its enrichment.
+
+### Large Galaxy selections
+
+At 10,000 or more selected orthogroups, the backend automatically creates an
+input collection of batches containing at most 1,000 whole groups each. One
+Galaxy-owned workflow maps extraction and splitting across those batches,
+flattens the nested output without copying datasets, and maps the alignment,
+IQ-TREE and three HyPhy tools over the unified list. Parallel execution is
+subject to Galaxy scheduling and account quotas.
+
+Batch-prefixed collection identifiers retain the canonical HOG identifier;
+result discovery normalizes them so the existing dashboard, counts and across-
+gene corrections include the complete family, not just the last batch. No
+client-side follow-up submission or stored API key is needed after invocation.
+For example, 11,822 selected groups become 12 batches (11 × 1,000 + 822).
+
+Restart/rebuild the local app to load backend changes. Already-failed invocations
+are not modified by a code update: resume the existing history and resubmit the
+downstream group selection using its successful OrthoFinder and prepared FASTA
+outputs. Do not rerun OrthoFinder solely to recover this splitting failure.
