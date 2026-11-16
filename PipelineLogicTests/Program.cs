@@ -440,4 +440,30 @@ if (args.Length > 0)
         Check($"reference N0 filter returns {expectedReferenceRows} rows", referenceRowCount == expectedReferenceRows);
 }
 
+// A single dynamic split must never discover >=10,000 files.
+foreach (var count in new[] { 1, 9999, 10000, 10001, 11822, 20000 })
+{
+    var groups = Enumerable.Range(0,count).Select(i => selectedGroups[0] with { GroupId = $"N0.HOG{i:D7}" }).ToList();
+    var batches = GalaxyOrthoFinderPipeline.PlanSelectionBatches(groups);
+    Check($"batch plan preserves every one of {count} groups", batches.SelectMany(b=>b).Select(g=>g.GroupId).SequenceEqual(groups.Select(g=>g.GroupId)));
+    Check($"batch plan respects safe fan-out for {count} groups", count < 10000 ? batches.Count == 1 : batches.All(b=>b.Count<=1000));
+    if(count==11822) Check("11,822 groups become 12 batches, last with 822",batches.Count==12&&batches[^1].Count==822);
+    Check($"each batch repeats its N0 header for {count} groups",batches.All(b=>GalaxyOrthoFinderPipeline.BuildSelectedN0Subset(b,selectedGenomes).Split('\n',StringSplitOptions.RemoveEmptyEntries).Length==b.Count+1));
+}
+try { GalaxyOrthoFinderPipeline.PlanSelectionBatches(new[] { selectedGroups[0],selectedGroups[0] });Check("reject duplicate batch IDs",false); }
+catch(InvalidOperationException){Check("reject duplicate batch IDs",true);}
+using(var stream=typeof(GalaxyOrthoFinderPipeline).Assembly.GetManifestResourceStream("CapstoneServices.GalaxyWorkflows.phyloDIVaS.Selection.v2.ga")!)
+using(var reader=new StreamReader(stream))
+{
+    var workflow=GalaxyOrthoFinderPipeline.BuildBatchedSelectionWorkflowDefinition(GalaxyOrthoFinderPipeline.BuildBackgroundSelectionWorkflowDefinition(reader.ReadToEnd()));
+    GalaxyOrthoFinderPipeline.ValidateUninterruptedSelectionWorkflow(workflow);
+    var steps=System.Text.Json.Nodes.JsonNode.Parse(workflow)!["steps"]!;
+    Check("batched workflow accepts the outer input collection",steps["0"]!["type"]!.GetValue<string>()=="data_collection_input");
+    Check("fan-in uses native flatten without creating new datasets",steps["16"]!["tool_id"]!.GetValue<string>()=="__FLATTEN__");
+    Check("Cut and all downstream mapped jobs receive the complete flattened family",steps["5"]!["input_connections"]!["input"]!["id"]!.GetValue<int>()==16);
+    Check("batch namespace preserves canonical HOG word boundary",System.Text.RegularExpressions.Regex.Match("batch0001:N0.HOG0005248",@"\bN\d+\.HOG\d+\b").Value=="N0.HOG0005248");
+    var exportPath=Environment.GetEnvironmentVariable("PHYLODIVAS_BATCH_WORKFLOW_EXPORT");
+    if(!string.IsNullOrEmpty(exportPath)) File.WriteAllText(exportPath,workflow);
+}
+
 Console.WriteLine($"{passed} pipeline logic tests passed.");
