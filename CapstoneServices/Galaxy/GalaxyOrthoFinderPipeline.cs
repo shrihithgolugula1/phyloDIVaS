@@ -2778,6 +2778,11 @@ namespace CapstoneServices.Galaxy
             foreach (var step in steps.Select(pair => pair.Value).OfType<JsonObject>())
                 if (step["type"]?.GetValue<string>() == "pause")
                     throw new InvalidOperationException("The downstream workflow contains a pause and cannot run unattended.");
+            if (steps["0"]?["type"]?.GetValue<string>() == "data_collection_input" &&
+                (steps["16"]?["tool_id"]?.GetValue<string>() != "__FLATTEN__" ||
+                 steps["16"]?["input_connections"]?["input"]?["id"]?.GetValue<int>() != 4 ||
+                 steps["5"]?["input_connections"]?["input"]?["id"]?.GetValue<int>() != 16))
+                throw new InvalidOperationException("Batched selection must flatten all bounded split outputs before downstream mapping.");
             foreach (var id in new[] { "11", "12", "13" })
             {
                 var connections = steps[id]?["input_connections"];
