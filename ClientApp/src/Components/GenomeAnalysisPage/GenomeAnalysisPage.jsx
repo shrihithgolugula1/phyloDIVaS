@@ -585,6 +585,7 @@ const GenomeAnalysisPage = () => {
     const [inputTreeError, setInputTreeError] = useState(null);
     const [isStartingGenomeAnalysis, setIsStartingGenomeAnalysis] = useState(false);
     const [isLoadingGroups, setIsLoadingGroups] = useState(false);
+    const groupLoadInFlightRef = useRef(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [statusMessage, setStatusMessage] = useState("Add at least 3 species to begin analysis.");
     const [statusProgress, setStatusProgress] = useState(0);
@@ -1163,7 +1164,10 @@ const renderSpeciesTree = useCallback(() => {
    
     // Define before first use to avoid Temporal Dead Zone errors
     const loadOrthologousGroups = useCallback(async (historyId, orthoFinderJobId, options = {}) => {
+        if (groupLoadInFlightRef.current) return null;
+        groupLoadInFlightRef.current = true;
         const quiet = options.quiet === true;
+        setOrthoBrowseError(null);
         setIsLoadingGroups(true);
         if (!quiet) setStatusMessage("Loading orthologous groups...");
         if (quiet) setOrthoBrowseError(null);
@@ -1203,6 +1207,7 @@ const renderSpeciesTree = useCallback(() => {
             }
             return null;
         } finally {
+            groupLoadInFlightRef.current = false;
             setIsLoadingGroups(false);
         }
     }, [galaxyApiKey, resumeGalaxyApiKey]);
@@ -1723,10 +1728,6 @@ const renderSpeciesTree = useCallback(() => {
                 ...(Array.isArray(hyphyJsonOutputs) && hyphyJsonOutputs.length ? { hyphyJsonOutputs } : {})
             });
 
-            if (orthoFinderJobId && !outputsFetched) {
-                fetchOrthoFinderOutputs(historyId, orthoFinderJobId);
-            }
-
             // A historical invocation is not an active submission lock.
             if (["workflow_failed", "workflow_pending", "orthofinder_complete", "orthogroups_ready"].includes(normalizedStatus)) {
                 analysisSubmissionInFlightRef.current = false;
@@ -1738,6 +1739,10 @@ const renderSpeciesTree = useCallback(() => {
                 await loadOrthologousGroups(historyId,lookupId);
                 if(normalizedStatus === "workflow_failed")setStatusMessage("The previous downstream run stopped. Choose orthogroups to retry using the existing OrthoFinder results.");
                 return;
+            }
+
+            if (orthoFinderJobId && !outputsFetched) {
+                fetchOrthoFinderOutputs(historyId, orthoFinderJobId);
             }
 
             // If the downstream workflow was already invoked, skip group selection and show analysis progress/results

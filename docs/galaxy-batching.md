@@ -30,3 +30,21 @@ For example, 11,822 groups produce 12 bounded inputs (11 × 1,000 plus 822), the
 one combined orthogroup list and one complete result family. Existing failed
 invocations are not rewritten automatically; retry downstream selection using
 the updated application and the successful existing OrthoFinder/protein/CDS data.
+
+## Resuming a stopped downstream run
+
+Load Existing History inspects both dataset/collection activity and the latest
+workflow invocation. An empty collection from a failed dynamic split is a
+stopped workflow, even when Galaxy reports zero failed child datasets.
+
+- Completed histories open the shared results dashboard.
+- Active jobs or a workflow still being scheduled keep submission locked.
+- A failed/cancelled downstream invocation, or completed OrthoFinder results
+  without a downstream submission, reopens gene selection and loads the strict
+  root N0 single-copy rows from the existing table. If no saved filtered table
+  exists, the raw N0 table is filtered in memory.
+
+Loading a history does not resubmit a selection. Choose genes (or all groups)
+and confirm analysis to start a new downstream invocation in the same history.
+The existing OrthoFinder results are reused; the historical failed outputs remain
+in Galaxy for inspection. A transient status timeout does not prove failure.

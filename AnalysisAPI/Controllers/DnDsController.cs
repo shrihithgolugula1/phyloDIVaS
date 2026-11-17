@@ -1805,7 +1805,7 @@ namespace AnalysisAPI.Controllers
 
                 // Empty dynamic collections have no child dataset error counts.
                 // A failed invocation is authoritative when no current jobs are active.
-                if (stage != "workflow_complete" && latestMarkerHid >= latestPreparationHid && !currentWorkflowItems.Any(item => IsActive(item.State)))
+                if (stage != "workflow_complete" && !ActiveSelectionSubmissions.ContainsKey(req.HistoryId) && latestMarkerHid >= latestPreparationHid && !currentWorkflowItems.Any(item => IsActive(item.State)))
                 {
                     var invocationState = await _orthoPipeline.GetLatestSelectionInvocationStateAsync(req.HistoryId, statusCts.Token);
                     if (invocationState is "failed" or "cancelled")
