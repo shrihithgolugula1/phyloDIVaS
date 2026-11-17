@@ -1255,7 +1255,7 @@ namespace CapstoneServices.Galaxy
                     ? "workflow_failed"
                     : "workflow_running";
                 var quickDetail = quickStatus == "workflow_failed"
-                    ? $"Connected to Galaxy. The latest workflow generation has {failed} failed item(s); loading diagnostics."
+                    ? "Connected to Galaxy. The previous downstream workflow stopped; orthogroups can be selected again."
                     : running > 0 || queued > 0
                         ? $"Connected to Galaxy. Current workflow activity: {running} running, {queued} queued."
                         : "Connected to Galaxy. Verifying the latest workflow outputs.";

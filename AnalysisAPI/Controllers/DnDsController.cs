@@ -1805,13 +1805,18 @@ namespace AnalysisAPI.Controllers
 
                 // Empty dynamic collections have no child dataset error counts.
                 // A failed invocation is authoritative when no current jobs are active.
-                if (stage != "workflow_complete" && !currentWorkflowItems.Any(item => IsActive(item.State)))
+                if (stage != "workflow_complete" && latestMarkerHid >= latestPreparationHid && !currentWorkflowItems.Any(item => IsActive(item.State)))
                 {
                     var invocationState = await _orthoPipeline.GetLatestSelectionInvocationStateAsync(req.HistoryId, statusCts.Token);
                     if (invocationState is "failed" or "cancelled")
                     {
                         stage = "workflow_failed";
                         detail = "The previous downstream workflow stopped. Select orthogroups to submit a new downstream run using the existing OrthoFinder results.";
+                    }
+                    else if (invocationState is "new" or "ready")
+                    {
+                        stage = "workflow_preparing";
+                        detail = "Galaxy is scheduling the accepted downstream workflow. Selection is locked until it finishes or stops.";
                     }
                 }
 
