@@ -5,7 +5,7 @@ using AnalysisAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Force Kestrel to listen on a stable port for the frontend
-builder.WebHost.UseUrls("http://127.0.0.1:7040");
+builder.WebHost.UseUrls(builder.Configuration["urls"] ?? "http://127.0.0.1:7040");
 
 // Add services to the container
 builder.Services.AddControllers();

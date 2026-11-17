@@ -1565,14 +1565,6 @@ const renderSpeciesTree = useCallback(() => {
                 setCurrentStep(WORKFLOW_STEPS.RUNNING_ANALYSIS);
                 setIsAnalyzing(["workflow_running", "workflow_preparing"].includes(status.stage));
             }
-            else if (status.stage === "workflow_pending") {
-                // A prepared unzip collection is reusable input, not proof that an
-                // alignment workflow has been submitted. Keep submission enabled.
-                setCurrentStep(WORKFLOW_STEPS.GROUP_SELECTION);
-                setIsAnalyzing(false);
-                analysisSubmissionInFlightRef.current = false;
-            }
-            else if (["orthofinder_complete", "orthogroups_ready"].includes(status.stage)) setCurrentStep(WORKFLOW_STEPS.GROUP_SELECTION);
             else setCurrentStep(WORKFLOW_STEPS.GENOME_ANALYSIS);
             return status;
         } catch (error) {
@@ -1812,7 +1804,7 @@ const renderSpeciesTree = useCallback(() => {
         try {
             await processResponse();
             resumeRetryCountRef.current = 0;
-            void refreshGalaxyStatus(historyIdInput, sessionGalaxyApiKey);
+
         } catch (e) {
             const msg = e?.message || String(e);
             if (e?.transient) {
@@ -1839,6 +1831,7 @@ const renderSpeciesTree = useCallback(() => {
             // Even if we're waiting on OrthoFinder to start, stop the "connecting" spinner
             resumeInFlightRef.current = false;
             setIsStartingGenomeAnalysis(false);
+            void refreshGalaxyStatus(historyIdInput, sessionGalaxyApiKey);
         }
     }, [resumeHistoryId, resumeGalaxyApiKey, galaxyApiKey, stopPolling, startOrthoFinderPolling, fetchOrthoFinderOutputs, loadOrthologousGroups, outputsFetched, refreshGalaxyStatus]);
 
@@ -2992,6 +2985,13 @@ const renderSpeciesTree = useCallback(() => {
                         </Button>
                     </div>
                     
+                    {liveGalaxyStatus?.stage === "workflow_failed" && (
+                        <Alert variant="warning">The previous downstream run stopped. Its OrthoFinder results are reusable. Select genes below to start a new downstream run. No job is submitted until you confirm your selection.</Alert>
+                    )}
+                    {orthoBrowseError && <Alert variant="danger">{orthoBrowseError}</Alert>}
+                    {!isLoadingGroups && orthologousGroups.length === 0 && (
+                        <Button variant="outline-primary" onClick={() => loadOrthologousGroups(activeHistoryId || resumeHistoryId, genomeAnalysisData?.orthoFinderJobId || "history-scan")}>Reload orthogroups</Button>
+                    )}
                     <OrthologousGroupSelector
                         groups={orthologousGroups}
                         selectedGroups={selectedGroups}
