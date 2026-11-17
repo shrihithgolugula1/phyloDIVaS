@@ -1251,7 +1251,7 @@ namespace CapstoneServices.Galaxy
                 var queued = quickCounts?.Queued ?? 0;
                 var failed = quickCounts?.Failed ?? 0;
                 var invocationState = await GetLatestSelectionInvocationStateAsync(historyId, ct);
-                var quickStatus = (failed > 0 || invocationState is "failed" or "cancelled") && running == 0 && queued == 0
+                var quickStatus = (failed > 0 && running == 0 && queued == 0) || GalaxyCompletionEvidence.InvocationStopped(invocationState, running > 0 || queued > 0)
                     ? "workflow_failed"
                     : "workflow_running";
                 var quickDetail = quickStatus == "workflow_failed"

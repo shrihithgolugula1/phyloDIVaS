@@ -466,4 +466,9 @@ using(var reader=new StreamReader(stream))
     if(!string.IsNullOrEmpty(exportPath)) File.WriteAllText(exportPath,workflow);
 }
 
+Check("empty failed split is recoverable without child errors", GalaxyCompletionEvidence.InvocationStopped("failed", false));
+Check("cancelled invocation is recoverable", GalaxyCompletionEvidence.InvocationStopped("cancelled", false));
+Check("running jobs keep selection locked after scheduler failure", !GalaxyCompletionEvidence.InvocationStopped("failed", true));
+foreach(var state in new string?[] { null, "new", "ready", "scheduled" })
+    Check($"{state ?? "unknown"} invocation is not proof of failure", !GalaxyCompletionEvidence.InvocationStopped(state, false));
 Console.WriteLine($"{passed} pipeline logic tests passed.");

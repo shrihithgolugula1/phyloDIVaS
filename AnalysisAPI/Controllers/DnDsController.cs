@@ -1701,7 +1701,8 @@ namespace AnalysisAPI.Controllers
                 else if (hyphyItems.Count > 0)
                 {
                     stage = "workflow_running";
-                    detail = "Some HyPhy outputs are present, but completion of all three methods is not verified. Outputs may be paused, pending, or incompletely discovered; this is not confirmation that jobs are running.";
+                    stage = downstreamItems.Any(item => IsActive(item.State)) ? "workflow_running" : "workflow_failed";
+                    detail = "Some HyPhy outputs are present, but all three methods have not finished. Review the available outputs or select orthogroups to retry the incomplete downstream run.";
                 }
                 else if (codonCollections.Any(item => item.State.Equals("ok", StringComparison.OrdinalIgnoreCase)) &&
                          treeCollections.Any(item => item.State.Equals("ok", StringComparison.OrdinalIgnoreCase)) &&
@@ -1808,7 +1809,7 @@ namespace AnalysisAPI.Controllers
                 if (stage != "workflow_complete" && !ActiveSelectionSubmissions.ContainsKey(req.HistoryId) && latestMarkerHid >= latestPreparationHid && !currentWorkflowItems.Any(item => IsActive(item.State)))
                 {
                     var invocationState = await _orthoPipeline.GetLatestSelectionInvocationStateAsync(req.HistoryId, statusCts.Token);
-                    if (invocationState is "failed" or "cancelled")
+                    if (GalaxyCompletionEvidence.InvocationStopped(invocationState, false))
                     {
                         stage = "workflow_failed";
                         detail = "The previous downstream workflow stopped. Select orthogroups to submit a new downstream run using the existing OrthoFinder results.";

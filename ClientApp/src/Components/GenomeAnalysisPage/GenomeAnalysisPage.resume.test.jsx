@@ -55,3 +55,14 @@ it('shows the completed viewer rather than a retry form for completed histories'
     await screen.findByRole('heading',{name:'Selection results dashboard'});
     expect(screen.queryByText('Step 3: Select Orthologous Gene Families')).toBeNull();
 });
+
+for (const stage of ['orthogroups_ready', 'hyphy_ready', 'post_mafft_ready']) {
+    it(`reopens selection for inactive ${stage} histories`, async () => {
+        attachedState=state=stage;
+        await resume();
+        await screen.findByText('N0.HOG0000001');
+        fireEvent.click(screen.getByRole('button',{name:'Select filtered'}));
+        const submit=screen.getByRole('button',{name:/Analyze Selected/});
+        expect(submit.disabled).toBe(false);
+    });
+}

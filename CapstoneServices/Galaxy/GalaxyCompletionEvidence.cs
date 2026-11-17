@@ -2,6 +2,9 @@ namespace CapstoneServices.Galaxy;
 
 public static class GalaxyCompletionEvidence
 {
+    public static bool InvocationStopped(string? state, bool hasActiveJobs) =>
+        !hasActiveJobs && state?.ToLowerInvariant() is "failed" or "cancelled";
+
     public static string SelectionOutputKey(string name)
     {
         var method = name.Contains("absrel", StringComparison.OrdinalIgnoreCase) ? "absrel"
