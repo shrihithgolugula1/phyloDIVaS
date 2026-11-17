@@ -1250,7 +1250,8 @@ namespace CapstoneServices.Galaxy
                 var running = quickCounts?.Running ?? 0;
                 var queued = quickCounts?.Queued ?? 0;
                 var failed = quickCounts?.Failed ?? 0;
-                var quickStatus = failed > 0 && running == 0 && queued == 0
+                var invocationState = await GetLatestSelectionInvocationStateAsync(historyId, ct);
+                var quickStatus = (failed > 0 || invocationState is "failed" or "cancelled") && running == 0 && queued == 0
                     ? "workflow_failed"
                     : "workflow_running";
                 var quickDetail = quickStatus == "workflow_failed"
@@ -5942,6 +5943,14 @@ namespace CapstoneServices.Galaxy
         }
 
         private record HistoryJobCounts(int Running, int Queued, int Ok, int Failed, int Total);
+
+        public async Task<string?> GetLatestSelectionInvocationStateAsync(string historyId, CancellationToken ct)
+        {
+            var id = await GetWorkflowInvocationIdFromMarkerAsync(historyId, ct);
+            if (string.IsNullOrWhiteSpace(id)) return null;
+            var invocation = await _galaxy.GetInvocationAsync(id, ct);
+            return invocation.TryGetProperty("state", out var state) ? state.GetString() : null;
+        }
 
         private async Task<HistoryJobCounts> GetLatestWorkflowJobCountsAsync(string historyId, CancellationToken ct)
         {

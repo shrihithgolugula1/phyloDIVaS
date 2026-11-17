@@ -1528,7 +1528,12 @@ const renderSpeciesTree = useCallback(() => {
             setStatusMessage(status.detail || "Galaxy history inspected.");
             const stageIndex = getDetectedPipelineStage(status.stage, currentStep);
             setStatusProgress([10, 35, 60, 75, 90, 100][stageIndex]);
-            if (status.stage === "workflow_complete" || status.stage === "workflow_failed") {
+            if (["workflow_failed","workflow_pending","orthofinder_complete","orthogroups_ready"].includes(status.stage)) {
+                setCurrentStep(WORKFLOW_STEPS.GROUP_SELECTION);setIsAnalyzing(false);
+                analysisSubmissionInFlightRef.current=false;
+                if(orthologousGroups.length===0&&!isLoadingGroups)await loadOrthologousGroups(historyId,genomeAnalysisData?.orthoFinderJobId||"history-scan",{quiet:true});
+            }
+            else if (status.stage === "workflow_complete") {
                 // Result discovery can be slow; do not leave a terminal history
                 // on the "analysis submitted/running" page while it is fetched.
                 setCurrentStep(WORKFLOW_STEPS.COMPLETED);
@@ -1588,7 +1593,7 @@ const renderSpeciesTree = useCallback(() => {
             galaxyStatusRefreshInFlightRef.current = false;
             setIsRefreshingGalaxyStatus(false);
         }
-    }, [activeHistoryId, resumeHistoryId, resumeGalaxyApiKey, galaxyApiKey, currentStep]);
+    }, [activeHistoryId, resumeHistoryId, resumeGalaxyApiKey, galaxyApiKey, currentStep, orthologousGroups.length, isLoadingGroups, loadOrthologousGroups, genomeAnalysisData?.orthoFinderJobId]);
 
     useEffect(() => {
         if (!autoRefreshGalaxyStatus || !activeHistoryId) return undefined;
@@ -1671,7 +1676,7 @@ const renderSpeciesTree = useCallback(() => {
             saveSession({ historyId, orthoFinderJobId, genomes });
 
             const normalizedStatus = workflowInvocationId
-                ? (workflowStatus || "workflow_running")
+                ? (workflowStatus || status || "workflow_running")
                 : (status || (orthoFinderJobId
                     ? "orthofinder"
                     : (genomes.length === 0 ? "initializing" : "uploading")));
@@ -1728,6 +1733,19 @@ const renderSpeciesTree = useCallback(() => {
 
             if (orthoFinderJobId && !outputsFetched) {
                 fetchOrthoFinderOutputs(historyId, orthoFinderJobId);
+            }
+
+            // A historical invocation is not an active submission lock.
+            if (["workflow_failed", "workflow_pending", "orthofinder_complete", "orthogroups_ready"].includes(normalizedStatus)) {
+                analysisSubmissionInFlightRef.current = false;
+                setIsAnalyzing(false);setSelectedGroups([]);setSubmittedGroups([]);
+                const lookupId = orthoFinderJobId || "history-scan";
+                setGenomeAnalysisData({historyId,genomes,orthoFinderJobId:lookupId});
+                setCurrentStep(WORKFLOW_STEPS.GROUP_SELECTION);
+                setIsStartingGenomeAnalysis(false);setStopPolling(null);
+                await loadOrthologousGroups(historyId,lookupId);
+                if(normalizedStatus === "workflow_failed")setStatusMessage("The previous downstream run stopped. Choose orthogroups to retry using the existing OrthoFinder results.");
+                return;
             }
 
             // If the downstream workflow was already invoked, skip group selection and show analysis progress/results

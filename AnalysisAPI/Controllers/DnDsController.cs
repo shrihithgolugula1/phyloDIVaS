@@ -1617,6 +1617,10 @@ namespace AnalysisAPI.Controllers
                     "orthogroup_workflow_invoked")).ToList();
                 var workflowPreparationItems = currentWorkflowItems.Where(item => NameHas(
                     item.Name,
+                    "split by group",
+                    "split strict orthogroups",
+                    "bounded N0 inputs",
+                    "N0 batch",
                     "orthogroup_ids.zip",
                     "orthogroup ids",
                     "selected N0 orthogroups",
@@ -1798,6 +1802,18 @@ namespace AnalysisAPI.Controllers
                     .Take(50)
                     .Select(item => new { item.Id, item.Name, item.State, item.Hid, item.ContentType })
                     .ToList();
+
+                // Empty dynamic collections have no child dataset error counts.
+                // A failed invocation is authoritative when no current jobs are active.
+                if (stage != "workflow_complete" && !currentWorkflowItems.Any(item => IsActive(item.State)))
+                {
+                    var invocationState = await _orthoPipeline.GetLatestSelectionInvocationStateAsync(req.HistoryId, statusCts.Token);
+                    if (invocationState is "failed" or "cancelled")
+                    {
+                        stage = "workflow_failed";
+                        detail = "The previous downstream workflow stopped. Select orthogroups to submit a new downstream run using the existing OrthoFinder results.";
+                    }
+                }
 
                 return Ok(new
                 {
