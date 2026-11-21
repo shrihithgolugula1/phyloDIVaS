@@ -52,6 +52,19 @@ class LauncherTests(unittest.TestCase):
                 local_app.launch({}, {})
             spawn.assert_not_called()
 
+    def test_analysis_api_ignores_conflicting_development_profile(self):
+        command = local_app.service_command({"dotnet": "dotnet"}, "AnalysisAPI", 7040)
+        self.assertIn("--no-launch-profile", command)
+        self.assertNotIn("--launch-profile", command)
+        self.assertEqual(command[command.index("--urls") + 1], "http://127.0.0.1:7040")
+
+    def test_other_services_keep_https_profiles(self):
+        for name, port in local_app.SERVICES:
+            if name == "AnalysisAPI":
+                continue
+            command = local_app.service_command({"dotnet": "dotnet"}, name, port)
+            self.assertEqual(command[command.index("--launch-profile") + 1], "https")
+
     def test_missing_dependency_is_actionable(self):
         with patch.object(local_app.shutil, 'which', return_value=None):
             with self.assertRaisesRegex(RuntimeError, 'Missing prerequisites'):

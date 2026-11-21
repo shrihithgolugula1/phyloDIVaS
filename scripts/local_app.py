@@ -153,6 +153,15 @@ def stop(processes):
             process.wait()
 
 
+def service_command(paths, name, port):
+    command = [paths["dotnet"], "run", "--no-build", "--no-restore", "--project",
+               str(ROOT / name / (name + ".csproj"))]
+    # AnalysisAPI's development profile defaults to 5039; the UI uses 7040.
+    if name == "AnalysisAPI":
+        return command + ["--no-launch-profile", "--urls", f"http://127.0.0.1:{port}"]
+    return command + ["--launch-profile", "https"]
+
+
 def launch(paths, env, no_browser=False):
     busy = [port for _, port in SERVICES if port_open(port)]
     if port_open(3000):
@@ -166,10 +175,8 @@ def launch(paths, env, no_browser=False):
     log_dir.mkdir(parents=True)
     processes, logs = [], []
     try:
-        commands = [(name, [paths["dotnet"], "run", "--no-build", "--no-restore", "--project",
-                           str(ROOT / name / (name + ".csproj"))]
-                     + ([] if name == "AnalysisAPI" else ["--launch-profile", "https"]), ROOT)
-                    for name, _ in SERVICES]
+        commands = [(name, service_command(paths, name, port), ROOT)
+                    for name, port in SERVICES]
         commands.append(("ClientApp", [paths["npm"], "run", "dev", "--", "--host", "127.0.0.1",
                                        "--port", "3000", "--strictPort"], ROOT / "ClientApp"))
         for name, command, cwd in commands:
